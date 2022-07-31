@@ -20,10 +20,10 @@ public interface DataConnection {
 
     DataSchemeContent getSchemeContent(@NonNull String name);
 
+    DataTableContent getTableContent(@NonNull String scheme, @NonNull String name);
+
     @NonNull
     Set<DataSchemeContent> getSchemesContents();
-
-    DataTableContent getTableContent(@NonNull String scheme, @NonNull String name);
 
     @NonNull
     Set<DataTableContent> getTablesContents(@NonNull String scheme);
@@ -36,12 +36,6 @@ public interface DataConnection {
 
     @NonNull
     Request createRequest(@NonNull DataExecutableContent executableContent);
-
-    @NonNull
-    default Request createRequest(@NonNull DataSchemeContent content) {
-        DataTableContent first = content.getTablesContents().iterator().next();
-        return createRequest(first);
-    }
 
     @NonNull
     CompletableFuture<Void> close() throws SQLException;

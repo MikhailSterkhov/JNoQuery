@@ -43,7 +43,7 @@ public class TestSQL {
             });
         }
 
-        // execution a queries by remote sql-connection.
+        // execution a no-sql queries by remote sql-connection.
         CompletableFuture<DataResponse> responseFuture = connection.createRequest(tableContent)
                 .with(RequestType.TYPE_FORWARD_ONLY)
                 .with(RequestFetchDirection.FETCH_REVERSE)
@@ -62,18 +62,38 @@ public class TestSQL {
         responseFuture.thenAccept(response -> {
 
             for (DataResponseRow row : response) {
-
-                String nickname = row.getString("nickname");
-
-                int age = row.getInt("age");
-
-                // todo
+                handleFetchRow(row);
             }
         });
+
+        // execution a sql queries by remote sql-connection.
+        connection.createRequest(tableContent).factory()
+                .newQuery("SELECT * FROM {table} WHERE {0}")
+                .where(FieldWhereRequest.Operator.LESS, ValueDataField.create("id", 5))
+                .complete()
+                .fetchSync()
+                .thenAccept(response -> {
+
+                    for (DataResponseRow row : response) {
+                        handleFetchRow(row);
+                    }
+                });
 
         // common manipulations with a table.
         tableContent.clear().thenAccept(unused -> System.out.printf("Table `%s` was success clear!%n", tableContent.getName()));
         tableContent.drop().thenAccept(unused -> System.out.printf("Table `%s` was success dropped!%n", tableContent.getName()));
+
+        // close a sql-connection.
+        connection.close().thenAccept(unused -> System.out.println("connection was closed"));
+    }
+
+    private static void handleFetchRow(DataResponseRow row) {
+        int id = row.getInt("id");
+        int age = row.getInt("age");
+
+        String nickname = row.getString("nickname");
+
+        System.out.printf("Success find a `%s` (id=%s, age=%s)%n", nickname, id, age);
     }
 
 }

@@ -1,6 +1,8 @@
 package com.itzstonlex.jnq.request;
 
 import com.itzstonlex.jnq.content.DataExecutableContent;
+import com.itzstonlex.jnq.request.query.RequestBasicQuery;
+import com.itzstonlex.jnq.request.query.RequestQueryType;
 import com.itzstonlex.jnq.request.query.type.*;
 import lombok.NonNull;
 
@@ -8,6 +10,9 @@ public interface RequestFactory {
 
     @NonNull
     DataExecutableContent getExecutableContent();
+
+    @NonNull
+    RequestBasicQuery newQuery(@NonNull String query);
 
     @NonNull
     RequestAlterAdd newAlterAdd();

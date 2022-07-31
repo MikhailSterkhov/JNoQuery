@@ -3,6 +3,7 @@ package com.itzstonlex.jnq.sql;
 import com.itzstonlex.jnq.DataConnection;
 import com.itzstonlex.jnq.DataMapProvider;
 import com.itzstonlex.jnq.DataValidator;
+import com.itzstonlex.jnq.content.DataExecutableContent;
 import com.itzstonlex.jnq.content.DataSchemeContent;
 import com.itzstonlex.jnq.content.DataTableContent;
 import com.itzstonlex.jnq.impl.decorator.DataValidateDecorator;
@@ -88,7 +89,7 @@ public class SqlConnection implements DataConnection {
     }
 
     @Override
-    public @NonNull Request createRequest(@NonNull DataTableContent content) {
+    public @NonNull Request createRequest(@NonNull DataExecutableContent content) {
         throw new UnsupportedOperationException();
     }
 
