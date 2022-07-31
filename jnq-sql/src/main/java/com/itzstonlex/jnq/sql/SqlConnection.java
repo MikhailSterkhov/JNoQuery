@@ -3,6 +3,7 @@ package com.itzstonlex.jnq.sql;
 import com.itzstonlex.jnq.DataConnection;
 import com.itzstonlex.jnq.DataMapProvider;
 import com.itzstonlex.jnq.DataValidator;
+import com.itzstonlex.jnq.content.DataSchemeContent;
 import com.itzstonlex.jnq.content.DataTableContent;
 import com.itzstonlex.jnq.impl.decorator.DataValidateDecorator;
 import com.itzstonlex.jnq.request.Request;
@@ -14,6 +15,8 @@ import lombok.experimental.FieldDefaults;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
@@ -34,6 +37,9 @@ public class SqlConnection implements DataConnection {
 
     private final Map<Class<?>, DataMapProvider> providerByTypesMap = new ConcurrentHashMap<>();
 
+    private final Map<String, DataSchemeContent> schemeByNamesMap = new ConcurrentHashMap<>();
+    private final Map<String, DataTableContent> tableByNamesMap = new ConcurrentHashMap<>();
+
     public SqlConnection(@NonNull DataValidator validator,
                          @NonNull String driverCls, @NonNull String url,
                          @NonNull String user, @NonNull String password) throws SQLException, ClassNotFoundException {
@@ -45,7 +51,7 @@ public class SqlConnection implements DataConnection {
 
         this.meta = new SqlConnectionMeta(connection);
 
-        this._applyMetaProperties(connection);
+        this.initContentData(connection);
     }
 
     public SqlConnection(@NonNull String driverCls, @NonNull String url,
@@ -54,7 +60,7 @@ public class SqlConnection implements DataConnection {
         this(PARENT_DATA_VALIDATOR, driverCls, url, user, password);
     }
 
-    private void _applyMetaProperties(Connection connection) {
+    private void initContentData(Connection connection) {
         // TODO - apply @meta for @connection properties
     }
 
@@ -64,18 +70,28 @@ public class SqlConnection implements DataConnection {
     }
 
     @Override
-    public @NonNull Set<DataTableContent> getTablesContents() {
-        return null;
+    public DataSchemeContent getSchemeContent(@NonNull String name) {
+        return schemeByNamesMap.get(name.toLowerCase());
+    }
+
+    @Override
+    public @NonNull Set<DataSchemeContent> getSchemesContents() {
+        return new HashSet<>(schemeByNamesMap.values());
     }
 
     @Override
     public @NonNull DataTableContent getTableContent(String name) {
-        return null;
+        return tableByNamesMap.get(name.toLowerCase());
+    }
+
+    @Override
+    public @NonNull Set<DataTableContent> getTablesContents() {
+        return new HashSet<>(tableByNamesMap.values());
     }
 
     @Override
     public @NonNull Request createRequest(@NonNull DataTableContent content) {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override

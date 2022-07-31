@@ -20,21 +20,11 @@ public class DataTableContent {
     @Setter
     DataSchemeContent scheme;
 
-    public CompletableFuture<Void> clear() {
-        return scheme.getConnection().createRequest(this).factory()
-                .newDelete()
-                .complete()
-                .updateAsync();
+    public boolean exists() {
+        return scheme.getConnection().getTableContent(name) != null;
     }
 
-    public CompletableFuture<Void> drop() {
-        return scheme.getConnection().createRequest(this).factory()
-                .newDelete()
-                .complete()
-                .updateAsync();
-    }
-
-    public CompletableFuture<Void> create(@NonNull IndexDataField... fields) {
+    public @NonNull CompletableFuture<Void> create(@NonNull IndexDataField... fields) {
         return scheme.getConnection().createRequest(this).factory()
                 .newCreateTable()
                 .withExistsChecking()
@@ -43,7 +33,18 @@ public class DataTableContent {
                 .updateAsync();
     }
 
-    public boolean exists() {
-        return scheme.getConnection().getTableContent(name) != null;
+    public @NonNull CompletableFuture<Void> clear() {
+        return scheme.getConnection().createRequest(this).factory()
+                .newDelete()
+                .complete()
+                .updateAsync();
     }
+
+    public @NonNull CompletableFuture<Void> drop() {
+        return scheme.getConnection().createRequest(this).factory()
+                .newDelete()
+                .complete()
+                .updateAsync();
+    }
+
 }

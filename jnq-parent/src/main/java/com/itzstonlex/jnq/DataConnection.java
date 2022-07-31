@@ -1,5 +1,6 @@
 package com.itzstonlex.jnq;
 
+import com.itzstonlex.jnq.content.DataSchemeContent;
 import com.itzstonlex.jnq.content.DataTableContent;
 import com.itzstonlex.jnq.request.Request;
 import lombok.NonNull;
@@ -16,7 +17,12 @@ public interface DataConnection {
         return checkConnection(1000);
     }
 
-    DataTableContent getTableContent(String name);
+    DataSchemeContent getSchemeContent(@NonNull String name);
+
+    @NonNull
+    Set<DataSchemeContent> getSchemesContents();
+
+    DataTableContent getTableContent(@NonNull String name);
 
     @NonNull
     Set<DataTableContent> getTablesContents();
@@ -29,6 +35,12 @@ public interface DataConnection {
 
     @NonNull
     Request createRequest(@NonNull DataTableContent content);
+
+    @NonNull
+    default Request createRequest(@NonNull DataSchemeContent content) {
+        DataTableContent first = content.getTables().values().iterator().next();
+        return createRequest(first);
+    }
 
     @NonNull
     CompletableFuture<Void> close() throws SQLException;
