@@ -16,10 +16,10 @@ public interface DataConnection {
         return checkConnection(1000);
     }
 
+    DataTableContent getTableContent(String name);
+
     @NonNull
     Set<DataTableContent> getTablesContents();
-
-    DataTableContent getTableContent(String name);
 
     @NonNull
     DataValidator getValidator();
@@ -28,11 +28,12 @@ public interface DataConnection {
     DataConnectionMeta getMeta();
 
     @NonNull
-    DataMapProvider getDataMapProvider();
-
-    @NonNull
     Request createRequest(@NonNull DataTableContent content);
 
     @NonNull
     CompletableFuture<Void> close() throws SQLException;
+
+    DataMapProvider getDataMapProvider(@NonNull Class<?> cls);
+
+    void registerDataMapProvider(@NonNull Class<?> cls, @NonNull DataMapProvider provider);
 }

@@ -4,7 +4,6 @@ import com.itzstonlex.jnq.DataConnection;
 import com.itzstonlex.jnq.DataMapProvider;
 import com.itzstonlex.jnq.DataValidator;
 import com.itzstonlex.jnq.content.DataTableContent;
-import com.itzstonlex.jnq.impl.decorator.DataMapProviderDecorator;
 import com.itzstonlex.jnq.impl.decorator.DataValidateDecorator;
 import com.itzstonlex.jnq.request.Request;
 import lombok.AccessLevel;
@@ -15,14 +14,15 @@ import lombok.experimental.FieldDefaults;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
 
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class SqlConnection implements DataConnection {
 
     private static final DataValidator PARENT_DATA_VALIDATOR = new DataValidateDecorator();
-    private static final DataMapProvider PARENT_DATA_MAP_PROVIDER = new DataMapProviderDecorator();
 
     @Getter
     private final DataValidator validator;
@@ -30,20 +30,17 @@ public class SqlConnection implements DataConnection {
     @Getter
     private final SqlConnectionMeta meta;
 
-    @Getter
-    private final DataMapProvider dataMapProvider;
-
     private final Connection connection;
 
-    public SqlConnection(@NonNull DataValidator validator, @NonNull DataMapProvider dataMapProvider,
+    private final Map<Class<?>, DataMapProvider> providerByTypesMap = new ConcurrentHashMap<>();
+
+    public SqlConnection(@NonNull DataValidator validator,
                          @NonNull String driverCls, @NonNull String url,
                          @NonNull String user, @NonNull String password) throws SQLException, ClassNotFoundException {
 
         Class.forName(driverCls);
 
         this.validator = validator;
-        this.dataMapProvider = dataMapProvider;
-
         this.connection = DriverManager.getConnection(url, user, password);
 
         this.meta = new SqlConnectionMeta(connection);
@@ -54,7 +51,7 @@ public class SqlConnection implements DataConnection {
     public SqlConnection(@NonNull String driverCls, @NonNull String url,
                          @NonNull String user, @NonNull String password) throws SQLException, ClassNotFoundException {
 
-        this(PARENT_DATA_VALIDATOR, PARENT_DATA_MAP_PROVIDER, driverCls, url, user, password);
+        this(PARENT_DATA_VALIDATOR, driverCls, url, user, password);
     }
 
     private void _applyMetaProperties(Connection connection) {
@@ -92,6 +89,16 @@ public class SqlConnection implements DataConnection {
         }
 
         return completableFuture;
+    }
+
+    @Override
+    public DataMapProvider getDataMapProvider(@NonNull Class<?> cls) {
+        return providerByTypesMap.get(cls);
+    }
+
+    @Override
+    public void registerDataMapProvider(@NonNull Class<?> cls, @NonNull DataMapProvider provider) {
+        providerByTypesMap.put(cls, provider);
     }
 
 }
