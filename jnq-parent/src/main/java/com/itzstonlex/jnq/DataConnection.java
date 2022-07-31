@@ -1,5 +1,6 @@
 package com.itzstonlex.jnq;
 
+import com.itzstonlex.jnq.content.DataExecutableContent;
 import com.itzstonlex.jnq.content.DataSchemeContent;
 import com.itzstonlex.jnq.content.DataTableContent;
 import com.itzstonlex.jnq.request.Request;
@@ -34,7 +35,7 @@ public interface DataConnection {
     DataConnectionMeta getMeta();
 
     @NonNull
-    Request createRequest(@NonNull DataTableContent content);
+    Request createRequest(@NonNull DataExecutableContent executableContent);
 
     @NonNull
     default Request createRequest(@NonNull DataSchemeContent content) {

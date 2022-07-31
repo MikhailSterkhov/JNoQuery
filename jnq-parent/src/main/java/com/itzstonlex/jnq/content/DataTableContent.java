@@ -10,7 +10,7 @@ import java.util.concurrent.CompletableFuture;
 
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class DataTableContent {
+public class DataTableContent implements DataExecutableContent {
 
     String name;
 

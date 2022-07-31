@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class DataSchemeContent {
+public class DataSchemeContent implements DataExecutableContent {
 
     Map<String, DataTableContent> tableByNamesMap = new ConcurrentHashMap<>();
 
@@ -69,6 +69,13 @@ public class DataSchemeContent {
 
     public @NonNull CompletableFuture<Void> drop(@NonNull DataTableContent table) {
         return table.drop().thenAccept(unused -> tableByNamesMap.remove(table.getName().toLowerCase()));
+    }
+
+    public @NonNull CompletableFuture<Void> drop() {
+        return connection.createRequest(this).factory()
+                .newDropScheme()
+                .complete()
+                .updateAsync();
     }
 
 }
