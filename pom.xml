@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.github.itzstonlex</groupId>
+    <artifactId>jnq</artifactId>
+    <version>1.0</version>
+
+    <packaging>pom</packaging>
+
+    <name>JNoQuery</name>
+    <description>Database connection with nosql and sql management</description>
+
+    <modules>
+        <module>jnq-parent</module>
+        <module>jnq-sql</module>
+    </modules>
+
+    <developers>
+        <developer>
+            <id>itzstonlex</id>
+            <email>itzstonlex@bk.ru</email>
+            <url>https://vk.com/itzstonlex</url>
+        </developer>
+    </developers>
+
+    <build>
+        <defaultGoal>clean install deploy</defaultGoal>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.10.1</version>
+            </plugin>
+        </plugins>
+    </build>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.24</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
+</project>
