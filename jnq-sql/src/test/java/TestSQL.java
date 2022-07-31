@@ -22,13 +22,13 @@ public class TestSQL {
     public static void main(String[] args) {
 
         // create a sql-connection channel.
-        String jdbcUrl = SQLUtility.toMysqlJDBC("localhost", 3306);
+        String jdbcUrl = SQLUtility.toMysqlJDBC("test_scheme", "localhost", 3306);
         String driverCls = SQLUtility.MYSQL_DRIVER_CLASS;
 
         DataConnection connection = new SqlConnection(driverCls, jdbcUrl, "root", "");
 
         // management with a table.
-        DataTableContent tableContent = connection.getTableContent("registered_users");
+        DataTableContent tableContent = connection.getTableContent("test_scheme", "registered_users");
 
         if (!tableContent.exists()) {
             tableContent.create(

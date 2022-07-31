@@ -4,9 +4,7 @@ import com.itzstonlex.jnq.field.impl.IndexDataField;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.NonNull;
-import lombok.Setter;
 import lombok.experimental.FieldDefaults;
-import lombok.experimental.NonFinal;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -16,12 +14,10 @@ public class DataTableContent {
 
     String name;
 
-    @NonFinal
-    @Setter
     DataSchemeContent scheme;
 
     public boolean exists() {
-        return scheme.getConnection().getTableContent(name) != null;
+        return scheme.getTableContent(name) != null;
     }
 
     public @NonNull CompletableFuture<Void> create(@NonNull IndexDataField... fields) {

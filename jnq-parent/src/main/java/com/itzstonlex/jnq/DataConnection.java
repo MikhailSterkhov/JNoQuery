@@ -22,10 +22,10 @@ public interface DataConnection {
     @NonNull
     Set<DataSchemeContent> getSchemesContents();
 
-    DataTableContent getTableContent(@NonNull String name);
+    DataTableContent getTableContent(@NonNull String scheme, @NonNull String name);
 
     @NonNull
-    Set<DataTableContent> getTablesContents();
+    Set<DataTableContent> getTablesContents(@NonNull String scheme);
 
     @NonNull
     DataValidator getValidator();
@@ -38,7 +38,7 @@ public interface DataConnection {
 
     @NonNull
     default Request createRequest(@NonNull DataSchemeContent content) {
-        DataTableContent first = content.getTables().values().iterator().next();
+        DataTableContent first = content.getTablesContents().iterator().next();
         return createRequest(first);
     }
 

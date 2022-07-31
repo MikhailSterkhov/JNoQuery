@@ -35,10 +35,8 @@ public class SqlConnection implements DataConnection {
 
     private final Connection connection;
 
-    private final Map<Class<?>, DataMapProvider> providerByTypesMap = new ConcurrentHashMap<>();
-
     private final Map<String, DataSchemeContent> schemeByNamesMap = new ConcurrentHashMap<>();
-    private final Map<String, DataTableContent> tableByNamesMap = new ConcurrentHashMap<>();
+    private final Map<Class<?>, DataMapProvider> providerByTypesMap = new ConcurrentHashMap<>();
 
     public SqlConnection(@NonNull DataValidator validator,
                          @NonNull String driverCls, @NonNull String url,
@@ -71,7 +69,7 @@ public class SqlConnection implements DataConnection {
 
     @Override
     public DataSchemeContent getSchemeContent(@NonNull String name) {
-        return schemeByNamesMap.get(name.toLowerCase());
+        return schemeByNamesMap.computeIfAbsent(name.toLowerCase(), f -> new DataSchemeContent(name, this));
     }
 
     @Override
@@ -80,13 +78,13 @@ public class SqlConnection implements DataConnection {
     }
 
     @Override
-    public @NonNull DataTableContent getTableContent(String name) {
-        return tableByNamesMap.get(name.toLowerCase());
+    public @NonNull DataTableContent getTableContent(@NonNull String scheme, @NonNull String name) {
+        return getSchemeContent(scheme).getTableContent(name);
     }
 
     @Override
-    public @NonNull Set<DataTableContent> getTablesContents() {
-        return new HashSet<>(tableByNamesMap.values());
+    public @NonNull Set<DataTableContent> getTablesContents(@NonNull String scheme) {
+        return getSchemeContent(scheme).getTablesContents();
     }
 
     @Override
