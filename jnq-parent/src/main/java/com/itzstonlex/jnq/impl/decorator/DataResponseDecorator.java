@@ -11,6 +11,10 @@ import java.util.LinkedList;
 
 public class DataResponseDecorator extends LinkedList<DataResponseRow> implements DataResponse {
 
+    public DataResponseDecorator(@NonNull DataResponse response) {
+        super(response);
+    }
+
     @SneakyThrows
     public DataResponseDecorator(@NonNull ResultSet resultSet) {
         while (resultSet.next()) {
