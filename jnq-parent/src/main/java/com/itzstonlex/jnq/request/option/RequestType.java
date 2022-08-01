@@ -12,11 +12,11 @@ import java.sql.ResultSet;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public enum RequestType {
 
-    TYPE_FORWARD_ONLY(ResultSet.TYPE_FORWARD_ONLY),
+    FORWARD_ONLY(ResultSet.TYPE_FORWARD_ONLY), // 1003
 
-    TYPE_SCROLL_INSENSITIVE(ResultSet.TYPE_SCROLL_INSENSITIVE),
+    SCROLL_INSENSITIVE(ResultSet.TYPE_SCROLL_INSENSITIVE), // 1004
 
-    TYPE_SCROLL_SENSITIVE(ResultSet.TYPE_SCROLL_SENSITIVE);
+    SCROLL_SENSITIVE(ResultSet.TYPE_SCROLL_SENSITIVE); // 1005
 
     int index;
 }

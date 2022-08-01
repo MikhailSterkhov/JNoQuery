@@ -12,9 +12,9 @@ import java.sql.ResultSet;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public enum RequestConcurrency {
 
-    CONCUR_READ_ONLY(ResultSet.CONCUR_READ_ONLY),
+    READ_ONLY(ResultSet.CONCUR_READ_ONLY), // 1007
 
-    CONCUR_UPDATABLE(ResultSet.CONCUR_UPDATABLE);
+    UPDATABLE(ResultSet.CONCUR_UPDATABLE); // 1008
 
     int index;
 }

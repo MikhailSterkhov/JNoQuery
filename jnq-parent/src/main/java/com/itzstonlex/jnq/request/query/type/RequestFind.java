@@ -1,23 +1,25 @@
 package com.itzstonlex.jnq.request.query.type;
 
-import com.itzstonlex.jnq.field.impl.ValueDataField;
-import com.itzstonlex.jnq.field.request.FieldWhereRequest;
-import com.itzstonlex.jnq.request.query.RequestQueryType;
+import com.itzstonlex.jnq.request.query.RequestQuery;
+import com.itzstonlex.jnq.request.query.session.RequestSessionFilter;
+import com.itzstonlex.jnq.request.query.session.RequestSessionJoiner;
+import com.itzstonlex.jnq.request.query.session.RequestSessionSelector;
 import lombok.NonNull;
 
-public interface RequestFind extends RequestQueryType, FieldWhereRequest<RequestFind, ValueDataField> {
+public interface RequestFind extends RequestQuery {
 
     @NonNull
-    RequestFind withSorting(@NonNull Operator operator, @NonNull ValueDataField... fields);
+    RequestSessionSelector<RequestFind> sessionSelector();
 
     @NonNull
-    RequestFind withGrouping(@NonNull Operator operator, @NonNull ValueDataField... fields);
+    RequestSessionFilter<RequestFind> sessionOrder();
 
-    default @NonNull RequestFind withSorting(@NonNull ValueDataField... fields) {
-        return withSorting(Operator.EQUAL, fields);
-    }
+    @NonNull
+    RequestSessionFilter<RequestFind> sessionGroup();
 
-    default @NonNull RequestFind withGrouping(@NonNull ValueDataField... fields) {
-        return withGrouping(Operator.EQUAL, fields);
-    }
+    @NonNull
+    RequestSessionFilter<RequestFind> sessionFilter();
+
+    @NonNull
+    RequestSessionJoiner<RequestFind> sessionJoiner();
 }

@@ -12,9 +12,9 @@ import java.sql.ResultSet;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public enum RequestHoldability {
 
-    HOLD_CURSORS_OVER_COMMIT(ResultSet.HOLD_CURSORS_OVER_COMMIT),
+    HOLD_CURSORS_OVER_COMMIT(ResultSet.HOLD_CURSORS_OVER_COMMIT), // 1
 
-    CLOSE_CURSORS_AT_COMMIT(ResultSet.CLOSE_CURSORS_AT_COMMIT);
+    CLOSE_CURSORS_AT_COMMIT(ResultSet.CLOSE_CURSORS_AT_COMMIT); // 2
 
     int index;
 }

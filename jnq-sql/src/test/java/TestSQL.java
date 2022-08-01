@@ -1,97 +1,109 @@
 import com.itzstonlex.jnq.DataConnection;
-import com.itzstonlex.jnq.content.DataTableContent;
-import com.itzstonlex.jnq.field.DataFieldType;
-import com.itzstonlex.jnq.field.impl.IndexDataField;
-import com.itzstonlex.jnq.field.impl.ValueDataField;
-import com.itzstonlex.jnq.field.request.FieldWhereRequest;
+import com.itzstonlex.jnq.impl.content.TableContent;
+import com.itzstonlex.jnq.exception.JnqException;
+import com.itzstonlex.jnq.field.FieldType;
+import com.itzstonlex.jnq.field.FieldOperator;
+import com.itzstonlex.jnq.impl.field.IndexDataField;
+import com.itzstonlex.jnq.impl.field.ValueDataField;
 import com.itzstonlex.jnq.request.option.RequestConcurrency;
 import com.itzstonlex.jnq.request.option.RequestFetchDirection;
 import com.itzstonlex.jnq.request.option.RequestHoldability;
 import com.itzstonlex.jnq.request.option.RequestType;
-import com.itzstonlex.jnq.response.DataResponse;
-import com.itzstonlex.jnq.response.DataResponseRow;
-import com.itzstonlex.jnq.sql.SqlConnection;
-import com.itzstonlex.jnq.sql.util.SQLUtility;
+import com.itzstonlex.jnq.request.query.session.RequestSessionJoiner;
+import com.itzstonlex.jnq.response.ResponseLine;
+import com.itzstonlex.jnq.sql.SQLConnection;
+import com.itzstonlex.jnq.sql.utility.SQLUtility;
 import lombok.SneakyThrows;
-
-import java.util.concurrent.CompletableFuture;
 
 public class TestSQL {
 
-    @SneakyThrows
+    @SneakyThrows({JnqException.class})
     public static void main(String[] args) {
 
         // create a sql-connection channel.
         String jdbcUrl = SQLUtility.toMysqlJDBC("test_scheme", "localhost", 3306);
         String driverCls = SQLUtility.MYSQL_DRIVER_CLASS;
 
-        DataConnection connection = new SqlConnection(driverCls, jdbcUrl, "root", "");
+        DataConnection connection = new SQLConnection(driverCls, jdbcUrl, "root", "");
 
         // management with a table.
-        DataTableContent tableContent = connection.getTableContent("test_scheme", "registered_users");
+        TableContent tableContent = connection.getTableContent("test_scheme", "registered_users");
 
         if (!tableContent.exists()) {
-            tableContent.create(
-                    IndexDataField.createPrimaryNotNullAutoIncrement("id"),
+            tableContent.create()
+                    .append(IndexDataField.createPrimaryNotNullAutoIncrement("id"))
+                    .append(IndexDataField.createNotNull(FieldType.VAR_CHAR, "nickname"))
+                    .append(IndexDataField.createNotNull(FieldType.INT, "age"))
+                    .backward()
 
-                    IndexDataField.createNotNull(DataFieldType.VAR_CHAR, "nickname"),
-                    IndexDataField.createNotNull(DataFieldType.INT, "age")
+                    .compile()
 
-            ).thenAccept(unused -> {
-
-                System.out.printf("Table `%s` was success created!%n", tableContent.getName());
-            });
+                    .updateSync()
+                    .thenRun(() -> System.out.printf("Table `%s` was success created!%n", tableContent.getName()));
         }
 
         // execution a no-sql queries by remote sql-connection.
-        CompletableFuture<DataResponse> responseFuture = connection.createRequest(tableContent)
-                .with(RequestType.TYPE_FORWARD_ONLY)
-                .with(RequestFetchDirection.FETCH_REVERSE)
-                .with(RequestConcurrency.CONCUR_UPDATABLE)
-                .with(RequestHoldability.CLOSE_CURSORS_AT_COMMIT)
+        connection.createRequest(tableContent)
+                .set(RequestType.FORWARD_ONLY)
+                .set(RequestFetchDirection.REVERSE)
+                .set(RequestConcurrency.UPDATABLE)
+                .set(RequestHoldability.CLOSE_CURSORS_AT_COMMIT)
 
-                .factory()
-                .newFind()
+                .factory().newFind()
 
-                .where(FieldWhereRequest.Operator.LIKE, ValueDataField.create("nickname", "itzstonlex"))
-                .withSorting(FieldWhereRequest.Operator.MORE, ValueDataField.create("age", 14))
+                .sessionSelector()
+                    .withLowerCase("lower_nickname")
+                    .withAll()
 
-                .complete()
-                .fetchAsync();
+                .sessionJoiner()
+                    .joinAt("users_ids", RequestSessionJoiner.Direction.LEFT, RequestSessionJoiner.Type.INNER, "user_id", "id")
 
-        responseFuture.thenAccept(response -> {
+                .sessionFilter()
+                    .and(FieldOperator.LIKE, ValueDataField.create("nickname", ""))
+                    .and(FieldOperator.MORE, ValueDataField.create("age", 18))
+                    .or(FieldOperator.EQUAL, ValueDataField.create("age", 18))
+                    .backward()
 
-            for (DataResponseRow row : response) {
-                handleFetchRow(row);
-            }
-        });
+                .sessionOrder()
+                    .and(FieldOperator.MORE, ValueDataField.create("age", 14))
+                    .backward()
+
+                .compile()
+
+                .fetchFirstAsync()
+                .thenAccept(TestSQL::handleFetchResponseLine);
 
         // execution a sql queries by remote sql-connection.
         connection.createRequest(tableContent).factory()
-                .newQuery("SELECT * FROM {table} WHERE {0}")
-                .where(FieldWhereRequest.Operator.LESS, ValueDataField.create("id", 5))
-                .complete()
+                .fromQuery("SELECT * FROM {scheme}.{table} WHERE {0}")
+
+                .sessionFilter()
+                    .and(FieldOperator.LESS, ValueDataField.create("id", 5))
+                    .backward()
+
+                .compile()
+
                 .fetchSync()
                 .thenAccept(response -> {
 
-                    for (DataResponseRow row : response) {
-                        handleFetchRow(row);
+                    for (ResponseLine responseLine : response) {
+                        handleFetchResponseLine(responseLine);
                     }
                 });
 
         // common manipulations with a table.
-        tableContent.clear().thenAccept(unused -> System.out.printf("Table `%s` was success clear!%n", tableContent.getName()));
-        tableContent.drop().thenAccept(unused -> System.out.printf("Table `%s` was success dropped!%n", tableContent.getName()));
+        tableContent.clear().thenRun(() -> System.out.printf("Table `%s` was success clear!%n", tableContent.getName()));
+        tableContent.drop().thenRun(() -> System.out.printf("Table `%s` was success dropped!%n", tableContent.getName()));
 
         // close a sql-connection.
-        connection.close().thenAccept(unused -> System.out.println("connection was closed"));
+        connection.close().thenRun(() -> System.out.println("connection was closed"));
     }
 
-    private static void handleFetchRow(DataResponseRow row) {
-        int id = row.getInt("id");
-        int age = row.getInt("age");
+    private static void handleFetchResponseLine(ResponseLine responseLine) {
+        int id = responseLine.getInt("id");
+        int age = responseLine.getInt("age");
 
-        String nickname = row.getString("nickname");
+        String nickname = responseLine.getString("nickname");
 
         System.out.printf("Success find a `%s` (id=%s, age=%s)%n", nickname, id, age);
     }

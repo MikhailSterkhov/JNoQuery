@@ -1,8 +1,12 @@
 package com.itzstonlex.jnq.request.query.type;
 
-import com.itzstonlex.jnq.field.impl.IndexDataField;
-import com.itzstonlex.jnq.field.request.FieldSetRequest;
-import com.itzstonlex.jnq.request.query.RequestQueryType;
+import com.itzstonlex.jnq.impl.field.IndexDataField;
+import com.itzstonlex.jnq.request.query.RequestQuery;
+import com.itzstonlex.jnq.request.query.session.RequestSessionAppender;
+import lombok.NonNull;
 
-public interface RequestAlterAdd extends RequestQueryType, FieldSetRequest<RequestAlterAdd, IndexDataField> {
+public interface RequestAlterAdd extends RequestQuery {
+
+    @NonNull
+    RequestSessionAppender<IndexDataField, RequestAlterAdd> session();
 }

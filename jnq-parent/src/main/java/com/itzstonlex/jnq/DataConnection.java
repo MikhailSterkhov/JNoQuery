@@ -1,12 +1,12 @@
 package com.itzstonlex.jnq;
 
-import com.itzstonlex.jnq.content.DataExecutableContent;
-import com.itzstonlex.jnq.content.DataSchemeContent;
-import com.itzstonlex.jnq.content.DataTableContent;
+import com.itzstonlex.jnq.content.DataContent;
+import com.itzstonlex.jnq.impl.content.SchemeContent;
+import com.itzstonlex.jnq.impl.content.TableContent;
+import com.itzstonlex.jnq.exception.JnqException;
 import com.itzstonlex.jnq.request.Request;
 import lombok.NonNull;
 
-import java.sql.SQLException;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
@@ -18,29 +18,24 @@ public interface DataConnection {
         return checkConnection(1000);
     }
 
-    DataSchemeContent getSchemeContent(@NonNull String name);
+    SchemeContent getSchemeContent(@NonNull String name);
 
-    DataTableContent getTableContent(@NonNull String scheme, @NonNull String name);
+    TableContent getTableContent(@NonNull String scheme, @NonNull String name);
 
-    @NonNull
-    Set<DataSchemeContent> getSchemesContents();
-
-    @NonNull
-    Set<DataTableContent> getTablesContents(@NonNull String scheme);
+    TableContent getTableContent(@NonNull DataContent scheme, @NonNull String name);
 
     @NonNull
-    DataValidator getValidator();
+    Set<SchemeContent> getSchemesContents();
+
+    @NonNull
+    Set<TableContent> getTablesContents(@NonNull String scheme);
+
+    @NonNull
+    Request createRequest(@NonNull DataContent executableContent);
 
     @NonNull
     DataConnectionMeta getMeta();
 
     @NonNull
-    Request createRequest(@NonNull DataExecutableContent executableContent);
-
-    @NonNull
-    CompletableFuture<Void> close() throws SQLException;
-
-    DataMapProvider getDataMapProvider(@NonNull Class<?> cls);
-
-    void registerDataMapProvider(@NonNull Class<?> cls, @NonNull DataMapProvider provider);
+    CompletableFuture<Void> close() throws JnqException;
 }

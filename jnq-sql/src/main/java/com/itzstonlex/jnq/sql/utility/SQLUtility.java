@@ -1,6 +1,11 @@
-package com.itzstonlex.jnq.sql.util;
+package com.itzstonlex.jnq.sql.utility;
 
+import lombok.NonNull;
+import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
 
 @UtilityClass
 public class SQLUtility {
@@ -16,32 +21,37 @@ public class SQLUtility {
 
     public final String JDBC_URL_FORMAT = "jdbc:%s://%s:%s/%s";
 
-    public String toJDBC(String driverName, String scheme, String host, int port) {
+    public @NonNull String toJDBC(@NonNull String driverName, @NonNull String scheme, @NonNull String host, int port) {
         return String.format(JDBC_URL_FORMAT, driverName.toLowerCase(), host, port, scheme);
     }
 
-    public String toMysqlJDBC(String scheme, String host, int port) {
+    public @NonNull String toMysqlJDBC(@NonNull String scheme, @NonNull String host, int port) {
         return toJDBC(MYSQL_DRIVER_NAME, scheme, host, port);
     }
 
-    public String toMysqlJDBC(String host, int port) {
+    public @NonNull String toMysqlJDBC(@NonNull String host, int port) {
         return toMysqlJDBC("", host, port);
     }
 
-    public String toMysqlJDBC(String host) {
+    public @NonNull String toMysqlJDBC(@NonNull String host) {
         return toMysqlJDBC(host, MYSQL_PORT);
     }
 
-    public String toClickHouseJDBC(String scheme, String host, int port) {
+    public @NonNull String toClickHouseJDBC(@NonNull String scheme, @NonNull String host, int port) {
         return toJDBC(CLICKHOUSE_DRIVER_NAME, scheme, host, port);
     }
 
-    public String toClickHouseJDBC(String host, int port) {
+    public @NonNull String toClickHouseJDBC(@NonNull String host, int port) {
         return toClickHouseJDBC("", host, port);
     }
 
-    public String toClickHouseJDBC(String host) {
+    public @NonNull String toClickHouseJDBC(@NonNull String host) {
         return toClickHouseJDBC(host, CLICKHOUSE_PORT);
+    }
+
+    @SneakyThrows
+    public Connection getConnection(@NonNull String url, @NonNull String username, @NonNull String password) {
+        return DriverManager.getConnection(url, username, password);
     }
 
 }

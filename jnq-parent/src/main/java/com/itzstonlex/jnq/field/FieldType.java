@@ -1,12 +1,21 @@
 package com.itzstonlex.jnq.field;
 
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
+
 import java.sql.Blob;
 import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.time.Year;
 
-public enum DataFieldType {
+@Getter
+@RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+public enum FieldType {
 
     TINY_INT("TINYINT", Character.class),
     SMALL_INT("SMALLINT", Byte.class),
@@ -44,12 +53,12 @@ public enum DataFieldType {
     UNKNOWN("UNKNOWN", Object.class),
     ;
 
-    public static final DataFieldType[] VALUES = DataFieldType.values();
+    public static final FieldType[] VALUES = FieldType.values();
 
-    public static DataFieldType fromAttachment(Class<?> attachment) {
-        for (DataFieldType fieldType : VALUES) {
+    public static FieldType fromAttachment(@NonNull Class<?> attachment) {
+        for (FieldType fieldType : VALUES) {
 
-            if (fieldType.attachment.isAssignableFrom(attachment)) {
+            if (fieldType.cls.isAssignableFrom(attachment)) {
                 return fieldType;
             }
         }
@@ -57,19 +66,6 @@ public enum DataFieldType {
         return UNKNOWN;
     }
 
-    private final String formattedName;
-    private final Class<?> attachment;
-
-    DataFieldType(String formattedName, Class<?> attachment) {
-        this.formattedName = formattedName;
-        this.attachment = attachment;
-    }
-
-    public String getFormattedName() {
-        return formattedName;
-    }
-
-    public Class<?> getAttachment() {
-        return attachment;
-    }
+    String sql;
+    Class<?> cls;
 }

@@ -12,11 +12,11 @@ import java.sql.ResultSet;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public enum RequestFetchDirection {
 
-    FETCH_FORWARD(ResultSet.FETCH_FORWARD),
+    FORWARD(ResultSet.FETCH_FORWARD), // 1000
 
-    FETCH_REVERSE(ResultSet.FETCH_REVERSE),
+    REVERSE(ResultSet.FETCH_REVERSE), // 1001
 
-    FETCH_UNKNOWN(ResultSet.FETCH_UNKNOWN);
+    UNKNOWN(ResultSet.FETCH_UNKNOWN); // 1002
 
     int index;
 }

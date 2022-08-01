@@ -1,6 +1,6 @@
 package com.itzstonlex.jnq.request.query.type;
 
-import com.itzstonlex.jnq.request.query.RequestQueryType;
+import com.itzstonlex.jnq.request.query.RequestQuery;
 
-public interface RequestDropScheme extends RequestQueryType {
+public interface RequestDropScheme extends RequestQuery {
 }

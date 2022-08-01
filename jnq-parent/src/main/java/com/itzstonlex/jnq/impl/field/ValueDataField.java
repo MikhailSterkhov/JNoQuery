@@ -1,27 +1,33 @@
-package com.itzstonlex.jnq.field.impl;
+package com.itzstonlex.jnq.impl.field;
 
 import com.itzstonlex.jnq.field.DataField;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
+import lombok.experimental.NonFinal;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class ValueDataField implements DataField {
 
-    public static ValueDataField create(String name, Object value) {
+    public static @NonNull ValueDataField create(@NonNull String name, Object value) {
         return new ValueDataField(name, value);
     }
 
-    public static ValueDataField create(String name) {
+    public static @NonNull ValueDataField create(@NonNull String name) {
         return new ValueDataField(name, null);
     }
 
-    private final String name;
-    private Object value;
+    String name;
+
+    @NonFinal
+    Object value;
 
     @Override
-    public String name() {
+    public @NonNull String name() {
         return name;
     }
 

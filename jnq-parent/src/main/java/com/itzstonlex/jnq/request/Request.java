@@ -21,16 +21,16 @@ public interface Request {
     RequestType type();
 
     @NonNull
-    Request with(@NonNull RequestConcurrency concurrency);
+    Request set(@NonNull RequestConcurrency concurrency);
 
     @NonNull
-    Request with(@NonNull RequestFetchDirection fetchDirection);
+    Request set(@NonNull RequestFetchDirection fetchDirection);
 
     @NonNull
-    Request with(@NonNull RequestHoldability holdability);
+    Request set(@NonNull RequestHoldability holdability);
 
     @NonNull
-    Request with(@NonNull RequestType type);
+    Request set(@NonNull RequestType type);
 
     @NonNull
     RequestFactory factory();

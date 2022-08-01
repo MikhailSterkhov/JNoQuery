@@ -1,6 +1,7 @@
 package com.itzstonlex.jnq.request;
 
-import com.itzstonlex.jnq.response.DataResponse;
+import com.itzstonlex.jnq.response.Response;
+import com.itzstonlex.jnq.response.ResponseLine;
 import lombok.NonNull;
 
 import java.util.concurrent.CompletableFuture;
@@ -8,10 +9,22 @@ import java.util.concurrent.CompletableFuture;
 public interface RequestExecutor {
 
     @NonNull
-    CompletableFuture<DataResponse> fetchSync();
+    CompletableFuture<Response> fetchSync();
 
     @NonNull
-    CompletableFuture<DataResponse> fetchAsync();
+    CompletableFuture<ResponseLine> fetchFirstSync();
+
+    @NonNull
+    CompletableFuture<ResponseLine> fetchLastSync();
+
+    @NonNull
+    CompletableFuture<Response> fetchAsync();
+
+    @NonNull
+    CompletableFuture<ResponseLine> fetchFirstAsync();
+
+    @NonNull
+    CompletableFuture<ResponseLine> fetchLastAsync();
 
     @NonNull
     CompletableFuture<Void> updateSync();
