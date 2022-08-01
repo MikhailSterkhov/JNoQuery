@@ -129,9 +129,12 @@ public class SQLConnection implements DataConnection {
         if (checkConnection()) {
             try {
                 connection.close();
+
                 completableFuture.complete(null);
             }
             catch (SQLException exception) {
+                completableFuture.completeExceptionally(exception);
+
                 throw new JnqException("close", exception);
             }
         }
