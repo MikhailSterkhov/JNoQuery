@@ -35,7 +35,7 @@ public interface RequestFactory {
     RequestDropScheme newDropScheme();
 
     @NonNull
-    RequestFind newFind();
+    RequestFinder newFinder();
 
     @NonNull
     RequestInsert newInsert();

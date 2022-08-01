@@ -26,7 +26,7 @@ public class TableContent implements DataContent {
 
     public @NonNull RequestSessionAppender<IndexDataField, RequestCreateTable> create() {
         return scheme.getConnection().createRequest(this)
-                .factory()
+                .toFactory()
                 .newCreateTable()
 
                 .withExistsChecking()
@@ -35,7 +35,7 @@ public class TableContent implements DataContent {
 
     public @NonNull CompletableFuture<Void> clear() throws JnqException {
         return scheme.getConnection().createRequest(this)
-                .factory()
+                .toFactory()
                 .newDelete()
 
                 .compile()
@@ -44,7 +44,7 @@ public class TableContent implements DataContent {
 
     public @NonNull CompletableFuture<Void> drop() throws JnqException {
         return scheme.getConnection().createRequest(this)
-                .factory()
+                .toFactory()
                 .newDropTable()
 
                 .compile()

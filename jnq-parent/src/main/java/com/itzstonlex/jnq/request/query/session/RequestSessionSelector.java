@@ -12,11 +12,14 @@ public interface RequestSessionSelector<Query extends RequestQuery> extends Requ
     RequestSessionSelector<Query> with(@NonNull String field);
 
     @NonNull
-    RequestSessionSelector<Query> withCount(@NonNull String field);
+    RequestSessionCast<RequestSessionSelector<Query>, Query> withQuery(@NonNull RequestQuery query);
 
     @NonNull
-    RequestSessionSelector<Query> withLowerCase(@NonNull String field);
+    RequestSessionCast<RequestSessionSelector<Query>, Query> withCount(@NonNull String field);
 
     @NonNull
-    RequestSessionSelector<Query> withUpperCase(@NonNull String field);
+    RequestSessionCast<RequestSessionSelector<Query>, Query> withLowerCase(@NonNull String field);
+
+    @NonNull
+    RequestSessionCast<RequestSessionSelector<Query>, Query> withUpperCase(@NonNull String field);
 }

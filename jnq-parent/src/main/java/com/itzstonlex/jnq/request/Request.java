@@ -33,5 +33,5 @@ public interface Request {
     Request set(@NonNull RequestType type);
 
     @NonNull
-    RequestFactory factory();
+    RequestFactory toFactory();
 }

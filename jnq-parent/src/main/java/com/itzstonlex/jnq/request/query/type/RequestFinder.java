@@ -6,20 +6,20 @@ import com.itzstonlex.jnq.request.query.session.RequestSessionJoiner;
 import com.itzstonlex.jnq.request.query.session.RequestSessionSelector;
 import lombok.NonNull;
 
-public interface RequestFind extends RequestQuery {
+public interface RequestFinder extends RequestQuery {
 
     @NonNull
-    RequestSessionSelector<RequestFind> sessionSelector();
+    RequestSessionSelector<RequestFinder> sessionSelector();
 
     @NonNull
-    RequestSessionFilter<RequestFind> sessionOrder();
+    RequestSessionFilter<RequestFinder> sessionOrder();
 
     @NonNull
-    RequestSessionFilter<RequestFind> sessionGroup();
+    RequestSessionFilter<RequestFinder> sessionGroup();
 
     @NonNull
-    RequestSessionFilter<RequestFind> sessionFilter();
+    RequestSessionFilter<RequestFinder> sessionFilter();
 
     @NonNull
-    RequestSessionJoiner<RequestFind> sessionJoiner();
+    RequestSessionJoiner<RequestFinder> sessionJoiner();
 }

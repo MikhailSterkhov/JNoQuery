@@ -42,7 +42,7 @@ public class SchemeContent implements DataContent {
 
     public @NonNull CompletableFuture<Void> create() throws JnqException {
         return connection.createRequest(this)
-                .factory()
+                .toFactory()
                 .newCreateScheme()
 
                 .withExistsChecking()
@@ -65,7 +65,7 @@ public class SchemeContent implements DataContent {
 
     public @NonNull CompletableFuture<Void> drop() throws JnqException {
         return connection.createRequest(this)
-                .factory()
+                .toFactory()
                 .newDropScheme()
 
                 .compile()

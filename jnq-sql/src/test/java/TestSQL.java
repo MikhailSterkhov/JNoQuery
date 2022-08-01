@@ -49,11 +49,13 @@ public class TestSQL {
                 .set(RequestConcurrency.UPDATABLE)
                 .set(RequestHoldability.CLOSE_CURSORS_AT_COMMIT)
 
-                .factory().newFind()
+                .toFactory().newFinder()
 
                 .sessionSelector()
-                    .withLowerCase("lower_nickname")
-                    .withAll()
+                    .withLowerCase("nickname").uncheck() // LOWER(`nickname`)
+                    .withCount("id").as("ids_count") // COUNT(`id`) AS `ids_count`
+                    .withQuery(connection.createRequest(tableContent).toFactory().newFinder().sessionJoiner().joinAt("users_ids", "name", "name")).as("new_names") // select in select
+                    .withAll() // *
 
                 .sessionJoiner()
                     .joinAt("users_ids", RequestSessionJoiner.Direction.LEFT, RequestSessionJoiner.Type.INNER, "user_id", "id")
@@ -74,7 +76,7 @@ public class TestSQL {
                 .thenAccept(TestSQL::handleFetchResponseLine);
 
         // execution a sql queries by remote sql-connection.
-        connection.createRequest(tableContent).factory()
+        connection.createRequest(tableContent).toFactory()
                 .fromQuery("SELECT * FROM {scheme}.{table} WHERE {0}")
 
                 .sessionFilter()
