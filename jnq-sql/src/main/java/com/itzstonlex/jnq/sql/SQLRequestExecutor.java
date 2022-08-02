@@ -5,6 +5,7 @@ import com.itzstonlex.jnq.request.RequestExecutor;
 import com.itzstonlex.jnq.response.UpdateResponse;
 import com.itzstonlex.jnq.response.Response;
 import com.itzstonlex.jnq.response.ResponseLine;
+import com.itzstonlex.jnq.util.JnqSupplier;
 import lombok.AccessLevel;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -39,67 +40,41 @@ public class SQLRequestExecutor implements RequestExecutor {
         return fetchTransaction().getLast();
     }
 
-    @Override
-    public @NonNull CompletableFuture<Response> fetchTransactionAsync() {
-        CompletableFuture<Response> completableFuture = new CompletableFuture<>();
+    private @NonNull <T> CompletableFuture<T> _executeAsyncTransaction(@NonNull JnqSupplier<T> supplier) {
+        CompletableFuture<T> completableFuture = new CompletableFuture<>();
         CompletableFuture.runAsync(() -> {
 
             try {
-                completableFuture.complete(fetchTransaction());
+                completableFuture.complete(supplier.get());
             }
             catch (JnqException exception) {
                 completableFuture.completeExceptionally(exception);
             }
         });
 
+        // apply auto-join async transaction response
+        completableFuture.join();
+
         return completableFuture;
+    }
+
+    @Override
+    public @NonNull CompletableFuture<Response> fetchTransactionAsync() {
+        return this._executeAsyncTransaction(this::fetchTransaction);
     }
 
     @Override
     public @NonNull CompletableFuture<ResponseLine> fetchFirstLineAsync() {
-        CompletableFuture<ResponseLine> completableFuture = new CompletableFuture<>();
-        CompletableFuture.runAsync(() -> {
-
-            try {
-                completableFuture.complete(fetchFirstLine());
-            }
-            catch (JnqException exception) {
-                completableFuture.completeExceptionally(exception);
-            }
-        });
-
-        return completableFuture;
+        return this._executeAsyncTransaction(this::fetchFirstLine);
     }
 
     @Override
     public @NonNull CompletableFuture<ResponseLine> fetchLastLineAsync() {
-        CompletableFuture<ResponseLine> completableFuture = new CompletableFuture<>();
-        CompletableFuture.runAsync(() -> {
-
-            try {
-                completableFuture.complete(fetchLastLine());
-            }
-            catch (JnqException exception) {
-                completableFuture.completeExceptionally(exception);
-            }
-        });
-
-        return completableFuture;
+        return this._executeAsyncTransaction(this::fetchLastLine);
     }
 
     @Override
     public @NonNull CompletableFuture<UpdateResponse> updateTransactionAsync() {
-        CompletableFuture<UpdateResponse> completableFuture = new CompletableFuture<>();
-        CompletableFuture.runAsync(() -> {
-
-            try {
-                completableFuture.complete(updateTransaction());
-            }
-            catch (JnqException exception) {
-                completableFuture.completeExceptionally(exception);
-            }
-        });
-
-        return completableFuture;
+        return this._executeAsyncTransaction(this::updateTransaction);
     }
 }
