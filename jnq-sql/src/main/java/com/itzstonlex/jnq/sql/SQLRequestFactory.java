@@ -29,56 +29,56 @@ public class SQLRequestFactory implements RequestFactory {
 
     @Override
     public @NonNull RequestAlterAdd newAlterAdd() {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public @NonNull RequestAlterDrop newAlterDrop() {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public @NonNull RequestAlterUpdate newAlterUpdate() {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public @NonNull RequestCreateTable newCreateTable() {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public @NonNull RequestDropTable newDropTable() {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public @NonNull RequestCreateSchema newCreateSchema() {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public @NonNull RequestDropSchema newDropSchema() {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public @NonNull RequestFinder newFinder() {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public @NonNull RequestInsert newInsert() {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public @NonNull RequestUpdate newUpdate() {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public @NonNull RequestDelete newDelete() {
-        return null;
+        throw new UnsupportedOperationException();
     }
 }
