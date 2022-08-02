@@ -15,8 +15,7 @@ import lombok.NonNull;
 import lombok.SneakyThrows;
 import lombok.experimental.FieldDefaults;
 
-import java.sql.Connection;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -83,7 +82,7 @@ public class SQLConnection implements DataConnection {
             for (ResponseLine tableResponseLine : tablesResponse) {
 
                 String table = tableResponseLine.nextNullableString();
-                String tableFull = String.format(TABLE_NAME_FORMAT, schema, table);
+                String tableFull = String.format(TABLE_NAME_FORMAT, schema.getName(), table);
 
                 tableByNameMap.put(tableFull.toLowerCase(), new TableContent(table, schema));
             }
@@ -93,6 +92,7 @@ public class SQLConnection implements DataConnection {
         }
     }
 
+    @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
     public void updateContents() throws JnqException {
         tableByNameMap.clear();
         schemaByNamesMap.clear();
@@ -101,17 +101,23 @@ public class SQLConnection implements DataConnection {
             String baseSchemaName = sqlConnection.getSchema();
 
             if (baseSchemaName == null) {
-                for (ResponseLine schemaResponseLine : new SQLResponse(sqlConnection.prepareStatement(SHOW_DATABASES_QUERY).executeQuery())) {
 
-                    String schema = schemaResponseLine.nextNullableString();
+                try (PreparedStatement statement = sqlConnection.prepareStatement(SHOW_DATABASES_QUERY, Statement.NO_GENERATED_KEYS);
+                     ResultSet resultSet = statement.executeQuery()) {
 
-                    SchemaContent schemaContent = new SchemaContent(schema, this);
+                    SQLResponse response = new SQLResponse(resultSet);
 
-                    schemaByNamesMap.put(schema.toLowerCase(), schemaContent);
-                    this._updateTableContents(true, schemaContent);
+                    for (ResponseLine schemaResponseLine : response) {
+                        String schema = schemaResponseLine.nextNullableString();
+
+                        SchemaContent schemaContent = new SchemaContent(schema, this);
+
+                        schemaByNamesMap.put(schema.toLowerCase(), schemaContent);
+                        this._updateTableContents(true, schemaContent);
+                    }
                 }
-            }
-            else {
+
+            } else {
                 SchemaContent schemaContent = new SchemaContent(baseSchemaName, this);
 
                 schemaByNamesMap.put(baseSchemaName.toLowerCase(), schemaContent);

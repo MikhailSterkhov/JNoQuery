@@ -4,7 +4,6 @@ import com.itzstonlex.jnq.request.query.RequestQuery;
 import com.itzstonlex.jnq.request.query.session.RequestSessionCast;
 import com.itzstonlex.jnq.request.query.session.RequestSessionSelector;
 import lombok.AccessLevel;
-import lombok.Getter;
 import lombok.NonNull;
 import lombok.experimental.FieldDefaults;
 
@@ -13,7 +12,6 @@ public class SQLRequestSessionSelector<Query extends RequestQuery>
         extends SQLRequestSession<Query>
         implements RequestSessionSelector<Query> {
 
-    @Getter
     String generatedSql = "";
 
     public SQLRequestSessionSelector(@NonNull Query parent) {
@@ -22,6 +20,10 @@ public class SQLRequestSessionSelector<Query extends RequestQuery>
 
     private void _append(String value, String generatedSql) {
         this.generatedSql += (!this.generatedSql.isEmpty() ? ", " : "") + String.format(generatedSql, value);
+    }
+
+    public String getGeneratedSql() {
+        return generatedSql.isEmpty() ? "*" : generatedSql;
     }
 
     @Override

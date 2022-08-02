@@ -13,7 +13,7 @@ public class SQLRequestSessionJoiner<Query extends RequestQuery>
         implements RequestSessionJoiner<Query> {
 
     @Getter
-    String generatedSql;
+    String generatedSql = "";
 
     public SQLRequestSessionJoiner(@NonNull Query parent) {
         super(parent);

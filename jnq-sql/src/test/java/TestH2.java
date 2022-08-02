@@ -1,5 +1,6 @@
 import com.itzstonlex.jnq.DataConnection;
 import com.itzstonlex.jnq.exception.JnqException;
+import com.itzstonlex.jnq.field.FieldOperator;
 import com.itzstonlex.jnq.field.FieldType;
 import com.itzstonlex.jnq.impl.content.SchemaContent;
 import com.itzstonlex.jnq.impl.field.IndexDataField;
@@ -34,6 +35,8 @@ public class TestH2 {
                 .compile()
                 .updateTransaction();
 
+        connection.updateContents();
+
         connection.createRequest(schemaContent)
                 .toFactory()
                 .<ValueDataField>fromQuery("INSERT INTO `{content}`.`reg_users` ({name0}, {name1}, {name2}) VALUES (?, ?, ?)")
@@ -49,39 +52,54 @@ public class TestH2 {
 
                 .whenComplete((updateResponse, error) ->  {
 
-                    System.out.println(updateResponse.getAffectedRows() + " affected rows");
-
-                    System.out.println(updateResponse.supportsGeneratedKey());
-                    System.out.println("new user id - " + updateResponse.getGeneratedKey());
+                    System.out.println("INSERT RESPONSE:");
+                    System.out.println(" Inserted User ID: " + updateResponse.getGeneratedKey());
+                    System.out.println(" - " + updateResponse.getAffectedRows() + " affected rows");
+                    System.out.println();
                 });
 
-        connection.createRequest(schemaContent)
+        connection.createRequest(schemaContent.getTableContent("reg_users"))
                 .toFactory()
-                .<ValueDataField>fromQuery("SELECT {selection} FROM `reg_users` WHERE {filter}")
-
-                .sessionSelector("{selection}")
-                    .withAll()
+                .newFinder()
 
                 .sessionFilter()
                     .and(ValueDataField.create("name", "itzstonlex"))
                     .backward()
 
                 .compile()
-                .fetchTransactionAsync()
+                .fetchFirstLineAsync()
 
-                .whenComplete((responses, error) -> {
+                .whenComplete((response, throwable) -> {
 
-                    System.out.printf("Find %s users count!%n", responses.size());
+                    System.out.println("USER FETCH RESPONSE:");
+                    System.out.println(" ID: " + response.getNullableInt("id"));
+                    System.out.println(" Name: " + response.getNullableString("name"));
+                    System.out.println(" Register Time Millis: " + response.getNullableLong("register_date"));
+                    System.out.println(" Last Update Time Millis: " + response.getNullableLong("last_update_date"));
+                    System.out.println();
+                });
 
-                    for (ResponseLine responseLine : responses) {
+        connection.createRequest(schemaContent.getTableContent("reg_users"))
+                .toFactory()
+                .newUpdate()
 
-                        int id = responseLine.nextNullableInt();
-                        long registerDate = responseLine.getNullableLong(3);
+                .sessionUpdater()
+                    .and(ValueDataField.create("last_update_date", System.currentTimeMillis()))
+                    .backward()
 
-                        String name = responseLine.getNullableString("name");
+                .sessionFilter()
+                    .and(FieldOperator.MORE_WITH_EQUAL, ValueDataField.create("id", 1))
+                    .and(ValueDataField.create("name", "itzstonlex"))
+                    .backward()
 
-                        System.out.printf("-> User(id=%s, name=%s, register_date=%s)%n", id, name, registerDate);
-                    }
+                .compile()
+                .updateTransactionAsync()
+
+                .whenComplete((updateResponse, throwable) -> {
+
+                    System.out.println("UPDATE RESPONSE:");
+                    System.out.println(" - " + updateResponse.getAffectedRows() + " affected rows");
+                    System.out.println();
                 });
     }
 
