@@ -53,12 +53,11 @@ public class TestH2 {
 
                     System.out.println(updateResponse.supportsGeneratedKey());
                     System.out.println("new user id - " + updateResponse.getGeneratedKey());
-                })
-                .join();
+                });
 
         connection.createRequest(schemaContent)
                 .toFactory()
-                .fromQuery("SELECT {selection} FROM `reg_users` WHERE {filter}")
+                .<ValueDataField>fromQuery("SELECT {selection} FROM `reg_users` WHERE {filter}")
 
                 .sessionSelector("{selection}")
                     .withAll()
@@ -83,8 +82,7 @@ public class TestH2 {
 
                         System.out.printf("-> User(id=%s, name=%s, register_date=%s)%n", id, name, registerDate);
                     }
-                })
-                .join();
+                });
     }
 
 }
