@@ -11,17 +11,26 @@ import java.util.concurrent.CompletableFuture;
 public interface RequestExecutor {
 
     @NonNull
-    CompletableFuture<Response> fetchSync() throws JnqException;
+    Response fetchTransaction() throws JnqException;
 
     @NonNull
-    CompletableFuture<Response> fetchAsync() throws JnqException;
+    UpdateResponse updateTransaction() throws JnqException;
 
     @NonNull
-    CompletableFuture<ResponseLine> fetchFirst() throws JnqException;
+    ResponseLine fetchFirstLine() throws JnqException;
 
     @NonNull
-    CompletableFuture<ResponseLine> fetchLast() throws JnqException;
+    ResponseLine fetchLastLine() throws JnqException;
 
     @NonNull
-    CompletableFuture<UpdateResponse> updateTransaction() throws JnqException;
+    CompletableFuture<Response> fetchTransactionAsync();
+
+    @NonNull
+    CompletableFuture<ResponseLine> fetchFirstLineAsync();
+
+    @NonNull
+    CompletableFuture<ResponseLine> fetchLastLineAsync();
+
+    @NonNull
+    CompletableFuture<UpdateResponse> updateTransactionAsync();
 }

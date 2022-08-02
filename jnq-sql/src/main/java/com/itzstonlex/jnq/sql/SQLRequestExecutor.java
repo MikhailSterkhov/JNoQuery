@@ -20,34 +20,86 @@ public class SQLRequestExecutor implements RequestExecutor {
     SQLWrapperStatement wrapperStatement;
 
     @Override
-    public @NonNull CompletableFuture<Response> fetchSync() throws JnqException {
-        return wrapperStatement.executeFetchSync(query);
+    public @NonNull Response fetchTransaction() throws JnqException {
+        return wrapperStatement.fetch(query);
     }
 
     @Override
-    public @NonNull CompletableFuture<Response> fetchAsync() throws JnqException {
-        CompletableFuture<Response> completableFuture = wrapperStatement.executeFetchAsync(query);
-        completableFuture.join();
+    public @NonNull UpdateResponse updateTransaction() throws JnqException {
+        return wrapperStatement.update(query);
+    }
+
+    @Override
+    public @NonNull ResponseLine fetchFirstLine() throws JnqException {
+        return fetchTransaction().getFirst();
+    }
+
+    @Override
+    public @NonNull ResponseLine fetchLastLine() throws JnqException {
+        return fetchTransaction().getLast();
+    }
+
+    @Override
+    public @NonNull CompletableFuture<Response> fetchTransactionAsync() {
+        CompletableFuture<Response> completableFuture = new CompletableFuture<>();
+        CompletableFuture.runAsync(() -> {
+
+            try {
+                completableFuture.complete(fetchTransaction());
+            }
+            catch (JnqException exception) {
+                completableFuture.completeExceptionally(exception);
+            }
+        });
 
         return completableFuture;
     }
 
     @Override
-    public @NonNull CompletableFuture<ResponseLine> fetchFirst() throws JnqException {
-        return CompletableFuture.completedFuture(this.fetchSync().join().getFirst());
-    }
+    public @NonNull CompletableFuture<ResponseLine> fetchFirstLineAsync() {
+        CompletableFuture<ResponseLine> completableFuture = new CompletableFuture<>();
+        CompletableFuture.runAsync(() -> {
 
-    @Override
-    public @NonNull CompletableFuture<ResponseLine> fetchLast() throws JnqException {
-        return CompletableFuture.completedFuture(this.fetchSync().join().getLast());
-    }
-
-    @Override
-    public @NonNull CompletableFuture<UpdateResponse> updateTransaction() {
-        CompletableFuture<UpdateResponse> completableFuture = wrapperStatement.executeUpdate(query);
-        completableFuture.join();
+            try {
+                completableFuture.complete(fetchFirstLine());
+            }
+            catch (JnqException exception) {
+                completableFuture.completeExceptionally(exception);
+            }
+        });
 
         return completableFuture;
     }
 
+    @Override
+    public @NonNull CompletableFuture<ResponseLine> fetchLastLineAsync() {
+        CompletableFuture<ResponseLine> completableFuture = new CompletableFuture<>();
+        CompletableFuture.runAsync(() -> {
+
+            try {
+                completableFuture.complete(fetchLastLine());
+            }
+            catch (JnqException exception) {
+                completableFuture.completeExceptionally(exception);
+            }
+        });
+
+        return completableFuture;
+    }
+
+    @Override
+    public @NonNull CompletableFuture<UpdateResponse> updateTransactionAsync() {
+        CompletableFuture<UpdateResponse> completableFuture = new CompletableFuture<>();
+        CompletableFuture.runAsync(() -> {
+
+            try {
+                completableFuture.complete(updateTransaction());
+            }
+            catch (JnqException exception) {
+                completableFuture.completeExceptionally(exception);
+            }
+        });
+
+        return completableFuture;
+    }
 }

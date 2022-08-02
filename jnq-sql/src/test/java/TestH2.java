@@ -4,6 +4,7 @@ import com.itzstonlex.jnq.field.FieldType;
 import com.itzstonlex.jnq.impl.content.SchemaContent;
 import com.itzstonlex.jnq.impl.field.IndexDataField;
 import com.itzstonlex.jnq.impl.field.ValueDataField;
+import com.itzstonlex.jnq.response.ResponseLine;
 import com.itzstonlex.jnq.sql.SQLConnection;
 
 public class TestH2 {
@@ -21,7 +22,7 @@ public class TestH2 {
         
         connection.createRequest(schemaContent)
                 .toFactory()
-                .<IndexDataField>fromQuery("CREATE TABLE IF NOT EXISTS `users` ({0}, {1}, {2}, {3})")
+                .<IndexDataField>fromQuery("CREATE TABLE IF NOT EXISTS `reg_users` ({0}, {1}, {2}, {3})")
 
                 .sessionAppender()
                     .append(IndexDataField.createPrimaryNotNullAutoIncrement("id"))
@@ -31,13 +32,11 @@ public class TestH2 {
                     .backward()
 
                 .compile()
-                .updateTransaction()
-                .join();
+                .updateTransaction();
 
-        connection.updateContents();
-        connection.createRequest(schemaContent.getTableContent("users"))
+        connection.createRequest(schemaContent)
                 .toFactory()
-                .<ValueDataField>fromQuery("INSERT INTO `users` ({name0}, {name1}, {name2}) VALUES (?, ?, ?)")
+                .<ValueDataField>fromQuery("INSERT INTO `{content}`.`reg_users` ({name0}, {name1}, {name2}) VALUES (?, ?, ?)")
 
                 .sessionAppender()
                     .append(ValueDataField.create("name", "itzstonlex"))
@@ -46,11 +45,44 @@ public class TestH2 {
                     .backward()
 
                 .compile()
-                .updateTransaction()
+                .updateTransactionAsync()
 
-                .thenAccept(updateResponse ->  {
+                .whenComplete((updateResponse, error) ->  {
 
-                    System.out.println(updateResponse.getAffectedRows() + " affected rows!");
+                    System.out.println(updateResponse.getAffectedRows() + " affected rows");
+
+                    System.out.println(updateResponse.supportsGeneratedKey());
+                    System.out.println("new user id - " + updateResponse.getGeneratedKey());
+                })
+                .join();
+
+        connection.createRequest(schemaContent)
+                .toFactory()
+                .fromQuery("SELECT {selection} FROM `reg_users` WHERE {filter}")
+
+                .sessionSelector("{selection}")
+                    .withAll()
+
+                .sessionFilter()
+                    .and(ValueDataField.create("name", "itzstonlex"))
+                    .backward()
+
+                .compile()
+                .fetchTransactionAsync()
+
+                .whenComplete((responses, error) -> {
+
+                    System.out.printf("Find %s users count!%n", responses.size());
+
+                    for (ResponseLine responseLine : responses) {
+
+                        int id = responseLine.nextNullableInt();
+                        long registerDate = responseLine.getNullableLong(3);
+
+                        String name = responseLine.getNullableString("name");
+
+                        System.out.printf("-> User(id=%s, name=%s, register_date=%s)%n", id, name, registerDate);
+                    }
                 })
                 .join();
     }

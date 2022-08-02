@@ -80,7 +80,7 @@ public class SQLConnection implements DataConnection {
 
             for (ResponseLine tableResponseLine : new SQLResponse(sqlConnection.prepareStatement(query).executeQuery())) {
 
-                String table = tableResponseLine.nextString();
+                String table = tableResponseLine.nextNullableString();
                 String tableFull = String.format(TABLE_NAME_FORMAT, schema, table);
 
                 tableByNameMap.put(tableFull.toLowerCase(), new TableContent(table, getSchemaContent(schema)));
@@ -101,7 +101,7 @@ public class SQLConnection implements DataConnection {
             if (baseSchemaName == null) {
                 for (ResponseLine schemaResponseLine : new SQLResponse(sqlConnection.prepareStatement(SHOW_DATABASES_QUERY).executeQuery())) {
 
-                    String schema = schemaResponseLine.nextString();
+                    String schema = schemaResponseLine.nextNullableString();
 
                     SchemaContent schemaContent = new SchemaContent(schema, this);
 

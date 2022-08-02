@@ -50,7 +50,7 @@ public class SchemaContent implements DataContent {
                 .withExistsChecking()
 
                 .compile()
-                .updateTransaction();
+                .updateTransactionAsync();
     }
 
     public @NonNull CompletableFuture<UpdateResponse> clear()
@@ -73,7 +73,7 @@ public class SchemaContent implements DataContent {
                 .newDropSchema()
 
                 .compile()
-                .updateTransaction();
+                .updateTransactionAsync();
     }
 
 }

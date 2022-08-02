@@ -40,7 +40,7 @@ public class TableContent implements DataContent {
                 .newDelete()
 
                 .compile()
-                .updateTransaction();
+                .updateTransactionAsync();
     }
 
     public @NonNull CompletableFuture<UpdateResponse> drop() throws JnqException {
@@ -49,7 +49,7 @@ public class TableContent implements DataContent {
                 .newDropTable()
 
                 .compile()
-                .updateTransaction();
+                .updateTransactionAsync();
     }
 
 }
