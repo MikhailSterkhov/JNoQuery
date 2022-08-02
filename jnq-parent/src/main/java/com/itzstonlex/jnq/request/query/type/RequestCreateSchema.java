@@ -3,8 +3,8 @@ package com.itzstonlex.jnq.request.query.type;
 import com.itzstonlex.jnq.request.query.RequestQuery;
 import lombok.NonNull;
 
-public interface RequestCreateScheme extends RequestQuery {
+public interface RequestCreateSchema extends RequestQuery {
 
     @NonNull
-    RequestCreateScheme withExistsChecking();
+    RequestCreateSchema withExistsChecking();
 }

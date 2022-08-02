@@ -1,7 +1,7 @@
 package com.itzstonlex.jnq;
 
 import com.itzstonlex.jnq.content.DataContent;
-import com.itzstonlex.jnq.impl.content.SchemeContent;
+import com.itzstonlex.jnq.impl.content.SchemaContent;
 import com.itzstonlex.jnq.impl.content.TableContent;
 import com.itzstonlex.jnq.exception.JnqException;
 import com.itzstonlex.jnq.request.Request;
@@ -12,23 +12,25 @@ import java.util.concurrent.CompletableFuture;
 
 public interface DataConnection {
 
+    void updateContents() throws JnqException;
+
     boolean checkConnection(int timeout);
 
     default boolean checkConnection() {
-        return checkConnection(1000);
+        return checkConnection(100);
     }
 
-    SchemeContent getSchemeContent(@NonNull String name);
+    SchemaContent getSchemaContent(@NonNull String name);
 
-    TableContent getTableContent(@NonNull String scheme, @NonNull String name);
+    TableContent getTableContent(@NonNull String schema, @NonNull String name);
 
-    TableContent getTableContent(@NonNull DataContent scheme, @NonNull String name);
-
-    @NonNull
-    Set<SchemeContent> getSchemesContents();
+    TableContent getTableContent(@NonNull DataContent schema, @NonNull String name);
 
     @NonNull
-    Set<TableContent> getTablesContents(@NonNull String scheme);
+    Set<SchemaContent> getSchemasContents();
+
+    @NonNull
+    Set<TableContent> getTablesContents(@NonNull String schema);
 
     @NonNull
     Request createRequest(@NonNull DataContent executableContent);

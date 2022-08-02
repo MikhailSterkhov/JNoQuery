@@ -7,5 +7,5 @@ import lombok.NonNull;
 public interface RequestQuery {
 
     @NonNull
-    RequestExecutor compile() throws JnqException;
+    RequestExecutor compile();
 }

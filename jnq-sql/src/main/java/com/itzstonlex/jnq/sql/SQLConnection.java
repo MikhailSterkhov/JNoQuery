@@ -3,15 +3,15 @@ package com.itzstonlex.jnq.sql;
 import com.itzstonlex.jnq.DataConnection;
 import com.itzstonlex.jnq.content.DataContent;
 import com.itzstonlex.jnq.exception.JnqException;
-import com.itzstonlex.jnq.impl.content.SchemeContent;
+import com.itzstonlex.jnq.impl.content.SchemaContent;
 import com.itzstonlex.jnq.impl.content.TableContent;
-import com.itzstonlex.jnq.impl.response.WrapperResponse;
+import com.itzstonlex.jnq.sql.response.SQLResponse;
 import com.itzstonlex.jnq.request.Request;
 import com.itzstonlex.jnq.response.ResponseLine;
-import com.itzstonlex.jnq.sql.utility.SQLUtility;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NonNull;
+import lombok.SneakyThrows;
 import lombok.experimental.FieldDefaults;
 
 import java.sql.Connection;
@@ -23,103 +23,136 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
-@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@FieldDefaults(level = AccessLevel.PROTECTED, makeFinal = true)
 public class SQLConnection implements DataConnection {
 
-    private static final String SHOW_DATABASES_QUERY = "SHOW DATABASES;";
+    private static final String SHOW_DATABASES_QUERY = "SHOW SCHEMAS;";
     private static final String SHOW_TABLES_QUERY = "SHOW TABLES ";
 
     private static final String TABLE_NAME_FORMAT = "%s.%s";
 
     @Getter
-    private final SQLConnectionMeta meta;
+    SQLConnectionMeta meta;
 
-    private final Connection connection;
+    @Getter
+    Connection sqlConnection;
 
-    private final Map<String, SchemeContent> schemeByNamesMap = new ConcurrentHashMap<>();
-    private final Map<String, TableContent> tableByNameMap = new ConcurrentHashMap<>();
+    Map<String, SchemaContent> schemaByNamesMap = new ConcurrentHashMap<>();
+    Map<String, TableContent> tableByNameMap = new ConcurrentHashMap<>();
 
-    public SQLConnection(String driverCls, @NonNull Connection connection) throws JnqException {
+    public SQLConnection(String driverCls, @NonNull Connection sqlConnection) throws JnqException {
         try {
             if (driverCls != null) {
                 Class.forName(driverCls);
             }
 
-            this.connection = connection;
-            this.meta = new SQLConnectionMeta(connection.getMetaData());
+            this.sqlConnection = sqlConnection;
+            this.meta = new SQLConnectionMeta(sqlConnection.getMetaData());
 
-            this._initContentData(connection);
+            this.updateContents();
         }
         catch (Exception exception) {
             throw new JnqException("init", exception);
         }
     }
 
-    public SQLConnection(@NonNull Connection connection) throws JnqException {
-        this(null, connection);
+    public SQLConnection(@NonNull Connection sqlConnection) throws JnqException {
+        this(null, sqlConnection);
     }
 
     public SQLConnection(String driverCls, @NonNull String url, @NonNull String username, @NonNull String password) throws JnqException {
-        this(driverCls, SQLUtility.getConnection(url, username, password));
+        this(driverCls, SQLHelper.getConnection(url, username, password));
     }
 
     public SQLConnection(@NonNull String url, @NonNull String username, @NonNull String password) throws JnqException {
         this(null, url, username, password);
     }
 
-    private void _initContentData(@NonNull Connection connection)
-    throws Exception {
+    protected void _updateTableContents(String schema)
+    throws JnqException {
 
-        for (ResponseLine schemeResponseLine : new WrapperResponse(connection.prepareStatement(SHOW_DATABASES_QUERY).executeQuery())) {
-            String scheme = schemeResponseLine.nextString();
+        try {
+            String query = SHOW_TABLES_QUERY + (schema != null ? schema : "");
 
-            SchemeContent schemeContent = new SchemeContent(scheme, this);
-
-            for (ResponseLine tableResponseLine : new WrapperResponse(connection.prepareStatement(SHOW_TABLES_QUERY + scheme).executeQuery())) {
-
-                String table = tableResponseLine.nextString();
-                String tableFull = String.format(TABLE_NAME_FORMAT, scheme, table);
-
-                tableByNameMap.put(tableFull.toLowerCase(), new TableContent(table, schemeContent));
+            if (schema == null) {
+                schema = sqlConnection.getSchema();
             }
 
-            schemeByNamesMap.put(scheme.toLowerCase(), new SchemeContent(scheme, this));
+            for (ResponseLine tableResponseLine : new SQLResponse(sqlConnection.prepareStatement(query).executeQuery())) {
+
+                String table = tableResponseLine.nextString();
+                String tableFull = String.format(TABLE_NAME_FORMAT, schema, table);
+
+                tableByNameMap.put(tableFull.toLowerCase(), new TableContent(table, getSchemaContent(schema)));
+            }
+        }
+        catch (SQLException exception) {
+            throw new JnqException("tables contents update", exception);
         }
     }
 
+    public void updateContents() throws JnqException {
+        tableByNameMap.clear();
+        schemaByNamesMap.clear();
+
+        try {
+            String baseSchemaName = sqlConnection.getSchema();
+
+            if (baseSchemaName == null) {
+                for (ResponseLine schemaResponseLine : new SQLResponse(sqlConnection.prepareStatement(SHOW_DATABASES_QUERY).executeQuery())) {
+
+                    String schema = schemaResponseLine.nextString();
+
+                    SchemaContent schemaContent = new SchemaContent(schema, this);
+
+                    schemaByNamesMap.put(schema.toLowerCase(), schemaContent);
+                    _updateTableContents(schema);
+                }
+            }
+            else {
+                schemaByNamesMap.put(baseSchemaName.toLowerCase(), new SchemaContent(baseSchemaName, this));
+                _updateTableContents(null);
+            }
+        }
+        catch (SQLException exception) {
+            throw new JnqException("contents update", exception);
+        }
+    }
+
+    @SneakyThrows
     @Override
     public boolean checkConnection(int timeout) {
-        return connection != null && checkConnection(timeout);
+        return sqlConnection != null && sqlConnection.isValid(timeout);
     }
 
     @Override
-    public SchemeContent getSchemeContent(@NonNull String name) {
-        return schemeByNamesMap.computeIfAbsent(name.toLowerCase(), f -> new SchemeContent(name, this));
+    public SchemaContent getSchemaContent(@NonNull String name) {
+        return schemaByNamesMap.computeIfAbsent(name.toLowerCase(), f -> new SchemaContent(name, this));
     }
 
     @Override
-    public @NonNull Set<SchemeContent> getSchemesContents() {
-        return new HashSet<>(schemeByNamesMap.values());
+    public @NonNull Set<SchemaContent> getSchemasContents() {
+        return new HashSet<>(schemaByNamesMap.values());
     }
 
     @Override
-    public TableContent getTableContent(@NonNull String scheme, @NonNull String name) {
-        return tableByNameMap.get(String.format(TABLE_NAME_FORMAT, scheme, name).toLowerCase());
+    public TableContent getTableContent(@NonNull String schema, @NonNull String name) {
+        return tableByNameMap.get(String.format(TABLE_NAME_FORMAT, schema, name).toLowerCase());
     }
 
     @Override
-    public TableContent getTableContent(@NonNull DataContent scheme, @NonNull String name) {
-        return getTableContent(scheme.getName(), name);
+    public TableContent getTableContent(@NonNull DataContent schema, @NonNull String name) {
+        return getTableContent(schema.getName(), name);
     }
 
     @Override
-    public @NonNull Set<TableContent> getTablesContents(@NonNull String scheme) {
-        return tableByNameMap.values().stream().filter(tableContent -> tableContent.getScheme().getName().equalsIgnoreCase(scheme)).collect(Collectors.toSet());
+    public @NonNull Set<TableContent> getTablesContents(@NonNull String schema) {
+        return tableByNameMap.values().stream().filter(tableContent -> tableContent.getSchema().getName().equalsIgnoreCase(schema)).collect(Collectors.toSet());
     }
 
     @Override
     public @NonNull Request createRequest(@NonNull DataContent content) {
-        throw new UnsupportedOperationException();
+        return new SQLRequest(this, content);
     }
 
     @Override
@@ -128,7 +161,7 @@ public class SQLConnection implements DataConnection {
 
         if (checkConnection()) {
             try {
-                connection.close();
+                sqlConnection.close();
 
                 completableFuture.complete(null);
             }

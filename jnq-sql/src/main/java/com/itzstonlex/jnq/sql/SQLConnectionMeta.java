@@ -9,7 +9,7 @@ import lombok.experimental.FieldDefaults;
 import java.sql.DatabaseMetaData;
 
 @RequiredArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@FieldDefaults(level = AccessLevel.PROTECTED, makeFinal = true)
 public class SQLConnectionMeta implements DataConnectionMeta {
 
     DatabaseMetaData impl;

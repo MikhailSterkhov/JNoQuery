@@ -93,50 +93,62 @@ public interface ResponseLine {
     }
 
     default String nextString() {
-        return getString(nextIndex());
+        int current = nextIndex();
+        return contains(current) ? getString(current) : null;
     }
 
     default Boolean nextBoolean() {
-        return getBoolean(nextIndex());
+        int current = nextIndex();
+        return contains(current) ? getBoolean(current) : null;
     }
 
     default Long nextLong() {
-        return getLong(nextIndex());
+        int current = nextIndex();
+        return contains(current) ? getLong(current) : null;
     }
 
     default Integer nextInt() {
-        return getInt(nextIndex());
+        int current = nextIndex();
+        return contains(current) ? getInt(current) : null;
     }
 
     default Double nextDouble() {
-        return getDouble(nextIndex());
+        int current = nextIndex();
+        return contains(current) ? getDouble(current) : null;
     }
 
     default Float nextFloat() {
-        return getFloat(nextIndex());
+        int current = nextIndex();
+        return contains(current) ? getFloat(current) : null;
     }
 
     default Object nextShort() {
-        return getObject(nextIndex());
+        int current = nextIndex();
+        return contains(current) ? getShort(current) : null;
     }
 
     default Byte nextByte() {
-        return getByte(nextIndex());
+        int current = nextIndex();
+        return contains(current) ? getByte(current) : null;
     }
 
     default Date nextDate() {
-        return getDate(nextIndex());
+        int current = nextIndex();
+        return contains(current) ? getDate(current) : null;
     }
 
     default Time nextTime() {
-        return getTime(nextIndex());
+        int current = nextIndex();
+        return contains(current) ? getTime(current) : null;
     }
 
     default Timestamp nextTimestamp() {
-        return getTimestamp(nextIndex());
+        int current = nextIndex();
+        return contains(current) ? getTimestamp(current) : null;
     }
 
     default byte[] nextByteArray() {
-        return getByteArray(nextIndex());
+        int current = nextIndex();
+        return contains(current) ? getByteArray(current) : null;
     }
 }

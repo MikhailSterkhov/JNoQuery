@@ -5,6 +5,7 @@ import com.itzstonlex.jnq.exception.JnqException;
 import com.itzstonlex.jnq.impl.field.IndexDataField;
 import com.itzstonlex.jnq.request.query.session.RequestSessionAppender;
 import com.itzstonlex.jnq.request.query.type.RequestCreateTable;
+import com.itzstonlex.jnq.response.UpdateResponse;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.NonNull;
@@ -18,14 +19,14 @@ public class TableContent implements DataContent {
 
     String name;
 
-    SchemeContent scheme;
+    SchemaContent schema;
 
     public boolean exists() {
-        return scheme.hasTableByName(name);
+        return schema.hasTableByName(name);
     }
 
     public @NonNull RequestSessionAppender<IndexDataField, RequestCreateTable> create() {
-        return scheme.getConnection().createRequest(this)
+        return schema.getConnection().createRequest(this)
                 .toFactory()
                 .newCreateTable()
 
@@ -33,22 +34,22 @@ public class TableContent implements DataContent {
                 .session();
     }
 
-    public @NonNull CompletableFuture<Void> clear() throws JnqException {
-        return scheme.getConnection().createRequest(this)
+    public @NonNull CompletableFuture<UpdateResponse> clear() throws JnqException {
+        return schema.getConnection().createRequest(this)
                 .toFactory()
                 .newDelete()
 
                 .compile()
-                .updateAsync();
+                .updateTransaction();
     }
 
-    public @NonNull CompletableFuture<Void> drop() throws JnqException {
-        return scheme.getConnection().createRequest(this)
+    public @NonNull CompletableFuture<UpdateResponse> drop() throws JnqException {
+        return schema.getConnection().createRequest(this)
                 .toFactory()
                 .newDropTable()
 
                 .compile()
-                .updateAsync();
+                .updateTransaction();
     }
 
 }

@@ -12,6 +12,9 @@ public interface RequestSessionSelector<Query extends RequestQuery> extends Requ
     RequestSessionSelector<Query> with(@NonNull String field);
 
     @NonNull
+    RequestSessionCast<RequestSessionSelector<Query>, Query> withCasted(@NonNull String field);
+
+    @NonNull
     RequestSessionCast<RequestSessionSelector<Query>, Query> withQuery(@NonNull RequestQuery query);
 
     @NonNull

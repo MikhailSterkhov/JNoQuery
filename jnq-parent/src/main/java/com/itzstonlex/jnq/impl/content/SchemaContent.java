@@ -3,20 +3,20 @@ package com.itzstonlex.jnq.impl.content;
 import com.itzstonlex.jnq.DataConnection;
 import com.itzstonlex.jnq.content.DataContent;
 import com.itzstonlex.jnq.exception.JnqException;
+import com.itzstonlex.jnq.response.UpdateResponse;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
-import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class SchemeContent implements DataContent {
+public class SchemaContent implements DataContent {
 
     @Getter
     String name;
@@ -40,36 +40,40 @@ public class SchemeContent implements DataContent {
         return connection.getTableContent(this, name);
     }
 
-    public @NonNull CompletableFuture<Void> create() throws JnqException {
+    public @NonNull CompletableFuture<UpdateResponse> create()
+    throws JnqException {
+
         return connection.createRequest(this)
                 .toFactory()
-                .newCreateScheme()
+                .newCreateSchema()
 
                 .withExistsChecking()
 
                 .compile()
-                .updateAsync();
+                .updateTransaction();
     }
 
-    public @NonNull CompletableFuture<Void> clear() throws JnqException {
-        Set<CompletableFuture<Void>> completableFutureSet = new HashSet<>();
+    public @NonNull CompletableFuture<UpdateResponse> clear()
+    throws JnqException {
+
+        CompletableFuture<UpdateResponse> completableFuture = new CompletableFuture<>();
 
         for (TableContent tableContent : getTablesContents()) {
-
-            CompletableFuture<Void> future = tableContent.drop();
-            completableFutureSet.add(future);
+            completableFuture.acceptEither(tableContent.drop(), (updateResponse) -> {});
         }
 
-        return CompletableFuture.allOf(completableFutureSet.toArray(new CompletableFuture[0]));
+        return completableFuture;
     }
 
-    public @NonNull CompletableFuture<Void> drop() throws JnqException {
+    public @NonNull CompletableFuture<UpdateResponse> drop()
+    throws JnqException {
+
         return connection.createRequest(this)
                 .toFactory()
-                .newDropScheme()
+                .newDropSchema()
 
                 .compile()
-                .updateAsync();
+                .updateTransaction();
     }
 
 }

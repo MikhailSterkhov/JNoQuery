@@ -6,4 +6,8 @@ public interface DataField {
 
     @NonNull
     String name();
+
+    @NonNull
+    @Override
+    String toString();
 }

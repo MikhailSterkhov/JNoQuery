@@ -39,4 +39,8 @@ public class ValueDataField implements DataField {
         this.value = value;
     }
 
+    @Override
+    public String toString() {
+        return ("`" + name + "`" + (value == null ? " is NULL" : " = " + (value instanceof Number ? value : "'" + value + "'")));
+    }
 }

@@ -6,51 +6,46 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
-import java.sql.Blob;
-import java.sql.Date;
-import java.sql.Time;
-import java.sql.Timestamp;
-import java.time.Year;
+import java.sql.*;
 
 @Getter
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public enum FieldType {
 
-    TINY_INT("TINYINT", Character.class),
-    SMALL_INT("SMALLINT", Byte.class),
-    MEDIUM_INT("MEDIUMINT", Short.class),
-    INT("INT", Integer.class),
-    BIG_INT("BIGINT", Long.class),
-    BIT("BIT", Integer.class),
-    BOOLEAN("BOOLEAN", Boolean.class),
+    TINYINT(JDBCType.TINYINT.getVendorTypeNumber(), "TINYINT", Character.class),
+    SMALLINT(JDBCType.SMALLINT.getVendorTypeNumber(), "SMALLINT", Byte.class),
+    MEDIUM_INT(JDBCType.INTEGER.getVendorTypeNumber(), "MEDIUMINT", Short.class),
+    INT(JDBCType.INTEGER.getVendorTypeNumber(), "INT", Integer.class),
+    BIGINT(JDBCType.BIT.getVendorTypeNumber(), "BIGINT", Long.class),
+    BIT(JDBCType.BIT.getVendorTypeNumber(), "BIT", Integer.class),
+    BOOLEAN(JDBCType.BOOLEAN.getVendorTypeNumber(), "BOOLEAN", Boolean.class),
 
-    FLOAT("FLOAT", Float.class),
-    DOUBLE("DOUBLE", Double.class),
-    DECIMAL("DECIMAL", Integer.class),
+    FLOAT(JDBCType.FLOAT.getVendorTypeNumber(), "FLOAT", Float.class),
+    DOUBLE(JDBCType.DOUBLE.getVendorTypeNumber(), "DOUBLE", Double.class),
+    LONG(JDBCType.BIGINT.getVendorTypeNumber(), "LONG", Long.class),
+    DECIMAL(JDBCType.DECIMAL.getVendorTypeNumber(), "DECIMAL", Integer.class),
 
-    CHAR("CHAR", Character.class),
-    VAR_CHAR("VARCHAR", String.class),
-    TINY_TEXT("TINYTEXT", CharSequence.class),
-    TEXT("TEXT", String.class),
-    MEDIUM_TEXT("MEDIUMTEXT", CharSequence.class),
-    LONG_TEXT("LONGTEXT", String.class),
-    JSON("JSON", String.class),
+    CHAR(JDBCType.CHAR.getVendorTypeNumber(), "CHAR", Character.class),
+    VARCHAR(JDBCType.VARCHAR.getVendorTypeNumber(), "VARCHAR", String.class),
+    TINYTEXT(JDBCType.VARCHAR.getVendorTypeNumber(), "TINYTEXT", CharSequence.class),
+    TEXT(JDBCType.VARCHAR.getVendorTypeNumber(), "TEXT", String.class),
+    MEDIUM_TEXT(JDBCType.NVARCHAR.getVendorTypeNumber(), "MEDIUMTEXT", CharSequence.class),
+    LONGTEXT(JDBCType.LONGNVARCHAR.getVendorTypeNumber(), "LONGTEXT", String.class),
 
-    BINARY("BINARY", byte[].class),
-    VAR_BINARY("VARBINARY", byte[].class),
-    TINY_BLOB("TINYBLOB", Blob.class),
-    BLOB("BLOB", Blob.class),
-    MEDIUM_BLOB("MEDIUMBLOB", Blob.class),
-    LONG_BLOB("LONGBLOB", Blob.class),
+    BINARY(JDBCType.BINARY.getVendorTypeNumber(), "BINARY", byte[].class),
+    VAR_BINARY(JDBCType.VARBINARY.getVendorTypeNumber(), "VARBINARY", byte[].class),
+    TINY_BLOB(JDBCType.BLOB.getVendorTypeNumber(), "TINYBLOB", Blob.class),
+    BLOB(JDBCType.BLOB.getVendorTypeNumber(), "BLOB", Blob.class),
+    MEDIUM_BLOB(JDBCType.BLOB.getVendorTypeNumber(), "MEDIUMBLOB", Blob.class),
+    LONG_BLOB(JDBCType.BLOB.getVendorTypeNumber(), "LONGBLOB", Blob.class),
 
-    DATE("DATE", Date.class),
-    TIME("TIME", Time.class),
-    YEAR("YEAR", Year.class),
-    DATETIME("DATETIME", Date.class),
-    TIMESTAMP("TIMESTAMP", Timestamp.class),
+    DATE(JDBCType.DATE.getVendorTypeNumber(), "DATE", Date.class),
+    TIME(JDBCType.TIME.getVendorTypeNumber(), "TIME", Time.class),
+    DATETIME(JDBCType.DATE.getVendorTypeNumber(), "DATETIME", Date.class),
+    TIMESTAMP(JDBCType.TIMESTAMP.getVendorTypeNumber(), "TIMESTAMP", Timestamp.class),
 
-    UNKNOWN("UNKNOWN", Object.class),
+    OBJECT(JDBCType.JAVA_OBJECT.getVendorTypeNumber(), "UNKNOWN", Object.class),
     ;
 
     public static final FieldType[] VALUES = FieldType.values();
@@ -63,8 +58,10 @@ public enum FieldType {
             }
         }
 
-        return UNKNOWN;
+        return OBJECT;
     }
+
+    int id;
 
     String sql;
     Class<?> cls;

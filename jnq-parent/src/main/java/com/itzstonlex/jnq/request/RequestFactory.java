@@ -1,6 +1,7 @@
 package com.itzstonlex.jnq.request;
 
 import com.itzstonlex.jnq.content.DataContent;
+import com.itzstonlex.jnq.field.DataField;
 import com.itzstonlex.jnq.request.query.RequestQueryBasic;
 import com.itzstonlex.jnq.request.query.type.*;
 import lombok.NonNull;
@@ -11,7 +12,7 @@ public interface RequestFactory {
     DataContent getExecutableContent();
 
     @NonNull
-    RequestQueryBasic<?> fromQuery(@NonNull String query);
+    <Field extends DataField> RequestQueryBasic<Field> fromQuery(@NonNull String query);
 
     @NonNull
     RequestAlterAdd newAlterAdd();
@@ -29,10 +30,10 @@ public interface RequestFactory {
     RequestDropTable newDropTable();
 
     @NonNull
-    RequestCreateScheme newCreateScheme();
+    RequestCreateSchema newCreateSchema();
 
     @NonNull
-    RequestDropScheme newDropScheme();
+    RequestDropSchema newDropSchema();
 
     @NonNull
     RequestFinder newFinder();

@@ -93,6 +93,10 @@ public class IndexDataField implements DataField {
         return name;
     }
 
+    public @NonNull FieldType type() {
+        return type;
+    }
+
     @Getter
     @RequiredArgsConstructor
     @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)

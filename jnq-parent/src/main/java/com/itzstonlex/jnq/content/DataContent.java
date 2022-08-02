@@ -1,6 +1,7 @@
 package com.itzstonlex.jnq.content;
 
 import com.itzstonlex.jnq.exception.JnqException;
+import com.itzstonlex.jnq.response.UpdateResponse;
 import lombok.NonNull;
 
 import java.util.concurrent.CompletableFuture;
@@ -11,8 +12,8 @@ public interface DataContent {
     String getName();
 
     @NonNull
-    CompletableFuture<Void> clear() throws JnqException;
+    CompletableFuture<UpdateResponse> clear() throws JnqException;
 
     @NonNull
-    CompletableFuture<Void> drop() throws JnqException;
+    CompletableFuture<UpdateResponse> drop() throws JnqException;
 }

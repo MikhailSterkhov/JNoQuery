@@ -1,4 +1,4 @@
-package com.itzstonlex.jnq.sql.utility;
+package com.itzstonlex.jnq.sql;
 
 import lombok.NonNull;
 import lombok.SneakyThrows;
@@ -8,7 +8,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 
 @UtilityClass
-public class SQLUtility {
+public class SQLHelper {
 
     public final int MYSQL_PORT = 3306;
     public final int CLICKHOUSE_PORT = 8123;
@@ -21,12 +21,12 @@ public class SQLUtility {
 
     public final String JDBC_URL_FORMAT = "jdbc:%s://%s:%s/%s";
 
-    public @NonNull String toJDBC(@NonNull String driverName, @NonNull String scheme, @NonNull String host, int port) {
-        return String.format(JDBC_URL_FORMAT, driverName.toLowerCase(), host, port, scheme);
+    public @NonNull String toJDBC(@NonNull String driverName, @NonNull String schema, @NonNull String host, int port) {
+        return String.format(JDBC_URL_FORMAT, driverName.toLowerCase(), host, port, schema);
     }
 
-    public @NonNull String toMysqlJDBC(@NonNull String scheme, @NonNull String host, int port) {
-        return toJDBC(MYSQL_DRIVER_NAME, scheme, host, port);
+    public @NonNull String toMysqlJDBC(@NonNull String schema, @NonNull String host, int port) {
+        return toJDBC(MYSQL_DRIVER_NAME, schema, host, port);
     }
 
     public @NonNull String toMysqlJDBC(@NonNull String host, int port) {
@@ -37,8 +37,8 @@ public class SQLUtility {
         return toMysqlJDBC(host, MYSQL_PORT);
     }
 
-    public @NonNull String toClickHouseJDBC(@NonNull String scheme, @NonNull String host, int port) {
-        return toJDBC(CLICKHOUSE_DRIVER_NAME, scheme, host, port);
+    public @NonNull String toClickHouseJDBC(@NonNull String schema, @NonNull String host, int port) {
+        return toJDBC(CLICKHOUSE_DRIVER_NAME, schema, host, port);
     }
 
     public @NonNull String toClickHouseJDBC(@NonNull String host, int port) {
