@@ -21,9 +21,12 @@ public class SQLRequestSessionJoiner<Query extends RequestQuery>
 
     @Override
     public @NonNull Query joinAt(@NonNull String table, @NonNull Direction direction, @NonNull Type type, @NonNull String from, @NonNull String to) {
-        generatedSql = (direction + " " + type + " JOIN `" + table + "` ON `" + from + "` = `" + to + "`");
+        String directionString = (direction == Direction.EMPTY ? "" : direction.name());
+        String typeString = (type == Type.EMPTY ? "" : type.name());
 
-        return backward();
+        generatedSql = (directionString + " " + typeString + " JOIN `" + table + "` ON `" + from + "` = `" + to + "`");
+
+        return super.backward();
     }
 
 }

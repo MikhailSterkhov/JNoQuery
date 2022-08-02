@@ -29,31 +29,26 @@ public class SQLRequestSessionFilter<Query extends RequestQuery>
         }
     }
 
-    @Override
-    public @NonNull RequestSessionFilter<Query> and(@NonNull FieldOperator operator, @NonNull ValueDataField field) {
+    private void _append(String delimiter, FieldOperator operator, ValueDataField field) {
         StringBuilder builder = new StringBuilder(generatedSql);
 
         if (!generatedSql.isEmpty()) {
-            builder.append(" AND ");
+            builder.append(" ").append(delimiter).append(" ");
         }
 
         _appendField(builder, operator, field);
         generatedSql = builder.toString();
+    }
 
+    @Override
+    public @NonNull RequestSessionFilter<Query> and(@NonNull FieldOperator operator, @NonNull ValueDataField field) {
+        this._append("AND", operator, field);
         return this;
     }
 
     @Override
     public @NonNull RequestSessionFilter<Query> or(@NonNull FieldOperator operator, @NonNull ValueDataField field) {
-        StringBuilder builder = new StringBuilder(generatedSql);
-
-        if (!generatedSql.isEmpty()) {
-            builder.append(" OR ");
-        }
-
-        _appendField(builder, operator, field);
-        generatedSql = builder.toString();
-
+        this._append("OR", operator, field);
         return this;
     }
 }

@@ -87,16 +87,16 @@ public class SQLRequestQueryBasic<Field extends DataField>
     protected String toSQL() {
         query = query.replace("{content}", request.getDataContent().getName());;
 
-        if (sessionFilter != null && sessionFilterReplacement != null) {
-            query = query.replace(sessionFilterReplacement, sessionFilter.getGeneratedSql());
+        if (sessionFilterReplacement != null) {
+            query = query.replace(sessionFilterReplacement, sessionFilter == null ? "" : sessionFilter.getGeneratedSql());
         }
 
-        if (sessionJoiner != null && sessionJoinerReplacement != null) {
-            query = query.replace(sessionJoinerReplacement, sessionJoiner.getGeneratedSql());
+        if (sessionJoinerReplacement != null) {
+            query = query.replace(sessionJoinerReplacement, sessionJoiner == null ? "" : sessionJoiner.getGeneratedSql());
         }
 
-        if (sessionSelector != null && sessionSelectorReplacement != null) {
-            query = query.replace(sessionSelectorReplacement, sessionSelector.getGeneratedSql());
+        if (sessionSelectorReplacement != null) {
+            query = query.replace(sessionSelectorReplacement, sessionSelector == null ? "" : sessionSelector.getGeneratedSql());
         }
 
         if (sessionAppender != null) {

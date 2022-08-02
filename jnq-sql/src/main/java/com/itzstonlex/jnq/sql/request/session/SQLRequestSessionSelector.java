@@ -20,13 +20,13 @@ public class SQLRequestSessionSelector<Query extends RequestQuery>
         super(parent);
     }
 
-    private void _append(String generatedSql) {
-        this.generatedSql += (!this.generatedSql.isEmpty() ? ", " : "") + generatedSql;
+    private void _append(String value, String generatedSql) {
+        this.generatedSql += (!this.generatedSql.isEmpty() ? ", " : "") + String.format(generatedSql, value);
     }
 
     @Override
     public @NonNull Query withAll() {
-        this._append("*");
+        this._append("", "*");
         return backward();
     }
 
@@ -37,26 +37,26 @@ public class SQLRequestSessionSelector<Query extends RequestQuery>
 
     @Override
     public @NonNull RequestSessionCast<RequestSessionSelector<Query>, Query> withCasted(@NonNull String field) {
-        return new SQLRequestSessionCast<>(this, backward(), (generatedSql) -> _append("`" + field + "`" + generatedSql));
+        return new SQLRequestSessionCast<>(this, backward(), (generatedSql) -> _append(field, "`%s`" + generatedSql));
     }
 
     @Override
     public @NonNull RequestSessionCast<RequestSessionSelector<Query>, Query> withQuery(@NonNull RequestQuery query) {
-        return new SQLRequestSessionCast<>(this, backward(), (generatedSql) -> _append("(" + query + ")" + generatedSql));
+        return new SQLRequestSessionCast<>(this, backward(), (generatedSql) -> _append(query.toString(), "(%s)" + generatedSql));
     }
 
     @Override
     public @NonNull RequestSessionCast<RequestSessionSelector<Query>, Query> withCount(@NonNull String field) {
-        return new SQLRequestSessionCast<>(this, backward(), (generatedSql) -> _append("COUNT(`" + field + "`)" + generatedSql));
+        return new SQLRequestSessionCast<>(this, backward(), (generatedSql) -> _append(field, "COUNT(`%s`)" + generatedSql));
     }
 
     @Override
     public @NonNull RequestSessionCast<RequestSessionSelector<Query>, Query> withLowerCase(@NonNull String field) {
-        return new SQLRequestSessionCast<>(this, backward(), (generatedSql) -> _append("LOWER(`" + field + "`)" + generatedSql));
+        return new SQLRequestSessionCast<>(this, backward(), (generatedSql) -> _append(field, "LOWER(`%s`)" + generatedSql));
     }
 
     @Override
     public @NonNull RequestSessionCast<RequestSessionSelector<Query>, Query> withUpperCase(@NonNull String field) {
-        return new SQLRequestSessionCast<>(this, backward(), (generatedSql) -> _append("UPPER(`" + field + "`)" + generatedSql));
+        return new SQLRequestSessionCast<>(this, backward(), (generatedSql) -> _append(field, "UPPER(`%s`)" + generatedSql));
     }
 }
