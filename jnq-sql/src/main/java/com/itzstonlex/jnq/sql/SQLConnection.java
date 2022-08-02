@@ -5,6 +5,7 @@ import com.itzstonlex.jnq.content.DataContent;
 import com.itzstonlex.jnq.exception.JnqException;
 import com.itzstonlex.jnq.impl.content.SchemaContent;
 import com.itzstonlex.jnq.impl.content.TableContent;
+import com.itzstonlex.jnq.response.Response;
 import com.itzstonlex.jnq.sql.response.SQLResponse;
 import com.itzstonlex.jnq.request.Request;
 import com.itzstonlex.jnq.response.ResponseLine;
@@ -68,25 +69,26 @@ public class SQLConnection implements DataConnection {
         this(null, url, username, password);
     }
 
-    protected void _updateTableContents(String schema)
+    protected void _updateTableContents(boolean appendSchema, @NonNull SchemaContent schema)
     throws JnqException {
 
         try {
-            String query = SHOW_TABLES_QUERY + (schema != null ? schema : "");
+            Response tablesResponse = createRequest(schema)
+                    .toFactory()
+                    .fromQuery(SHOW_TABLES_QUERY + (appendSchema ? schema.getName() : ""))
 
-            if (schema == null) {
-                schema = sqlConnection.getSchema();
-            }
+                    .compile()
+                    .fetchTransaction();
 
-            for (ResponseLine tableResponseLine : new SQLResponse(sqlConnection.prepareStatement(query).executeQuery())) {
+            for (ResponseLine tableResponseLine : tablesResponse) {
 
                 String table = tableResponseLine.nextNullableString();
                 String tableFull = String.format(TABLE_NAME_FORMAT, schema, table);
 
-                tableByNameMap.put(tableFull.toLowerCase(), new TableContent(table, getSchemaContent(schema)));
+                tableByNameMap.put(tableFull.toLowerCase(), new TableContent(table, schema));
             }
         }
-        catch (SQLException exception) {
+        catch (JnqException exception) {
             throw new JnqException("tables contents update", exception);
         }
     }
@@ -106,12 +108,14 @@ public class SQLConnection implements DataConnection {
                     SchemaContent schemaContent = new SchemaContent(schema, this);
 
                     schemaByNamesMap.put(schema.toLowerCase(), schemaContent);
-                    _updateTableContents(schema);
+                    this._updateTableContents(true, schemaContent);
                 }
             }
             else {
-                schemaByNamesMap.put(baseSchemaName.toLowerCase(), new SchemaContent(baseSchemaName, this));
-                _updateTableContents(null);
+                SchemaContent schemaContent = new SchemaContent(baseSchemaName, this);
+
+                schemaByNamesMap.put(baseSchemaName.toLowerCase(), schemaContent);
+                this._updateTableContents(false, schemaContent);
             }
         }
         catch (SQLException exception) {
