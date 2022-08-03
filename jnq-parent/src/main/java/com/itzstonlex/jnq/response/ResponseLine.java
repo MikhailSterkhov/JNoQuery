@@ -7,6 +7,7 @@ import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.Set;
 
 public interface ResponseLine {
 
@@ -19,6 +20,11 @@ public interface ResponseLine {
     int findIndex(@NonNull String label);
 
     String findLabel(int index);
+
+    // *------------------------------------------------- * //
+
+    Set<Integer> getIndexes();
+    Set<String> getLabels();
 
     // *------------------------------------------------- * //
 

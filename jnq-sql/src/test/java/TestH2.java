@@ -91,6 +91,9 @@ public class TestH2 {
                     System.out.println(" Register Time Millis: " + response.getNullableLong("register_date"));
                     System.out.println(" Last Update Time Millis: " + response.getNullableLong("last_update_date"));
                     System.out.println();
+                    System.out.println(" Response indexes: " + response.getIndexes());
+                    System.out.println(" Response labels names: " + response.getLabels());
+                    System.out.println();
                 });
 
         connection.createRequest(schemaContent.getTableContent("reg_users"))

@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -68,6 +69,19 @@ public class SQLResponseLine extends LinkedHashMap<Integer, Object> implements R
         return labelByIndexesMap.get(index);
     }
 
+    // *------------------------------------------------- * //
+
+    @Override
+    public Set<Integer> getIndexes() {
+        return super.keySet();
+    }
+
+    @Override
+    public Set<String> getLabels() {
+        return getIndexes().stream().map(this::findLabel).collect(Collectors.toSet());
+    }
+
+    // *------------------------------------------------- * //
     @Override
     public boolean contains(int index) {
         return containsKey(index);
