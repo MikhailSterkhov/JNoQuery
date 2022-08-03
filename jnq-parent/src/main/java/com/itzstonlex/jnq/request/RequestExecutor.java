@@ -6,9 +6,21 @@ import com.itzstonlex.jnq.response.Response;
 import com.itzstonlex.jnq.response.ResponseLine;
 import lombok.NonNull;
 
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 public interface RequestExecutor {
+
+    void update(@NonNull Object object) throws JnqException;
+
+    @NonNull
+    <T> T fetchFirst(@NonNull Class<T> cls) throws JnqException;
+
+    @NonNull
+    <T> T fetchLast(@NonNull Class<T> cls) throws JnqException;
+
+    @NonNull
+    <T> List<T> fetchAll(@NonNull Class<T> cls) throws JnqException;
 
     @NonNull
     Response fetchTransaction() throws JnqException;

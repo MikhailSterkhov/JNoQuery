@@ -11,6 +11,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 @RequiredArgsConstructor
@@ -19,6 +20,26 @@ public class SQLRequestExecutor implements RequestExecutor {
 
     String query;
     SQLWrapperStatement wrapperStatement;
+
+    @Override
+    public void update(@NonNull Object object) throws JnqException {
+        throw new UnsupportedOperationException(); // TODO
+    }
+
+    @Override
+    public <T> @NonNull T fetchFirst(@NonNull Class<T> cls) throws JnqException {
+        throw new UnsupportedOperationException(); // TODO
+    }
+
+    @Override
+    public <T> @NonNull T fetchLast(@NonNull Class<T> cls) throws JnqException {
+        throw new UnsupportedOperationException(); // TODO
+    }
+
+    @Override
+    public @NonNull <T> List<T> fetchAll(@NonNull Class<T> cls) throws JnqException {
+        throw new UnsupportedOperationException(); // TODO
+    }
 
     @Override
     public @NonNull Response fetchTransaction() throws JnqException {

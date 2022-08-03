@@ -8,11 +8,12 @@ import com.itzstonlex.jnq.sql.request.session.*;
 import lombok.AccessLevel;
 import lombok.NonNull;
 import lombok.experimental.FieldDefaults;
+import lombok.experimental.NonFinal;
 
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class SQLRequestFinder extends SQLRequestQuery implements RequestFinder {
 
-    private static final String QUERY = "SELECT {selector} FROM `{content}` {joiner} WHERE {filter} {group} {order}";
+    private static final String QUERY = "SELECT {selector} FROM `{content}` {joiner} WHERE {filter} {group} {order} {limit}";
 
     SQLRequestSessionSelector<RequestFinder> sessionSelector = new SQLRequestSessionSelector<>(this);
 
@@ -24,8 +25,17 @@ public class SQLRequestFinder extends SQLRequestQuery implements RequestFinder {
 
     SQLRequestSessionJoiner<RequestFinder> sessionJoiner = new SQLRequestSessionJoiner<>(this);
 
+    @NonFinal
+    int limitSize;
+
     public SQLRequestFinder(@NonNull SQLRequest request) {
         super(request);
+    }
+
+    @Override
+    public @NonNull RequestFinder withLimit(int limit) {
+        this.limitSize = limit;
+        return this;
     }
 
     @Override
@@ -62,6 +72,8 @@ public class SQLRequestFinder extends SQLRequestQuery implements RequestFinder {
         query = query.replace("{group}", sessionGroup.getGeneratedSql());
         query = query.replace("{filter}", sessionFilter.getGeneratedSql());
         query = query.replace("{joiner}", sessionJoiner.getGeneratedSql());
+
+        query = query.replace("{limit}", limitSize > 0 ? Integer.toString(limitSize) : "");
 
         return query;
     }

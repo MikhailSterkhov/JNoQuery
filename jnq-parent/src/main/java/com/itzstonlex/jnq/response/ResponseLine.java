@@ -8,13 +8,19 @@ import java.sql.Timestamp;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Supplier;
 
 public interface ResponseLine {
+    
+    @NonNull
+    Supplier<NoSuchElementException> NO_VALUE_PRESENT_SUPPLIER = (() -> new NoSuchElementException("no value present"));
+
+    // *------------------------------------------------- * //
 
     ResponseLine nextResponseLine();
 
     int nextIndex();
-    
+
     int size();
 
     int findIndex(@NonNull String label);
@@ -35,7 +41,7 @@ public interface ResponseLine {
     boolean isFirstLine();
 
     boolean isLastLine();
-    
+
     boolean isNullable(int index);
 
     boolean isNullable(@NonNull String label);
@@ -103,107 +109,107 @@ public interface ResponseLine {
     // *------------------------------------------------- * //
 
     default Object getNullableObject(int index) {
-        return getObject(index).orElseThrow(() -> new NoSuchElementException("no value present"));
+        return getObject(index).orElseThrow(NO_VALUE_PRESENT_SUPPLIER);
     }
 
     default Object getNullableObject(@NonNull String label) {
-        return getObject(label).orElseThrow(() -> new NoSuchElementException("no value present"));
+        return getObject(label).orElseThrow(NO_VALUE_PRESENT_SUPPLIER);
     }
 
     default String getNullableString(int index) {
-        return getString(index).orElseThrow(() -> new NoSuchElementException("no value present"));
+        return getString(index).orElseThrow(NO_VALUE_PRESENT_SUPPLIER);
     }
 
     default String getNullableString(@NonNull String label) {
-        return getString(label).orElseThrow(() -> new NoSuchElementException("no value present"));
+        return getString(label).orElseThrow(NO_VALUE_PRESENT_SUPPLIER);
     }
 
     default Boolean getNullableBoolean(int index) {
-        return getBoolean(index).orElseThrow(() -> new NoSuchElementException("no value present"));
+        return getBoolean(index).orElseThrow(NO_VALUE_PRESENT_SUPPLIER);
     }
 
     default Boolean getNullableBoolean(@NonNull String label) {
-        return getBoolean(label).orElseThrow(() -> new NoSuchElementException("no value present"));
+        return getBoolean(label).orElseThrow(NO_VALUE_PRESENT_SUPPLIER);
     }
 
     default Long getNullableLong(int index) {
-        return getLong(index).orElseThrow(() -> new NoSuchElementException("no value present"));
+        return getLong(index).orElseThrow(NO_VALUE_PRESENT_SUPPLIER);
     }
 
     default Long getNullableLong(@NonNull String label) {
-        return getLong(label).orElseThrow(() -> new NoSuchElementException("no value present"));
+        return getLong(label).orElseThrow(NO_VALUE_PRESENT_SUPPLIER);
     }
 
     default Integer getNullableInt(int index) {
-        return getInt(index).orElseThrow(() -> new NoSuchElementException("no value present"));
+        return getInt(index).orElseThrow(NO_VALUE_PRESENT_SUPPLIER);
     }
 
     default Integer getNullableInt(@NonNull String label) {
-        return getInt(label).orElseThrow(() -> new NoSuchElementException("no value present"));
+        return getInt(label).orElseThrow(NO_VALUE_PRESENT_SUPPLIER);
     }
 
     default Double getNullableDouble(int index) {
-        return getDouble(index).orElseThrow(() -> new NoSuchElementException("no value present"));
+        return getDouble(index).orElseThrow(NO_VALUE_PRESENT_SUPPLIER);
     }
 
     default Double getNullableDouble(@NonNull String label) {
-        return getDouble(label).orElseThrow(() -> new NoSuchElementException("no value present"));
+        return getDouble(label).orElseThrow(NO_VALUE_PRESENT_SUPPLIER);
     }
 
     default Float getNullableFloat(int index) {
-        return getFloat(index).orElseThrow(() -> new NoSuchElementException("no value present"));
+        return getFloat(index).orElseThrow(NO_VALUE_PRESENT_SUPPLIER);
     }
 
     default Float getNullableFloat(@NonNull String label) {
-        return getFloat(label).orElseThrow(() -> new NoSuchElementException("no value present"));
+        return getFloat(label).orElseThrow(NO_VALUE_PRESENT_SUPPLIER);
     }
 
     default Short getNullableShort(int index) {
-        return getShort(index).orElseThrow(() -> new NoSuchElementException("no value present"));
+        return getShort(index).orElseThrow(NO_VALUE_PRESENT_SUPPLIER);
     }
 
-    default Short getNullableShort(@NonNull String label) { 
-        return getShort(label).orElseThrow(() -> new NoSuchElementException("no value present"));
+    default Short getNullableShort(@NonNull String label) {
+        return getShort(label).orElseThrow(NO_VALUE_PRESENT_SUPPLIER);
     }
 
     default Byte getNullableByte(int index) {
-        return getByte(index).orElseThrow(() -> new NoSuchElementException("no value present"));
+        return getByte(index).orElseThrow(NO_VALUE_PRESENT_SUPPLIER);
     }
 
     default Byte getNullableByte(@NonNull String label) {
-        return getByte(label).orElseThrow(() -> new NoSuchElementException("no value present"));
+        return getByte(label).orElseThrow(NO_VALUE_PRESENT_SUPPLIER);
     }
 
     default Date getNullableDate(int index) {
-        return getDate(index).orElseThrow(() -> new NoSuchElementException("no value present"));
+        return getDate(index).orElseThrow(NO_VALUE_PRESENT_SUPPLIER);
     }
 
     default Date getNullableDate(@NonNull String label) {
-        return getDate(label).orElseThrow(() -> new NoSuchElementException("no value present"));
+        return getDate(label).orElseThrow(NO_VALUE_PRESENT_SUPPLIER);
     }
 
     default Time getNullableTime(int index) {
-        return getTime(index).orElseThrow(() -> new NoSuchElementException("no value present"));
+        return getTime(index).orElseThrow(NO_VALUE_PRESENT_SUPPLIER);
     }
 
     default Time getNullableTime(@NonNull String label) {
-        return getTime(label).orElseThrow(() -> new NoSuchElementException("no value present"));
+        return getTime(label).orElseThrow(NO_VALUE_PRESENT_SUPPLIER);
     }
 
     default Timestamp getNullableTimestamp(int index) {
-        return getTimestamp(index).orElseThrow(() -> new NoSuchElementException("no value present"));
+        return getTimestamp(index).orElseThrow(NO_VALUE_PRESENT_SUPPLIER);
     }
 
     default Timestamp getNullableTimestamp(@NonNull String label) {
-        return getTimestamp(label).orElseThrow(() -> new NoSuchElementException("no value present"));
+        return getTimestamp(label).orElseThrow(NO_VALUE_PRESENT_SUPPLIER);
     }
 
     default byte[] getNullableBlob(int index) {
-        return getBlob(index).orElseThrow(() -> new NoSuchElementException("no value present"));
+        return getBlob(index).orElseThrow(NO_VALUE_PRESENT_SUPPLIER);
     }
 
     default byte[] getNullableBlob(@NonNull String label) {
-        return getBlob(label).orElseThrow(() -> new NoSuchElementException("no value present"));
+        return getBlob(label).orElseThrow(NO_VALUE_PRESENT_SUPPLIER);
     }
 
     // *------------------------------------------------- * //
@@ -275,54 +281,54 @@ public interface ResponseLine {
     // *------------------------------------------------- * //
 
     default Object nextNullableObject() {
-        return nextObject().orElseThrow(() -> new NoSuchElementException("no value present"));
+        return nextObject().orElseThrow(NO_VALUE_PRESENT_SUPPLIER);
     }
 
     default String nextNullableString() {
-        return nextString().orElseThrow(() -> new NoSuchElementException("no value present"));
+        return nextString().orElseThrow(NO_VALUE_PRESENT_SUPPLIER);
     }
 
     default Boolean nextNullableBoolean() {
-        return nextBoolean().orElseThrow(() -> new NoSuchElementException("no value present"));
+        return nextBoolean().orElseThrow(NO_VALUE_PRESENT_SUPPLIER);
     }
 
     default Long nextNullableLong() {
-        return nextLong().orElseThrow(() -> new NoSuchElementException("no value present"));
+        return nextLong().orElseThrow(NO_VALUE_PRESENT_SUPPLIER);
     }
 
     default Integer nextNullableInt() {
-        return nextInt().orElseThrow(() -> new NoSuchElementException("no value present"));
+        return nextInt().orElseThrow(NO_VALUE_PRESENT_SUPPLIER);
     }
 
     default Double nextNullableDouble() {
-        return nextDouble().orElseThrow(() -> new NoSuchElementException("no value present"));
+        return nextDouble().orElseThrow(NO_VALUE_PRESENT_SUPPLIER);
     }
 
     default Float nextNullableFloat() {
-        return nextFloat().orElseThrow(() -> new NoSuchElementException("no value present"));
+        return nextFloat().orElseThrow(NO_VALUE_PRESENT_SUPPLIER);
     }
 
     default Short nextNullableShort() {
-        return nextShort().orElseThrow(() -> new NoSuchElementException("no value present"));
+        return nextShort().orElseThrow(NO_VALUE_PRESENT_SUPPLIER);
     }
 
     default Byte nextNullableByte() {
-        return nextByte().orElseThrow(() -> new NoSuchElementException("no value present"));
+        return nextByte().orElseThrow(NO_VALUE_PRESENT_SUPPLIER);
     }
 
     default Date nextNullableDate() {
-        return nextDate().orElseThrow(() -> new NoSuchElementException("no value present"));
+        return nextDate().orElseThrow(NO_VALUE_PRESENT_SUPPLIER);
     }
 
     default Time nextNullableTime() {
-        return nextTime().orElseThrow(() -> new NoSuchElementException("no value present"));
+        return nextTime().orElseThrow(NO_VALUE_PRESENT_SUPPLIER);
     }
 
     default Timestamp nextNullableTimestamp() {
-        return nextTimestamp().orElseThrow(() -> new NoSuchElementException("no value present"));
+        return nextTimestamp().orElseThrow(NO_VALUE_PRESENT_SUPPLIER);
     }
 
     default byte[] nextNullableBlob() {
-        return nextBlob().orElseThrow(() -> new NoSuchElementException("no value present"));
+        return nextBlob().orElseThrow(NO_VALUE_PRESENT_SUPPLIER);
     }
 }

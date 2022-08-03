@@ -7,6 +7,9 @@ import lombok.NonNull;
 public interface RequestFinder extends RequestQuery {
 
     @NonNull
+    RequestFinder withLimit(int limit);
+
+    @NonNull
     RequestSessionSelector<RequestFinder> sessionSelector();
 
     @NonNull

@@ -37,8 +37,7 @@ public class SQLResponse extends LinkedList<ResponseLine> implements Response {
                 super.add(responseLine);
                 index++;
             }
-        }
-        catch (SQLException exception) {
+        } catch (SQLException exception) {
             throw new JnqException("response", exception);
         }
     }

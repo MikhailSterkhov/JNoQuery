@@ -16,7 +16,7 @@ public abstract class SQLRequestSession<Query extends RequestQuery>
     Query parent;
 
     @Override
-    public @NonNull Query backward() {
+    public @NonNull Query endpoint() {
         return parent;
     }
 

@@ -6,5 +6,5 @@ import lombok.NonNull;
 public interface RequestSession<Query extends RequestQuery> {
 
     @NonNull
-    Query backward();
+    Query endpoint();
 }

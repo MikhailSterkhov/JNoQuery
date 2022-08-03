@@ -6,7 +6,6 @@ import com.itzstonlex.jnq.impl.content.SchemaContent;
 import com.itzstonlex.jnq.impl.content.TableContent;
 import com.itzstonlex.jnq.impl.field.IndexDataField;
 import com.itzstonlex.jnq.impl.field.ValueDataField;
-import com.itzstonlex.jnq.request.query.session.RequestSessionJoiner;
 import com.itzstonlex.jnq.sql.SQLConnection;
 import com.itzstonlex.jnq.sql.SQLHelper;
 
@@ -32,7 +31,7 @@ public class TestH2 {
                     .append(IndexDataField.createNotNull(FieldType.VARCHAR, "name"))
                     .append(IndexDataField.createNotNull(FieldType.LONG, "register_date"))
                     .append(IndexDataField.createNotNull(FieldType.LONG, "last_update_date"))
-                    .backward()
+                    .endpoint()
 
                 .compile()
                 .updateTransaction();
@@ -51,7 +50,7 @@ public class TestH2 {
                     .append(ValueDataField.create("name", "itzstonlex"))
                     .append(ValueDataField.create("register_date", System.currentTimeMillis()))
                     .append(ValueDataField.create("last_update_date", System.currentTimeMillis()))
-                    .backward()
+                    .endpoint()
 
                 .compile()
                 .updateTransactionAsync()
@@ -68,22 +67,24 @@ public class TestH2 {
                 .toFactory()
                 .newFinder()
 
+                .withLimit(50)
+
                 .sessionSelector()
                     .withUpperCase("name").as("upper_name")
                     .withAll()
 
                 .sessionFilter()
                     .and(ValueDataField.create("name", "itzstonlex"))
-                    .backward()
+                    .endpoint()
 
                 .sessionGroup()
                     .by(ValueDataField.create("id"))
-                    .backward()
+                    .endpoint()
 
                 .sessionSort()
                     .byDesc(ValueDataField.create("id"))
                     .byAsc(ValueDataField.create("name"))
-                    .backward()
+                    .endpoint()
 
                 .compile()
                 .fetchFirstLineAsync()
@@ -91,12 +92,14 @@ public class TestH2 {
                 .whenComplete((response, throwable) -> {
 
                     System.out.println("USER FETCH RESPONSE:");
+
                     System.out.println(" ID: " + response.getNullableInt("id"));
                     System.out.println(" Name (in upper-case): " + response.getNullableString("upper_name"));
                     System.out.println(" Name (without case): " + response.getNullableString("name"));
                     System.out.println(" Register Time Millis: " + response.getNullableTimestamp("register_date").toGMTString());
                     System.out.println(" Last Update Time Millis: " + response.getNullableTimestamp("register_date").toGMTString());
                     System.out.println();
+
                     System.out.println(" Response indexes: " + response.getIndexes());
                     System.out.println(" Response labels names: " + response.getLabels());
                     System.out.println();
@@ -108,12 +111,12 @@ public class TestH2 {
 
                 .sessionUpdater()
                     .and(ValueDataField.create("last_update_date", System.currentTimeMillis()))
-                    .backward()
+                    .endpoint()
 
                 .sessionFilter()
                     .and(FieldOperator.MORE_WITH_EQUAL, ValueDataField.create("id", 1))
                     .and(ValueDataField.create("name", "itzstonlex"))
-                    .backward()
+                    .endpoint()
 
                 .compile()
                 .updateTransactionAsync()

@@ -26,7 +26,7 @@ public class SQLRequestSessionJoiner<Query extends RequestQuery>
 
         generatedSql = (directionString + " " + typeString + " JOIN `" + table + "` ON `" + from + "` = `" + to + "`");
 
-        return super.backward();
+        return endpoint();
     }
 
 }

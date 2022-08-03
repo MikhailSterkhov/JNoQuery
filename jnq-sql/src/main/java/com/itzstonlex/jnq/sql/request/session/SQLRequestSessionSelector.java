@@ -29,7 +29,7 @@ public class SQLRequestSessionSelector<Query extends RequestQuery>
     @Override
     public @NonNull Query withAll() {
         this._append("", "*");
-        return backward();
+        return endpoint();
     }
 
     @Override
@@ -39,41 +39,41 @@ public class SQLRequestSessionSelector<Query extends RequestQuery>
 
     @Override
     public @NonNull RequestSessionCast<RequestSessionSelector<Query>, Query> withCasted(@NonNull String field) {
-        return new SQLRequestSessionCast<>(this, backward(), (generatedSql) -> _append(field, "`%s`" + generatedSql));
+        return new SQLRequestSessionCast<>(this, endpoint(), (generatedSql) -> _append(field, "`%s`" + generatedSql));
     }
 
     @Override
     public @NonNull RequestSessionCast<RequestSessionSelector<Query>, Query> withQuery(@NonNull RequestQuery query) {
-        return new SQLRequestSessionCast<>(this, backward(), (generatedSql) -> _append(query.toString(), "(%s)" + generatedSql));
+        return new SQLRequestSessionCast<>(this, endpoint(), (generatedSql) -> _append(query.toString(), "(%s)" + generatedSql));
     }
 
     @Override
     public @NonNull RequestSessionCast<RequestSessionSelector<Query>, Query> withCount(@NonNull String field) {
-        return new SQLRequestSessionCast<>(this, backward(), (generatedSql) -> _append(field, "COUNT(`%s`)" + generatedSql));
+        return new SQLRequestSessionCast<>(this, endpoint(), (generatedSql) -> _append(field, "COUNT(`%s`)" + generatedSql));
     }
 
     @Override
     public @NonNull RequestSessionCast<RequestSessionSelector<Query>, Query> withLowerCase(@NonNull String field) {
-        return new SQLRequestSessionCast<>(this, backward(), (generatedSql) -> _append(field, "LOWER(`%s`)" + generatedSql));
+        return new SQLRequestSessionCast<>(this, endpoint(), (generatedSql) -> _append(field, "LOWER(`%s`)" + generatedSql));
     }
 
     @Override
     public @NonNull RequestSessionCast<RequestSessionSelector<Query>, Query> withUpperCase(@NonNull String field) {
-        return new SQLRequestSessionCast<>(this, backward(), (generatedSql) -> _append(field, "UPPER(`%s`)" + generatedSql));
+        return new SQLRequestSessionCast<>(this, endpoint(), (generatedSql) -> _append(field, "UPPER(`%s`)" + generatedSql));
     }
 
     @Override
     public @NonNull RequestSessionCast<RequestSessionSelector<Query>, Query> withMax(@NonNull String field) {
-        return new SQLRequestSessionCast<>(this, backward(), (generatedSql) -> _append(field, "MAX(`%s`)" + generatedSql));
+        return new SQLRequestSessionCast<>(this, endpoint(), (generatedSql) -> _append(field, "MAX(`%s`)" + generatedSql));
     }
 
     @Override
     public @NonNull RequestSessionCast<RequestSessionSelector<Query>, Query> withMin(@NonNull String field) {
-        return new SQLRequestSessionCast<>(this, backward(), (generatedSql) -> _append(field, "MIN(`%s`)" + generatedSql));
+        return new SQLRequestSessionCast<>(this, endpoint(), (generatedSql) -> _append(field, "MIN(`%s`)" + generatedSql));
     }
 
     @Override
     public @NonNull RequestSessionCast<RequestSessionSelector<Query>, Query> withAvg(@NonNull String field) {
-        return new SQLRequestSessionCast<>(this, backward(), (generatedSql) -> _append(field, "AVG(`%s`)" + generatedSql));
+        return new SQLRequestSessionCast<>(this, endpoint(), (generatedSql) -> _append(field, "AVG(`%s`)" + generatedSql));
     }
 }
