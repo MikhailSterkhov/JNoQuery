@@ -5,6 +5,7 @@ import com.itzstonlex.jnq.field.FieldType;
 import com.itzstonlex.jnq.impl.content.SchemaContent;
 import com.itzstonlex.jnq.impl.field.IndexDataField;
 import com.itzstonlex.jnq.impl.field.ValueDataField;
+import com.itzstonlex.jnq.request.query.session.RequestSessionJoiner;
 import com.itzstonlex.jnq.sql.SQLConnection;
 
 public class TestH2 {
@@ -61,6 +62,10 @@ public class TestH2 {
                 .toFactory()
                 .newFinder()
 
+                .sessionSelector()
+                    .withUpperCase("name").as("upper_name")
+                    .withAll()
+
                 .sessionFilter()
                     .and(ValueDataField.create("name", "itzstonlex"))
                     .backward()
@@ -81,7 +86,8 @@ public class TestH2 {
 
                     System.out.println("USER FETCH RESPONSE:");
                     System.out.println(" ID: " + response.getNullableInt("id"));
-                    System.out.println(" Name: " + response.getNullableString("name"));
+                    System.out.println(" Name (in upper-case): " + response.getNullableString("upper_name"));
+                    System.out.println(" Name (without case): " + response.getNullableString("name"));
                     System.out.println(" Register Time Millis: " + response.getNullableLong("register_date"));
                     System.out.println(" Last Update Time Millis: " + response.getNullableLong("last_update_date"));
                     System.out.println();
