@@ -94,8 +94,8 @@ public class TestH2 {
                     System.out.println(" ID: " + response.getNullableInt("id"));
                     System.out.println(" Name (in upper-case): " + response.getNullableString("upper_name"));
                     System.out.println(" Name (without case): " + response.getNullableString("name"));
-                    System.out.println(" Register Time Millis: " + response.getNullableLong("register_date"));
-                    System.out.println(" Last Update Time Millis: " + response.getNullableLong("last_update_date"));
+                    System.out.println(" Register Time Millis: " + response.getNullableTimestamp("register_date").toGMTString());
+                    System.out.println(" Last Update Time Millis: " + response.getNullableTimestamp("register_date").toGMTString());
                     System.out.println();
                     System.out.println(" Response indexes: " + response.getIndexes());
                     System.out.println(" Response labels names: " + response.getLabels());
