@@ -31,31 +31,8 @@ public class SQLResponse extends LinkedList<ResponseLine> implements Response {
                 int finalIndex = index; // java8 fuck u
                 Supplier<ResponseLine> nextSupplier = () -> super.get(finalIndex);
 
-                Map<String, Integer> indexByLabelsMap = new HashMap<>();
-                Map<Integer, String> labelByIndexesMap = new HashMap<>();
-
-                Set<Integer> nullableIndexes = new HashSet<>();
-
                 SQLResponseLine responseLine = new SQLResponseLine(index == 0, index == (columns - 1), nextSupplier);
-
-                for (int columnIndex = 1; columnIndex <= columns; columnIndex++) {
-
-                    String name = metadata.getColumnName(columnIndex);
-
-                    indexByLabelsMap.put(name.toLowerCase(), columnIndex);
-                    labelByIndexesMap.put(columnIndex, name);
-
-                    if (metadata.isNullable(columnIndex) == ResultSetMetaData.columnNullable) {
-                        nullableIndexes.add(columnIndex);
-                    }
-
-                    responseLine.set(columnIndex, resultSet.getObject(columnIndex));
-                }
-
-                responseLine.setIndexByLabelsMap(indexByLabelsMap);
-                responseLine.setLabelByIndexesMap(labelByIndexesMap);
-
-                responseLine.setNullableIndexes(nullableIndexes);
+                this._applyMetadata(responseLine, resultSet, metadata, columns);
 
                 super.add(responseLine);
                 index++;
@@ -64,6 +41,37 @@ public class SQLResponse extends LinkedList<ResponseLine> implements Response {
         catch (SQLException exception) {
             throw new JnqException("response", exception);
         }
+    }
+
+    private void _applyMetadata(SQLResponseLine responseLine, ResultSet resultSet, ResultSetMetaData metadata, int columns)
+    throws SQLException {
+
+        // create caches data.
+        Set<Integer> nullableIndexes = new HashSet<>();
+
+        Map<String, Integer> indexByLabelsMap = new HashMap<>();
+        Map<Integer, String> labelByIndexesMap = new HashMap<>();
+
+        // init columns data.
+        for (int columnIndex = 1; columnIndex <= columns; columnIndex++) {
+
+            String name = metadata.getColumnName(columnIndex);
+
+            indexByLabelsMap.put(name.toLowerCase(), columnIndex);
+            labelByIndexesMap.put(columnIndex, name);
+
+            if (metadata.isNullable(columnIndex) == ResultSetMetaData.columnNullable) {
+                nullableIndexes.add(columnIndex);
+            }
+
+            responseLine.set(columnIndex, resultSet.getObject(columnIndex));
+        }
+
+        // set metadata values for response-line.
+        responseLine.setIndexByLabelsMap(indexByLabelsMap);
+        responseLine.setLabelByIndexesMap(labelByIndexesMap);
+
+        responseLine.setNullableIndexes(nullableIndexes);
     }
 
 }

@@ -23,14 +23,35 @@ public interface RequestExecutor {
     ResponseLine fetchLastLine() throws JnqException;
 
     @NonNull
-    CompletableFuture<Response> fetchTransactionAsync();
+    CompletableFuture<Response> fetchTransactionAsync(boolean autojoin);
 
     @NonNull
-    CompletableFuture<ResponseLine> fetchFirstLineAsync();
+    CompletableFuture<ResponseLine> fetchFirstLineAsync(boolean autojoin);
 
     @NonNull
-    CompletableFuture<ResponseLine> fetchLastLineAsync();
+    CompletableFuture<ResponseLine> fetchLastLineAsync(boolean autojoin);
 
     @NonNull
-    CompletableFuture<UpdateResponse> updateTransactionAsync();
+    CompletableFuture<UpdateResponse> updateTransactionAsync(boolean autojoin);
+
+    @NonNull
+    default CompletableFuture<Response> fetchTransactionAsync() {
+        return fetchTransactionAsync(true);
+    }
+
+    @NonNull
+    default CompletableFuture<ResponseLine> fetchFirstLineAsync() {
+        return fetchFirstLineAsync(true);
+    }
+
+    @NonNull
+    default CompletableFuture<ResponseLine> fetchLastLineAsync() {
+        return fetchLastLineAsync(true);
+    }
+
+    @NonNull
+    default CompletableFuture<UpdateResponse> updateTransactionAsync() {
+        return updateTransactionAsync(true);
+    }
+
 }

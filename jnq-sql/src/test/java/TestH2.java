@@ -3,18 +3,20 @@ import com.itzstonlex.jnq.exception.JnqException;
 import com.itzstonlex.jnq.field.FieldOperator;
 import com.itzstonlex.jnq.field.FieldType;
 import com.itzstonlex.jnq.impl.content.SchemaContent;
+import com.itzstonlex.jnq.impl.content.TableContent;
 import com.itzstonlex.jnq.impl.field.IndexDataField;
 import com.itzstonlex.jnq.impl.field.ValueDataField;
 import com.itzstonlex.jnq.request.query.session.RequestSessionJoiner;
 import com.itzstonlex.jnq.sql.SQLConnection;
+import com.itzstonlex.jnq.sql.SQLHelper;
 
 public class TestH2 {
 
     public static void main(String[] args)
     throws JnqException {
 
-        DataConnection connection = new SQLConnection("org.h2.Driver", "jdbc:h2:mem:", "root", "password");
-        SchemaContent schemaContent = connection.getSchemaContent("public");
+        DataConnection connection = new SQLConnection(SQLHelper.toH2JDBC(), "root", "password");
+        SchemaContent schemaContent = connection.getSchemaContent(SQLHelper.H2_DEFAULT_SCHEMA_NAME);
 
         if (schemaContent == null) {
             System.out.println("wtf ?");
@@ -35,7 +37,11 @@ public class TestH2 {
                 .compile()
                 .updateTransaction();
 
+        // update schemes & tables content caches.
         connection.updateContents();
+
+        // getting created table now.
+        TableContent usersTable = schemaContent.getTableContent("reg_users");
 
         connection.createRequest(schemaContent)
                 .toFactory()
@@ -58,7 +64,7 @@ public class TestH2 {
                     System.out.println();
                 });
 
-        connection.createRequest(schemaContent.getTableContent("reg_users"))
+        connection.createRequest(usersTable)
                 .toFactory()
                 .newFinder()
 
@@ -96,7 +102,7 @@ public class TestH2 {
                     System.out.println();
                 });
 
-        connection.createRequest(schemaContent.getTableContent("reg_users"))
+        connection.createRequest(usersTable)
                 .toFactory()
                 .newUpdate()
 

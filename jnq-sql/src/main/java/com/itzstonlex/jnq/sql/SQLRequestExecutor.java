@@ -40,7 +40,7 @@ public class SQLRequestExecutor implements RequestExecutor {
         return fetchTransaction().getLast();
     }
 
-    private @NonNull <T> CompletableFuture<T> _executeAsyncTransaction(@NonNull JnqSupplier<T> supplier) {
+    private @NonNull <T> CompletableFuture<T> _executeAsyncTransaction(boolean autojoin, @NonNull JnqSupplier<T> supplier) {
         CompletableFuture<T> completableFuture = new CompletableFuture<>();
         CompletableFuture.runAsync(() -> {
 
@@ -53,28 +53,30 @@ public class SQLRequestExecutor implements RequestExecutor {
         });
 
         // apply auto-join async transaction response
-        completableFuture.join();
+        if (autojoin) {
+            completableFuture.join();
+        }
 
         return completableFuture;
     }
 
     @Override
-    public @NonNull CompletableFuture<Response> fetchTransactionAsync() {
-        return this._executeAsyncTransaction(this::fetchTransaction);
+    public @NonNull CompletableFuture<Response> fetchTransactionAsync(boolean autojoin) {
+        return this._executeAsyncTransaction(autojoin, this::fetchTransaction);
     }
 
     @Override
-    public @NonNull CompletableFuture<ResponseLine> fetchFirstLineAsync() {
-        return this._executeAsyncTransaction(this::fetchFirstLine);
+    public @NonNull CompletableFuture<ResponseLine> fetchFirstLineAsync(boolean autojoin) {
+        return this._executeAsyncTransaction(autojoin, this::fetchFirstLine);
     }
 
     @Override
-    public @NonNull CompletableFuture<ResponseLine> fetchLastLineAsync() {
-        return this._executeAsyncTransaction(this::fetchLastLine);
+    public @NonNull CompletableFuture<ResponseLine> fetchLastLineAsync(boolean autojoin) {
+        return this._executeAsyncTransaction(autojoin, this::fetchLastLine);
     }
 
     @Override
-    public @NonNull CompletableFuture<UpdateResponse> updateTransactionAsync() {
-        return this._executeAsyncTransaction(this::updateTransaction);
+    public @NonNull CompletableFuture<UpdateResponse> updateTransactionAsync(boolean autojoin) {
+        return this._executeAsyncTransaction(autojoin, this::updateTransaction);
     }
 }

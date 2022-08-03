@@ -54,11 +54,6 @@ public class SQLResponseLine extends LinkedHashMap<Integer, Object> implements R
     }
 
     @Override
-    public int size() {
-        return super.size() / 2;
-    }
-
-    @Override
     public int findIndex(@NonNull String label) {
         return indexByLabelsMap.getOrDefault(label.toLowerCase(), -1);
     }
@@ -114,7 +109,7 @@ public class SQLResponseLine extends LinkedHashMap<Integer, Object> implements R
     }
 
     private Optional<Object> lookup(int index) {
-        if (index < 0) {
+        if (index <= 0) {
             return Optional.empty();
         }
 
@@ -151,12 +146,26 @@ public class SQLResponseLine extends LinkedHashMap<Integer, Object> implements R
 
     @Override
     public Optional<Boolean> getBoolean(int index) {
-        return lookup(index, Boolean.class);
+        Object object = get(index);
+
+        boolean returnValue = false;
+
+        if (object instanceof Boolean) {
+            returnValue = (boolean) object;
+        }
+        else if (object instanceof Number) {
+            returnValue = ((Number) object).byteValue() == 1;
+        }
+        else if (object instanceof String) {
+            returnValue = object.equals("true");
+        }
+
+        return Optional.of(returnValue);
     }
 
     @Override
     public Optional<Boolean> getBoolean(@NonNull String label) {
-        return lookup(label, Boolean.class);
+        return getBoolean(findIndex(label));
     }
 
     @Override
@@ -221,32 +230,89 @@ public class SQLResponseLine extends LinkedHashMap<Integer, Object> implements R
 
     @Override
     public Optional<Date> getDate(int index) {
-        return lookup(index, Date.class);
+        Object object = get(index);
+
+        Date returnValue = null;
+
+        if (object instanceof Date) {
+            returnValue = (Date) object;
+        }
+        else if (object instanceof Long) {
+            returnValue = new Date((Long) object);
+        }
+        else if (object instanceof String) {
+            try {
+                returnValue = new Date(Long.parseLong(object.toString()));
+            }
+            catch (NumberFormatException exception) {
+                returnValue = Date.valueOf(object.toString());
+            }
+        }
+
+        return Optional.ofNullable(returnValue);
     }
 
     @Override
     public Optional<Date> getDate(@NonNull String label) {
-        return lookup(label, Date.class);
+        return getDate(findIndex(label));
     }
 
     @Override
     public Optional<Time> getTime(int index) {
-        return lookup(index, Time.class);
+        Object object = get(index);
+
+        Time returnValue = null;
+
+        if (object instanceof Time) {
+            returnValue = (Time) object;
+        }
+        else if (object instanceof Long) {
+            returnValue = new Time((Long) object);
+        }
+        else if (object instanceof String) {
+            try {
+                returnValue = new Time(Long.parseLong(object.toString()));
+            }
+            catch (NumberFormatException exception) {
+                returnValue = Time.valueOf(object.toString());
+            }
+        }
+
+        return Optional.ofNullable(returnValue);
     }
 
     @Override
     public Optional<Time> getTime(@NonNull String label) {
-        return lookup(label, Time.class);
+        return getTime(findIndex(label));
     }
 
     @Override
     public Optional<Timestamp> getTimestamp(int index) {
-        return lookup(index, Timestamp.class);
+        Object object = get(index);
+
+        Timestamp returnValue = null;
+
+        if (object instanceof Timestamp) {
+            returnValue = (Timestamp) object;
+        }
+        else if (object instanceof Long) {
+            returnValue = new Timestamp((Long) object);
+        }
+        else if (object instanceof String) {
+            try {
+                returnValue = new Timestamp(Long.parseLong(object.toString()));
+            }
+            catch (NumberFormatException exception) {
+                returnValue = Timestamp.valueOf(object.toString());
+            }
+        }
+
+        return Optional.ofNullable(returnValue);
     }
 
     @Override
     public Optional<Timestamp> getTimestamp(@NonNull String label) {
-        return lookup(label, Timestamp.class);
+        return getTimestamp(findIndex(label));
     }
 
     @Override

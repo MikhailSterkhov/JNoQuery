@@ -16,7 +16,7 @@ import lombok.experimental.FieldDefaults;
 
 import java.sql.*;
 import java.time.LocalDate;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.time.LocalTime;
 
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PROTECTED, makeFinal = true)
@@ -26,30 +26,36 @@ public final class SQLWrapperStatement {
 
     Object[] valuesArray;
 
-    private void _prepareStatementValues(@NonNull PreparedStatement statement) {
+    private void _prepareStatementValues(@NonNull PreparedStatement statement)
+    throws JnqException {
+
         if (valuesArray == null || valuesArray.length == 0) {
             return;
         }
 
-        AtomicInteger indexAtomic = new AtomicInteger(1);
+        int index = 1;
 
         for (Object obj : valuesArray) {
-
-            int index = indexAtomic.getAndIncrement();
-
             try {
                 if (obj instanceof LocalDate) {
                     obj = Date.valueOf((LocalDate) obj);
                 }
 
+                if (obj instanceof LocalTime) {
+                    obj = Time.valueOf((LocalTime) obj);
+                }
+
                 if (obj == null) {
                     statement.setNull(index, Types.NULL);
-                } else {
+                }
+                else {
                     statement.setObject(index, obj);
                 }
+
+                index++;
             }
             catch (SQLException exception) {
-                throw new RuntimeException(exception);
+                throw new JnqException(exception);
             }
         }
     }
