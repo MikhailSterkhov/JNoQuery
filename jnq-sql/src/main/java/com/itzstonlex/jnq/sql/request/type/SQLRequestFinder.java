@@ -1,15 +1,10 @@
 package com.itzstonlex.jnq.sql.request.type;
 
-import com.itzstonlex.jnq.request.query.session.RequestSessionFilter;
-import com.itzstonlex.jnq.request.query.session.RequestSessionJoiner;
-import com.itzstonlex.jnq.request.query.session.RequestSessionSelector;
+import com.itzstonlex.jnq.request.query.session.*;
 import com.itzstonlex.jnq.request.query.type.RequestFinder;
-import com.itzstonlex.jnq.request.query.type.RequestUpdate;
 import com.itzstonlex.jnq.sql.SQLRequest;
 import com.itzstonlex.jnq.sql.request.SQLRequestQuery;
-import com.itzstonlex.jnq.sql.request.session.SQLRequestSessionFilter;
-import com.itzstonlex.jnq.sql.request.session.SQLRequestSessionJoiner;
-import com.itzstonlex.jnq.sql.request.session.SQLRequestSessionSelector;
+import com.itzstonlex.jnq.sql.request.session.*;
 import lombok.AccessLevel;
 import lombok.NonNull;
 import lombok.experimental.FieldDefaults;
@@ -21,9 +16,9 @@ public class SQLRequestFinder extends SQLRequestQuery implements RequestFinder {
 
     SQLRequestSessionSelector<RequestFinder> sessionSelector = new SQLRequestSessionSelector<>(this);
 
-    SQLRequestSessionFilter<RequestFinder> sessionOrder = new SQLRequestSessionFilter<>(this);
+    SQLRequestSessionSortBy<RequestFinder> sessionOrder = new SQLRequestSessionSortBy<>(this);
 
-    SQLRequestSessionFilter<RequestFinder> sessionGroup = new SQLRequestSessionFilter<>(this);
+    SQLRequestSessionGroupBy<RequestFinder> sessionGroup = new SQLRequestSessionGroupBy<>(this);
 
     SQLRequestSessionFilter<RequestFinder> sessionFilter = new SQLRequestSessionFilter<>(this);
 
@@ -39,12 +34,12 @@ public class SQLRequestFinder extends SQLRequestQuery implements RequestFinder {
     }
 
     @Override
-    public @NonNull RequestSessionFilter<RequestFinder> sessionOrder() {
+    public @NonNull RequestSessionSortBy<RequestFinder> sessionSort() {
         return sessionOrder;
     }
 
     @Override
-    public @NonNull RequestSessionFilter<RequestFinder> sessionGroup() {
+    public @NonNull RequestSessionGroupBy<RequestFinder> sessionGroup() {
         return sessionGroup;
     }
 

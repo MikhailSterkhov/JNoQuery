@@ -5,7 +5,6 @@ import com.itzstonlex.jnq.field.FieldType;
 import com.itzstonlex.jnq.impl.content.SchemaContent;
 import com.itzstonlex.jnq.impl.field.IndexDataField;
 import com.itzstonlex.jnq.impl.field.ValueDataField;
-import com.itzstonlex.jnq.response.ResponseLine;
 import com.itzstonlex.jnq.sql.SQLConnection;
 
 public class TestH2 {
@@ -64,6 +63,15 @@ public class TestH2 {
 
                 .sessionFilter()
                     .and(ValueDataField.create("name", "itzstonlex"))
+                    .backward()
+
+                .sessionGroup()
+                    .by(ValueDataField.create("id"))
+                    .backward()
+
+                .sessionSort()
+                    .byDesc(ValueDataField.create("id"))
+                    .byAsc(ValueDataField.create("name"))
                     .backward()
 
                 .compile()

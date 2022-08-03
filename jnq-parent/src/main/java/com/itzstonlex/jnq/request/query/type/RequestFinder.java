@@ -1,9 +1,7 @@
 package com.itzstonlex.jnq.request.query.type;
 
 import com.itzstonlex.jnq.request.query.RequestQuery;
-import com.itzstonlex.jnq.request.query.session.RequestSessionFilter;
-import com.itzstonlex.jnq.request.query.session.RequestSessionJoiner;
-import com.itzstonlex.jnq.request.query.session.RequestSessionSelector;
+import com.itzstonlex.jnq.request.query.session.*;
 import lombok.NonNull;
 
 public interface RequestFinder extends RequestQuery {
@@ -12,10 +10,10 @@ public interface RequestFinder extends RequestQuery {
     RequestSessionSelector<RequestFinder> sessionSelector();
 
     @NonNull
-    RequestSessionFilter<RequestFinder> sessionOrder();
+    RequestSessionSortBy<RequestFinder> sessionSort();
 
     @NonNull
-    RequestSessionFilter<RequestFinder> sessionGroup();
+    RequestSessionGroupBy<RequestFinder> sessionGroup();
 
     @NonNull
     RequestSessionFilter<RequestFinder> sessionFilter();
