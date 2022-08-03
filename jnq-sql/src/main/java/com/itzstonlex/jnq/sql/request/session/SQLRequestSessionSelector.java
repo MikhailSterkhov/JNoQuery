@@ -61,4 +61,19 @@ public class SQLRequestSessionSelector<Query extends RequestQuery>
     public @NonNull RequestSessionCast<RequestSessionSelector<Query>, Query> withUpperCase(@NonNull String field) {
         return new SQLRequestSessionCast<>(this, backward(), (generatedSql) -> _append(field, "UPPER(`%s`)" + generatedSql));
     }
+
+    @Override
+    public @NonNull RequestSessionCast<RequestSessionSelector<Query>, Query> withMax(@NonNull String field) {
+        return new SQLRequestSessionCast<>(this, backward(), (generatedSql) -> _append(field, "MAX(`%s`)" + generatedSql));
+    }
+
+    @Override
+    public @NonNull RequestSessionCast<RequestSessionSelector<Query>, Query> withMin(@NonNull String field) {
+        return new SQLRequestSessionCast<>(this, backward(), (generatedSql) -> _append(field, "MIN(`%s`)" + generatedSql));
+    }
+
+    @Override
+    public @NonNull RequestSessionCast<RequestSessionSelector<Query>, Query> withAvg(@NonNull String field) {
+        return new SQLRequestSessionCast<>(this, backward(), (generatedSql) -> _append(field, "AVG(`%s`)" + generatedSql));
+    }
 }
