@@ -12,7 +12,7 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class SQLRequestFinder extends SQLRequestQuery implements RequestFinder {
 
-    private static final String QUERY = "SELECT {selector} FROM `{content}` {joiner} WHERE {filter} {order} {group}";
+    private static final String QUERY = "SELECT {selector} FROM `{content}` {joiner} WHERE {filter} {group} {order}";
 
     SQLRequestSessionSelector<RequestFinder> sessionSelector = new SQLRequestSessionSelector<>(this);
 
