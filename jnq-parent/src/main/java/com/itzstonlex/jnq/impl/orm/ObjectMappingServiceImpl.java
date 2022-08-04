@@ -125,7 +125,7 @@ public class ObjectMappingServiceImpl implements ObjectMappingService<MappingDat
             return findMapper(AnnotationMapper.class);
         }
 
-        return new JsonMapper<>();
+        return new JsonMapper<>(); // TODO: мб получится обойтись findMapper() ?
     }
 
     @SuppressWarnings("unchecked")
