@@ -35,7 +35,7 @@ public class ObjectMappingServiceImpl implements ObjectMappingService<MappingDat
 
     {
         existsMappersMap.put(AnnotationMapper.class, new AnnotationMapper<>());
-        // existsMappersMap.put(JsonMapper.class, new JsonMapper<>());
+        existsMappersMap.put(JsonMapper.class, new JsonMapper<>());
     }
 
     @Override

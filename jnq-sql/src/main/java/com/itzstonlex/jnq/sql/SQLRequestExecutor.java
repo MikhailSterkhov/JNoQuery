@@ -88,7 +88,7 @@ public class SQLRequestExecutor implements RequestExecutor {
 
     @Override
     public CompletableFuture<Integer> map(@NonNull Object object) throws JnqObjectMappingException {
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException(); // TODO: перенести сюда DataContent и реализовать функционал
     }
 
     @Override
