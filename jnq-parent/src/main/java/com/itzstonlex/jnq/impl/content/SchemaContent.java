@@ -36,7 +36,7 @@ public class SchemaContent implements DataContent {
         return getTablesContents().stream().map(TableContent::getName).collect(Collectors.toSet());
     }
 
-    public @NonNull TableContent getTableContent(@NonNull String name) {
+    public TableContent getTableContent(@NonNull String name) {
         return connection.getTableContent(this, name);
     }
 

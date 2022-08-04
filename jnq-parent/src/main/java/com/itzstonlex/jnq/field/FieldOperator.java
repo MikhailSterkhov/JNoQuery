@@ -23,9 +23,9 @@ public enum FieldOperator {
 
     LESS("<"),
 
-    MORE_WITH_EQUAL(">="),
+    MORE_OR_EQUAL(">="),
 
-    LESS_WITH_EQUAL("<="),
+    LESS_OR_EQUAL("<="),
     ;
 
     String sql;

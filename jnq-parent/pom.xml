@@ -13,6 +13,7 @@
 
     <name>JNoQuery-Parent</name>
     <description>Parent module with basic databases API</description>
+
     <build>
         <plugins>
             <plugin>
@@ -25,4 +26,13 @@
             </plugin>
         </plugins>
     </build>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.github.itzstonlex</groupId>
+            <artifactId>jnq-orm</artifactId>
+            <version>1.0</version>
+        </dependency>
+    </dependencies>
+
 </project>

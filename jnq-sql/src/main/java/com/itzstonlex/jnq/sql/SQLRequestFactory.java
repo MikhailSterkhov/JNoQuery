@@ -6,8 +6,7 @@ import com.itzstonlex.jnq.request.RequestFactory;
 import com.itzstonlex.jnq.request.query.RequestQueryBasic;
 import com.itzstonlex.jnq.request.query.type.*;
 import com.itzstonlex.jnq.sql.request.SQLRequestQueryBasic;
-import com.itzstonlex.jnq.sql.request.type.SQLRequestFinder;
-import com.itzstonlex.jnq.sql.request.type.SQLRequestUpdate;
+import com.itzstonlex.jnq.sql.request.type.*;
 import lombok.AccessLevel;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -46,7 +45,7 @@ public class SQLRequestFactory implements RequestFactory {
 
     @Override
     public @NonNull RequestCreateTable newCreateTable() {
-        throw new UnsupportedOperationException();
+        return new SQLRequestCreateTable(request);
     }
 
     @Override
@@ -56,7 +55,7 @@ public class SQLRequestFactory implements RequestFactory {
 
     @Override
     public @NonNull RequestCreateSchema newCreateSchema() {
-        throw new UnsupportedOperationException();
+        return new SQLRequestCreateSchema(request);
     }
 
     @Override
@@ -71,7 +70,7 @@ public class SQLRequestFactory implements RequestFactory {
 
     @Override
     public @NonNull RequestInsert newInsert() {
-        throw new UnsupportedOperationException();
+        return new SQLRequestInsert(request);
     }
 
     @Override

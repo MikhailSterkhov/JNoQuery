@@ -2,9 +2,9 @@ package com.itzstonlex.jnq.response;
 
 import lombok.NonNull;
 
-import java.util.Collection;
+import java.util.List;
 
-public interface Response extends Collection<ResponseLine> {
+public interface Response extends List<ResponseLine> {
 
     ResponseLine getFirst();
 

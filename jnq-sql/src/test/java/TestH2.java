@@ -6,21 +6,29 @@ import com.itzstonlex.jnq.impl.content.SchemaContent;
 import com.itzstonlex.jnq.impl.content.TableContent;
 import com.itzstonlex.jnq.impl.field.IndexDataField;
 import com.itzstonlex.jnq.impl.field.ValueDataField;
+import com.itzstonlex.jnq.orm.exception.JnqObjectMappingException;
 import com.itzstonlex.jnq.sql.SQLConnection;
 import com.itzstonlex.jnq.sql.SQLHelper;
 
 public class TestH2 {
 
     public static void main(String[] args)
-    throws JnqException {
+    throws JnqException, JnqObjectMappingException {
 
-        DataConnection connection = new SQLConnection(SQLHelper.toH2JDBC(), "root", "password");
-        SchemaContent schemaContent = connection.getSchemaContent(SQLHelper.H2_DEFAULT_SCHEMA_NAME);
+        final DataConnection connection = new SQLConnection(SQLHelper.toH2JDBC(), "root", "password");
+        final SchemaContent schemaContent = connection.getSchemaContent(SQLHelper.H2_DEFAULT_SCHEMA_NAME);
 
         if (schemaContent == null) {
             System.out.println("wtf ?");
             return;
         }
+
+        // setup mysql mode for H2 driver.
+        connection.createRequest(schemaContent)
+                .toFactory()
+                .fromQuery("set mode MySQL;")
+                .compile()
+                .updateTransaction();
         
         connection.createRequest(schemaContent)
                 .toFactory()
@@ -40,7 +48,7 @@ public class TestH2 {
         connection.updateContents();
 
         // getting created table now.
-        TableContent usersTable = schemaContent.getTableContent("reg_users");
+        final TableContent usersTable = schemaContent.getTableContent("reg_users");
 
         connection.createRequest(schemaContent)
                 .toFactory()
@@ -114,7 +122,7 @@ public class TestH2 {
                     .endpoint()
 
                 .sessionFilter()
-                    .and(FieldOperator.MORE_WITH_EQUAL, ValueDataField.create("id", 1))
+                    .and(FieldOperator.MORE_OR_EQUAL, ValueDataField.create("id", 1))
                     .and(ValueDataField.create("name", "itzstonlex"))
                     .endpoint()
 

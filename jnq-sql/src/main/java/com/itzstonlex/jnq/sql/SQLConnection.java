@@ -5,10 +5,13 @@ import com.itzstonlex.jnq.content.DataContent;
 import com.itzstonlex.jnq.exception.JnqException;
 import com.itzstonlex.jnq.impl.content.SchemaContent;
 import com.itzstonlex.jnq.impl.content.TableContent;
-import com.itzstonlex.jnq.response.Response;
-import com.itzstonlex.jnq.sql.response.SQLResponse;
+import com.itzstonlex.jnq.impl.field.MappingDataField;
+import com.itzstonlex.jnq.impl.orm.ObjectMappingServiceImpl;
+import com.itzstonlex.jnq.orm.ObjectMappingService;
 import com.itzstonlex.jnq.request.Request;
+import com.itzstonlex.jnq.response.Response;
 import com.itzstonlex.jnq.response.ResponseLine;
+import com.itzstonlex.jnq.sql.response.SQLResponse;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NonNull;
@@ -37,6 +40,8 @@ public class SQLConnection implements DataConnection {
     @Getter
     Connection sqlConnection;
 
+    ObjectMappingService<MappingDataField> objectMappingService;
+
     Map<String, SchemaContent> schemaByNamesMap = new ConcurrentHashMap<>();
     Map<String, TableContent> tableByNameMap = new ConcurrentHashMap<>();
 
@@ -47,6 +52,8 @@ public class SQLConnection implements DataConnection {
             }
 
             this.sqlConnection = sqlConnection;
+
+            this.objectMappingService = new ObjectMappingServiceImpl(this);
             this.meta = new SQLConnectionMeta(sqlConnection.getMetaData());
 
             this.updateContents();
@@ -163,6 +170,11 @@ public class SQLConnection implements DataConnection {
     @Override
     public @NonNull Request createRequest(@NonNull DataContent content) {
         return new SQLRequest(this, content);
+    }
+
+    @Override
+    public @NonNull ObjectMappingService<MappingDataField> getObjectMappings() {
+        return objectMappingService;
     }
 
     @Override

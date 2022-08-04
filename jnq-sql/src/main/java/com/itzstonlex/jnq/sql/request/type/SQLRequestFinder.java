@@ -13,7 +13,7 @@ import lombok.experimental.NonFinal;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class SQLRequestFinder extends SQLRequestQuery implements RequestFinder {
 
-    private static final String QUERY = "SELECT {selector} FROM `{content}` {joiner} WHERE {filter} {group} {order} {limit}";
+    private static final String QUERY = "SELECT {selector} FROM `{content}` {joiner} {filter} {group} {order} {limit}";
 
     SQLRequestSessionSelector<RequestFinder> sessionSelector = new SQLRequestSessionSelector<>(this);
 
@@ -73,7 +73,7 @@ public class SQLRequestFinder extends SQLRequestQuery implements RequestFinder {
         query = query.replace("{filter}", sessionFilter.getGeneratedSql());
         query = query.replace("{joiner}", sessionJoiner.getGeneratedSql());
 
-        query = query.replace("{limit}", limitSize > 0 ? Integer.toString(limitSize) : "");
+        query = query.replace("{limit}", limitSize > 0 ? "LIMIT " + limitSize : "");
 
         return query;
     }

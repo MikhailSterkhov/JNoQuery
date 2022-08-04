@@ -1,17 +1,20 @@
 package com.itzstonlex.jnq.sql;
 
 import com.itzstonlex.jnq.exception.JnqException;
+import com.itzstonlex.jnq.impl.field.MappingDataField;
+import com.itzstonlex.jnq.orm.ObjectMappingService;
+import com.itzstonlex.jnq.orm.exception.JnqObjectMappingException;
 import com.itzstonlex.jnq.request.RequestExecutor;
-import com.itzstonlex.jnq.response.UpdateResponse;
 import com.itzstonlex.jnq.response.Response;
 import com.itzstonlex.jnq.response.ResponseLine;
+import com.itzstonlex.jnq.response.UpdateResponse;
 import com.itzstonlex.jnq.util.JnqSupplier;
 import lombok.AccessLevel;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
-import java.util.List;
+import java.util.LinkedList;
 import java.util.concurrent.CompletableFuture;
 
 @RequiredArgsConstructor
@@ -21,25 +24,7 @@ public class SQLRequestExecutor implements RequestExecutor {
     String query;
     SQLWrapperStatement wrapperStatement;
 
-    @Override
-    public void update(@NonNull Object object) throws JnqException {
-        throw new UnsupportedOperationException(); // TODO
-    }
-
-    @Override
-    public <T> @NonNull T fetchFirst(@NonNull Class<T> cls) throws JnqException {
-        throw new UnsupportedOperationException(); // TODO
-    }
-
-    @Override
-    public <T> @NonNull T fetchLast(@NonNull Class<T> cls) throws JnqException {
-        throw new UnsupportedOperationException(); // TODO
-    }
-
-    @Override
-    public @NonNull <T> List<T> fetchAll(@NonNull Class<T> cls) throws JnqException {
-        throw new UnsupportedOperationException(); // TODO
-    }
+    ObjectMappingService<MappingDataField> objectMappingService;
 
     @Override
     public @NonNull Response fetchTransaction() throws JnqException {
@@ -100,4 +85,25 @@ public class SQLRequestExecutor implements RequestExecutor {
     public @NonNull CompletableFuture<UpdateResponse> updateTransactionAsync(boolean autojoin) {
         return this._executeAsyncTransaction(autojoin, this::updateTransaction);
     }
+
+    @Override
+    public CompletableFuture<Integer> map(@NonNull Object object) throws JnqObjectMappingException {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public <T> @NonNull T fetchFirst(@NonNull Class<T> cls) throws JnqObjectMappingException {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public <T> @NonNull T fetchLast(@NonNull Class<T> cls) throws JnqObjectMappingException {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public @NonNull <T> LinkedList<T> fetchAll(@NonNull Class<T> cls) throws JnqObjectMappingException {
+        throw new UnsupportedOperationException();
+    }
+
 }

@@ -84,7 +84,7 @@ public class SQLResponseLine extends LinkedHashMap<Integer, Object> implements R
 
     @Override
     public boolean contains(@NonNull String label) {
-        return containsKey(label);
+        return containsKey(findIndex(label));
     }
 
     @SneakyThrows

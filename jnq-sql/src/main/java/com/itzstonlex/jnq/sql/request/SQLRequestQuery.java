@@ -24,7 +24,7 @@ public abstract class SQLRequestQuery implements RequestQuery {
     public @NonNull RequestExecutor compile() {
 
         SQLWrapperStatement statement = new SQLWrapperStatement(request, toFieldValues());
-        return new SQLRequestExecutor(toSQL(), statement);
+        return new SQLRequestExecutor(toSQL(), statement, request.connection().getObjectMappings());
     }
 
     @Override

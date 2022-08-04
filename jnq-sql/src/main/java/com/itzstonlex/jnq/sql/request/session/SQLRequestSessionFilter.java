@@ -35,6 +35,9 @@ public class SQLRequestSessionFilter<Query extends RequestQuery>
         if (!generatedSql.isEmpty()) {
             builder.append(" ").append(delimiter).append(" ");
         }
+        else {
+            builder.append("WHERE ");
+        }
 
         _appendField(builder, operator, field);
         generatedSql = builder.toString();

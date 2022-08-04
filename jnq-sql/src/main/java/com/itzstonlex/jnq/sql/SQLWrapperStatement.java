@@ -10,6 +10,7 @@ import com.itzstonlex.jnq.response.Response;
 import com.itzstonlex.jnq.response.UpdateResponse;
 import com.itzstonlex.jnq.sql.response.SQLResponse;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -18,8 +19,8 @@ import java.sql.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-@RequiredArgsConstructor
-@FieldDefaults(level = AccessLevel.PROTECTED, makeFinal = true)
+@AllArgsConstructor
+@FieldDefaults(level = AccessLevel.PROTECTED)
 public final class SQLWrapperStatement {
 
     SQLRequest request;

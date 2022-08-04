@@ -11,7 +11,7 @@ import lombok.experimental.NonFinal;
 
 import java.util.*;
 
-@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class IndexDataField implements DataField {
 
