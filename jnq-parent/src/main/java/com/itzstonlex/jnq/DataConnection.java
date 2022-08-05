@@ -1,9 +1,9 @@
 package com.itzstonlex.jnq;
 
 import com.itzstonlex.jnq.content.DataContent;
+import com.itzstonlex.jnq.exception.JnqException;
 import com.itzstonlex.jnq.impl.content.SchemaContent;
 import com.itzstonlex.jnq.impl.content.TableContent;
-import com.itzstonlex.jnq.exception.JnqException;
 import com.itzstonlex.jnq.impl.field.MappingDataField;
 import com.itzstonlex.jnq.orm.ObjectMappingService;
 import com.itzstonlex.jnq.request.Request;

@@ -12,7 +12,6 @@ import com.itzstonlex.jnq.sql.response.SQLResponse;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
 import java.sql.*;

@@ -1,7 +1,6 @@
 package com.itzstonlex.jnq.impl.orm.request;
 
 import com.itzstonlex.jnq.DataConnection;
-import com.itzstonlex.jnq.content.DataContent;
 import com.itzstonlex.jnq.impl.field.MappingDataField;
 import com.itzstonlex.jnq.orm.ObjectMapper;
 import com.itzstonlex.jnq.orm.ObjectMappingService;
