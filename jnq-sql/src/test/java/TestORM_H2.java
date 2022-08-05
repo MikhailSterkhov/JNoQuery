@@ -4,6 +4,7 @@ import com.itzstonlex.jnq.impl.field.MappingDataField;
 import com.itzstonlex.jnq.orm.ObjectMappingService;
 import com.itzstonlex.jnq.orm.annotation.Mapping;
 import com.itzstonlex.jnq.orm.annotation.MappingColumn;
+import com.itzstonlex.jnq.orm.annotation.MappingInitMethod;
 import com.itzstonlex.jnq.orm.exception.JnqObjectMappingException;
 import com.itzstonlex.jnq.sql.SQLConnection;
 import com.itzstonlex.jnq.sql.SQLHelper;
@@ -23,14 +24,19 @@ public class TestORM_H2 {
     @ToString
     public static class User {
 
-        @MappingColumn
+        @MappingColumn // annotation from JNQ
         private String name;
 
-        @MappingColumn("register_date")
+        @MappingColumn("register_date") // annotation from JNQ
         private long registerTimeMillis;
 
-        @MappingColumn("last_update_date")
+        @MappingColumn("last_update_date") // annotation from JNQ
         private long lastUpdateTimeMillis;
+
+        @MappingInitMethod // annotation from JNQ
+        public void init() {
+            System.out.println("User " + name + " was initialized!");
+        }
     }
 
     public static void main(String[] args)

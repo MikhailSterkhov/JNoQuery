@@ -4,6 +4,7 @@ import com.itzstonlex.jnq.orm.ObjectMapper;
 import com.itzstonlex.jnq.orm.ObjectMapperProperties;
 import com.itzstonlex.jnq.orm.annotation.Mapping;
 import com.itzstonlex.jnq.orm.annotation.MappingColumn;
+import com.itzstonlex.jnq.orm.annotation.MappingInitMethod;
 import com.itzstonlex.jnq.orm.exception.JnqObjectMappingException;
 import lombok.AccessLevel;
 import lombok.NonNull;
@@ -11,8 +12,11 @@ import lombok.experimental.FieldDefaults;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class AnnotationMapper<T> implements ObjectMapper<T> {
@@ -36,6 +40,25 @@ public class AnnotationMapper<T> implements ObjectMapper<T> {
         }
 
         return map;
+    }
+
+    @NonNull
+    private Set<Method> getInitMethods(Object src) {
+        Set<Method> methodSet = new HashSet<>();
+
+        for (Method method : src.getClass().getDeclaredMethods()) {
+            if (method.getParameterCount() != 0) {
+                continue;
+            }
+
+            if (method.isAnnotationPresent(MappingInitMethod.class)) {
+
+                method.setAccessible(true);
+                methodSet.add(method);
+            }
+        }
+
+        return methodSet;
     }
 
     protected void validateSourceType(@NonNull Class<?> cls)
@@ -86,6 +109,10 @@ public class AnnotationMapper<T> implements ObjectMapper<T> {
 
                 field.setAccessible(true);
                 field.set(instance, value);
+            }
+
+            for (Method initMethod : getInitMethods(instance)) {
+                initMethod.invoke(instance);
             }
 
             return instance;
