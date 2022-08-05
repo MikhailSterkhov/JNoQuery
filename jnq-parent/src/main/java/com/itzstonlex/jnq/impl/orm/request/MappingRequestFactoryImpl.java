@@ -28,7 +28,7 @@ public class MappingRequestFactoryImpl implements MappingRequestFactory<MappingD
     }
 
     @Override
-    public MappingRequestUpdate<MappingDataField> newUpdate() {
+    public MappingRequestUpdate newUpdate() {
         return new MappingRequestUpdateImpl(connection, schema, table, objectMappingService);
     }
 }

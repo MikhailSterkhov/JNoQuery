@@ -11,9 +11,32 @@ import lombok.experimental.FieldDefaults;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.util.HashMap;
+import java.util.Map;
 
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class AnnotationMapper<T> implements ObjectMapper<T> {
+
+    @NonNull
+    private Map<String, Field> _toDeclaredMappingFields(Class<?> cls) {
+        Map<String, Field> map = new HashMap<>();
+
+        Field[] declaredFields = cls.getDeclaredFields();
+
+        for (Field field : declaredFields) {
+            String name = field.getName();
+
+            MappingColumn mappingColumn = field.getDeclaredAnnotation(MappingColumn.class);
+
+            if (mappingColumn != null && !mappingColumn.value().isEmpty()) {
+                name = mappingColumn.value();
+            }
+
+            map.put(name, field);
+        }
+
+        return map;
+    }
 
     protected void validateSourceType(@NonNull Class<?> cls)
     throws JnqObjectMappingException {
@@ -29,23 +52,14 @@ public class AnnotationMapper<T> implements ObjectMapper<T> {
 
         this.validateSourceType(src.getClass());
 
-        Class<?> cls = src.getClass();
-        Field[] declaredFields = cls.getDeclaredFields();
+        for (Map.Entry<String, Field> entry : _toDeclaredMappingFields(src.getClass()).entrySet()) {
 
-        for (Field field : declaredFields) {
-            String name = field.getName();
-
-            MappingColumn mappingColumn = field.getDeclaredAnnotation(MappingColumn.class);
-
-            if (mappingColumn != null && !mappingColumn.value().isEmpty()) {
-                name = mappingColumn.value();
-            }
+            String name = entry.getKey();
+            Field field = entry.getValue();
 
             try {
                 field.setAccessible(true);
                 properties.set(name, field.get(src));
-
-                field.setAccessible(false);
             }
             catch (Exception exception) {
                 throw new JnqObjectMappingException("mapping", exception);
@@ -61,27 +75,20 @@ public class AnnotationMapper<T> implements ObjectMapper<T> {
 
         try {
             Constructor<T> constructor = cls.getConstructor();
+            T instance = constructor.newInstance();
 
-            T obj = constructor.newInstance();
+            for (Map.Entry<String, Field> entry : _toDeclaredMappingFields(cls).entrySet()) {
 
-            for (Field field : cls.getDeclaredFields()) {
-                String name = field.getName();
-
-                MappingColumn mappingColumn = field.getDeclaredAnnotation(MappingColumn.class);
-
-                if (mappingColumn != null && !mappingColumn.value().isEmpty()) {
-                    name = mappingColumn.value();
-                }
+                String name = entry.getKey();
+                Field field = entry.getValue();
 
                 Object value = properties.get(name.toLowerCase(), () -> null);
 
                 field.setAccessible(true);
-                field.set(obj, value);
-
-                field.setAccessible(false);
+                field.set(instance, value);
             }
 
-            return obj;
+            return instance;
         }
         catch (Exception exception) {
             throw new JnqObjectMappingException("fetch", exception);

@@ -12,7 +12,7 @@ import lombok.NonNull;
 import lombok.experimental.FieldDefaults;
 
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class MappingRequestUpdateImpl extends AbstractMappingRequest implements MappingRequestUpdate<MappingDataField> {
+public class MappingRequestUpdateImpl extends AbstractMappingRequest implements MappingRequestUpdate {
 
     public MappingRequestUpdateImpl(@NonNull DataConnection connection, @NonNull String schema, String table, @NonNull ObjectMappingService<MappingDataField> objectMappingService) {
         super(connection, schema, table, objectMappingService);

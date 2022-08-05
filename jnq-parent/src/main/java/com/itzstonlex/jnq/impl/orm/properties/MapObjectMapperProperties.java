@@ -16,6 +16,11 @@ public class MapObjectMapperProperties implements ObjectMapperProperties {
     Map<String, Object> propertiesMap = new LinkedHashMap<>();
 
     @Override
+    public void foreach(@NonNull BiConsumer<String, Object> foreach) {
+        propertiesMap.forEach(foreach);
+    }
+
+    @Override
     public @NonNull ObjectMapperProperties set(@NonNull String key, Object value) {
         propertiesMap.put(key, value);
         return this;
@@ -37,11 +42,6 @@ public class MapObjectMapperProperties implements ObjectMapperProperties {
         }
 
         return returnValue;
-    }
-
-    @Override
-    public void foreach(@NonNull BiConsumer<String, Object> foreach) {
-        propertiesMap.forEach(foreach);
     }
 
 }

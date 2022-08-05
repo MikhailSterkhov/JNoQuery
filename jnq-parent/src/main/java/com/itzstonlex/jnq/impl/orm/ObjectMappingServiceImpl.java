@@ -1,7 +1,6 @@
 package com.itzstonlex.jnq.impl.orm;
 
 import com.itzstonlex.jnq.DataConnection;
-import com.itzstonlex.jnq.impl.content.TableContent;
 import com.itzstonlex.jnq.impl.field.MappingDataField;
 import com.itzstonlex.jnq.impl.orm.request.MappingRequestFactoryImpl;
 import com.itzstonlex.jnq.orm.ObjectMapper;
@@ -20,6 +19,7 @@ import lombok.experimental.FieldDefaults;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 @Getter
@@ -48,11 +48,9 @@ public class ObjectMappingServiceImpl implements ObjectMappingService<MappingDat
         return getRequestFactory(connection.getSchemasContents().iterator().next().getName(), table);
     }
 
-    @Override
-    public Map<String, Object> toMap(@NonNull Object object) throws JnqObjectMappingException {
-        Map<String, Object> map = new HashMap<>();
+    private Map<String, Field> _toMapFields(Class<?> cls) {
+        Map<String, Field> map = new HashMap<>();
 
-        Class<?> cls = object.getClass();
         Field[] declaredFields = cls.getDeclaredFields();
 
         for (Field field : declaredFields) {
@@ -64,11 +62,29 @@ public class ObjectMappingServiceImpl implements ObjectMappingService<MappingDat
                 name = mappingColumn.value();
             }
 
+            field.setAccessible(true);
+            map.put(name, field);
+        }
+
+        return map;
+    }
+
+    @Override
+    public Map<String, Object> toMap(@NonNull Object object)
+    throws JnqObjectMappingException {
+
+        Map<String, Object> map = new LinkedHashMap<>();
+
+        Map<String, Field> mapFields = _toMapFields(object.getClass());
+
+        for (String name : mapFields.keySet()) {
+            Field field = mapFields.get(name);
+
             try {
                 map.put(name, field.get(object));
             }
             catch (Exception exception) {
-                throw new JnqObjectMappingException("parsing to map: " + cls, exception);
+                throw new JnqObjectMappingException("parse to map", exception);
             }
         }
 
@@ -76,28 +92,10 @@ public class ObjectMappingServiceImpl implements ObjectMappingService<MappingDat
     }
 
     @Override
-    public Map<String, Class<?>> toMap(@NonNull Class<?> cls) throws JnqObjectMappingException {
-        Map<String, Class<?>> map = new HashMap<>();
+    public Map<String, Class<?>> toMap(@NonNull Class<?> cls) {
+        Map<String, Class<?>> map = new LinkedHashMap<>();
 
-        Field[] declaredFields = cls.getDeclaredFields();
-
-        for (Field field : declaredFields) {
-            String name = field.getName();
-
-            MappingColumn mappingColumn = field.getDeclaredAnnotation(MappingColumn.class);
-
-            if (mappingColumn != null && !mappingColumn.value().isEmpty()) {
-                name = mappingColumn.value();
-            }
-
-            try {
-                map.put(name, field.getType());
-            }
-            catch (Exception exception) {
-                throw new JnqObjectMappingException("parsing to map: " + cls, exception);
-            }
-        }
-
+        _toMapFields(cls).forEach((name, field) -> map.put(name, field.getType()));
         return map;
     }
 

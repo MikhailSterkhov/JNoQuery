@@ -7,5 +7,5 @@ public interface MappingRequestFactory<Include> {
 
     MappingRequestFinder<Include>  newFinder();
 
-    MappingRequestUpdate<Include>  newUpdate();
+    MappingRequestUpdate newUpdate();
 }

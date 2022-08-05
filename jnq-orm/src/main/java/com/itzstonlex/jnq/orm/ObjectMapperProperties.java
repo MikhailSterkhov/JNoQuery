@@ -7,6 +7,8 @@ import java.util.function.Supplier;
 
 public interface ObjectMapperProperties {
 
+    void foreach(@NonNull BiConsumer<String, Object> foreach);
+
     @NonNull
     ObjectMapperProperties set(@NonNull String key, Object value);
 
@@ -15,6 +17,4 @@ public interface ObjectMapperProperties {
 
     @NonNull
     <T> T get(@NonNull String key, @NonNull Supplier<T> defaultValue);
-
-    void foreach(@NonNull BiConsumer<String, Object> foreach);
 }
