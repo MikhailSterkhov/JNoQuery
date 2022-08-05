@@ -1,6 +1,3 @@
-# JNoQuery
-Java Database connection with nosql &amp; sql management
-
 <div align="center">
 
 ---
@@ -9,7 +6,12 @@ Java Database connection with nosql &amp; sql management
 
 ---
 
-#### INFORMATION BLOCK
+# JNoQuery
+Java Database connection with nosql &amp; sql management
+
+---
+
+#### _INFORMATION BLOCK_
 
 [![MIT License](https://img.shields.io/github/license/pl3xgaming/Purpur?&logo=github)](LICENSE)
 
