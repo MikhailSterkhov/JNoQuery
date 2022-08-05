@@ -42,7 +42,7 @@ public class MappingRequestExecutorImpl implements MappingRequestExecutor {
 
     MappingRequestFinderImpl requestFinder;
 
-    private void _checkTableValidation(ObjectMapperProperties properties)
+    private RequestSessionAppender<IndexDataField, RequestCreateTable> _getTableCreateSession()
     throws JnqException {
 
         SchemaContent schemaContent = connection.getSchemaContent(schema);
@@ -58,18 +58,12 @@ public class MappingRequestExecutorImpl implements MappingRequestExecutor {
         if (tableContent == null) {
             tableContent = new TableContent(table, schemaContent);
 
-            RequestSessionAppender<IndexDataField, RequestCreateTable> createSession = tableContent.create()
-                    .append(IndexDataField.createPrimaryNotNullAutoIncrement("id"));
-
-            properties.foreach((name, value) -> {
-
-                FieldType fieldType = FieldType.fromAttachment(value.getClass());
-                createSession.append(IndexDataField.create(fieldType, name));
-            });
-
-            createSession.endpoint().compile().updateTransaction();
-            connection.updateContents();
+            return tableContent.create().append(
+                    IndexDataField.createPrimaryNotNullAutoIncrement("id")
+            );
         }
+
+        return null;
     }
 
     private CompletableFuture<Integer> _insertObject(ObjectMapperProperties properties)
@@ -100,48 +94,6 @@ public class MappingRequestExecutorImpl implements MappingRequestExecutor {
         return CompletableFuture.completedFuture(updateResponse.getGeneratedKey());
     }
 
-    @Override
-    public CompletableFuture<Integer> map(@NonNull Object object) throws JnqObjectMappingException {
-        ObjectMapperProperties properties = new MapObjectMapperProperties();
-
-        objectMapper.mapping(object, properties);
-
-        _checkTableValidation(properties);
-        return _insertObject(properties);
-    }
-
-    private void _checkTableValidation(Class<?> cls)
-    throws JnqObjectMappingException {
-
-        Map<String, Class<?>> map = connection.getObjectMappings().toMap(cls);
-
-        SchemaContent schemaContent = connection.getSchemaContent(schema);
-
-        // create schema if not exists.
-        if (schemaContent.getTablesContents().isEmpty()) {
-            schemaContent.create();
-        }
-
-        // create tables if not exists.
-        TableContent tableContent = schemaContent.getTableContent(table);
-
-        if (tableContent == null) {
-            tableContent = new TableContent(table, schemaContent);
-
-            RequestSessionAppender<IndexDataField, RequestCreateTable> createSession = tableContent.create()
-                    .append(IndexDataField.createPrimaryNotNullAutoIncrement("id"));
-
-            map.forEach((name, value) -> {
-
-                FieldType fieldType = FieldType.fromAttachment(value);
-                createSession.append(IndexDataField.create(fieldType, name));
-            });
-
-            createSession.endpoint().compile().updateTransaction();
-            connection.updateContents();
-        }
-    }
-
     private Response _fetchAllResponse()
     throws JnqException {
 
@@ -161,6 +113,28 @@ public class MappingRequestExecutorImpl implements MappingRequestExecutor {
         return newRequestFinder.compile().fetchTransaction();
     }
 
+    @Override
+    public CompletableFuture<Integer> map(@NonNull Object object) throws JnqObjectMappingException {
+        ObjectMapperProperties properties = new MapObjectMapperProperties();
+
+        objectMapper.mapping(object, properties);
+
+        RequestSessionAppender<IndexDataField, RequestCreateTable> createSession = _getTableCreateSession();
+
+        if (createSession != null) {
+            properties.foreach((name, value) -> {
+
+                FieldType fieldType = FieldType.fromAttachment(value.getClass());
+                createSession.append(IndexDataField.create(fieldType, name));
+            });
+
+            createSession.endpoint().compile().updateTransaction();
+            connection.updateContents();
+        }
+
+        return _insertObject(properties);
+    }
+
     @SuppressWarnings("unchecked")
     @Override
     public @NonNull <T> LinkedList<T> fetchAll(@NonNull Class<T> cls) throws JnqObjectMappingException {
@@ -168,7 +142,20 @@ public class MappingRequestExecutorImpl implements MappingRequestExecutor {
             throw new JnqObjectMappingException("this request is not instance of Finder");
         }
 
-        _checkTableValidation(cls);
+        RequestSessionAppender<IndexDataField, RequestCreateTable> createSession = _getTableCreateSession();
+
+        if (createSession != null) {
+            Map<String, Class<?>> map = connection.getObjectMappings().toMap(cls);
+
+            map.forEach((name, value) -> {
+
+                FieldType fieldType = FieldType.fromAttachment(value);
+                createSession.append(IndexDataField.create(fieldType, name));
+            });
+
+            createSession.endpoint().compile().updateTransaction();
+            connection.updateContents();
+        }
 
         LinkedList<T> linkedList = new LinkedList<>();
         Response response = _fetchAllResponse();
@@ -176,7 +163,7 @@ public class MappingRequestExecutorImpl implements MappingRequestExecutor {
         for (ResponseLine responseLine : response) {
 
             ObjectMapperProperties properties = new MapObjectMapperProperties();
-            responseLine.getLabels().forEach(label -> properties.set(label.toLowerCase(), responseLine.getObject(label).orElse(null)));
+            responseLine.getLabels().forEach(label -> properties.set(label, responseLine.getObject(label).orElse(null)));
 
             linkedList.add((T) objectMapper.fetch((Class<Object>) cls, properties));
         }

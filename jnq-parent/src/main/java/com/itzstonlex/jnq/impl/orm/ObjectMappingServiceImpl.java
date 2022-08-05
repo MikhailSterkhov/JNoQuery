@@ -123,7 +123,7 @@ public class ObjectMappingServiceImpl implements ObjectMappingService<MappingDat
             return findMapper(AnnotationMapper.class);
         }
 
-        return new JsonMapper<>(); // TODO: мб получится обойтись findMapper() ?
+        return findMapper(JsonMapper.class);
     }
 
     @SuppressWarnings("unchecked")

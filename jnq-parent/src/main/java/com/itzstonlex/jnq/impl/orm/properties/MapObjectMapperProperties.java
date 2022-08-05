@@ -22,20 +22,20 @@ public class MapObjectMapperProperties implements ObjectMapperProperties {
 
     @Override
     public @NonNull ObjectMapperProperties set(@NonNull String key, Object value) {
-        propertiesMap.put(key, value);
+        propertiesMap.put(key.toLowerCase(), value);
         return this;
     }
 
     @Override
     public @NonNull ObjectMapperProperties remove(@NonNull String key) {
-        propertiesMap.remove(key);
+        propertiesMap.remove(key.toLowerCase());
         return this;
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public <T> @NonNull T get(@NonNull String key, @NonNull Supplier<T> defaultValue) {
-        T returnValue = (T) propertiesMap.get(key);
+        T returnValue = (T) propertiesMap.get(key.toLowerCase());
 
         if (returnValue == null) {
             return defaultValue.get();

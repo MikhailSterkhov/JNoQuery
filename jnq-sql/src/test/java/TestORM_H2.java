@@ -42,20 +42,8 @@ public class TestORM_H2 {
     public static void main(String[] args)
     throws JnqObjectMappingException {
 
-        final DataConnection connection = new SQLConnection(SQLHelper.toH2JDBC(), "root", "password");
-        final SchemaContent schemaContent = connection.getSchemaContent(SQLHelper.H2_DEFAULT_SCHEMA_NAME);
-
-        if (schemaContent == null) {
-            System.out.println("wtf ?");
-            return;
-        }
-
-        // setup mysql mode for H2 driver.
-        connection.createRequest(schemaContent)
-                .toFactory()
-                .fromQuery("set mode MySQL;")
-                .compile()
-                .updateTransaction();
+        final DataConnection connection = new SQLConnection(SQLHelper.toH2JDBC(), "root", "password")
+                .setMode("MySQL");
 
         // getting objects-mapper service.
         final ObjectMappingService<MappingDataField> objectMappingService = connection.getObjectMappings();

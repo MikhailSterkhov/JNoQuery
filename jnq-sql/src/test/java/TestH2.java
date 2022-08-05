@@ -14,20 +14,10 @@ public class TestH2 {
     public static void main(String[] args)
     throws JnqException {
 
-        final DataConnection connection = new SQLConnection(SQLHelper.toH2JDBC(), "root", "password");
+        final DataConnection connection = new SQLConnection(SQLHelper.toH2JDBC(), "root", "password")
+                .setMode("MySQL");
+
         final SchemaContent schemaContent = connection.getSchemaContent(SQLHelper.H2_DEFAULT_SCHEMA_NAME);
-
-        if (schemaContent == null) {
-            System.out.println("wtf ?");
-            return;
-        }
-
-        // setup mysql mode for H2 driver.
-        connection.createRequest(schemaContent)
-                .toFactory()
-                .fromQuery("set mode MySQL;")
-                .compile()
-                .updateTransaction();
         
         connection.createRequest(schemaContent)
                 .toFactory()
@@ -43,7 +33,7 @@ public class TestH2 {
                 .compile()
                 .updateTransaction();
 
-        // update schemes & tables content caches.
+        // update schemes & tables content caches after table create.
         connection.updateContents();
 
         // getting created table now.

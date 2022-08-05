@@ -3,29 +3,29 @@ package com.itzstonlex.jnq.orm.mapper;
 import com.google.gson.Gson;
 import com.itzstonlex.jnq.orm.ObjectMapper;
 import com.itzstonlex.jnq.orm.ObjectMapperProperties;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import lombok.experimental.FieldDefaults;
-import lombok.experimental.NonFinal;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class JsonMapper<T> implements ObjectMapper<T> {
 
-    private static final Gson GSON = new Gson();
-
-    @NonFinal
-    @Setter
-    String columnName = "json";
+    private static final Gson PARSER = new Gson();
 
     @Override
     public void mapping(@NonNull T src, @NonNull ObjectMapperProperties properties) {
-        properties.set(columnName, GSON.toJson(src));
+        String json = PARSER.toJson(src);
+        properties.set("json", json);
     }
 
     @Override
     public @NonNull T fetch(@NonNull Class<T> cls, @NonNull ObjectMapperProperties properties) {
-        return GSON.fromJson(properties.get(columnName, () -> ""), cls);
+        String json = properties.get("json", () -> null);
+        return PARSER.fromJson(json, cls);
     }
 
 }

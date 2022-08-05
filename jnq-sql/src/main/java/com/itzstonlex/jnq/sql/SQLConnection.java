@@ -75,6 +75,20 @@ public class SQLConnection implements DataConnection {
         this(null, url, username, password);
     }
 
+    public final @NonNull SQLConnection setMode(@NonNull String mode)
+    throws JnqException {
+
+        this.createRequest(schemaByNamesMap.values().iterator().next())
+                .toFactory()
+
+                .fromQuery("set mode MySQL;")
+
+                .compile()
+                .updateTransaction();
+
+        return this;
+    }
+
     protected void _updateTableContents(boolean appendSchema, @NonNull SchemaContent schema)
     throws JnqException {
 
