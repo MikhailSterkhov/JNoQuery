@@ -4,15 +4,9 @@ import com.itzstonlex.jnq.field.DataField;
 import com.itzstonlex.jnq.impl.field.IndexDataField;
 import com.itzstonlex.jnq.impl.field.ValueDataField;
 import com.itzstonlex.jnq.request.query.RequestQueryBasic;
-import com.itzstonlex.jnq.request.query.session.RequestSessionAppender;
-import com.itzstonlex.jnq.request.query.session.RequestSessionFilter;
-import com.itzstonlex.jnq.request.query.session.RequestSessionJoiner;
-import com.itzstonlex.jnq.request.query.session.RequestSessionSelector;
+import com.itzstonlex.jnq.request.query.session.*;
 import com.itzstonlex.jnq.sql.SQLRequest;
-import com.itzstonlex.jnq.sql.request.session.SQLRequestSessionAppender;
-import com.itzstonlex.jnq.sql.request.session.SQLRequestSessionFilter;
-import com.itzstonlex.jnq.sql.request.session.SQLRequestSessionJoiner;
-import com.itzstonlex.jnq.sql.request.session.SQLRequestSessionSelector;
+import com.itzstonlex.jnq.sql.request.session.*;
 import lombok.AccessLevel;
 import lombok.NonNull;
 import lombok.experimental.FieldDefaults;
@@ -25,7 +19,7 @@ public class SQLRequestQueryBasic<Field extends DataField>
         extends SQLRequestQuery
         implements RequestQueryBasic<Field> {
 
-    String query, sessionFilterReplacement, sessionJoinerReplacement, sessionSelectorReplacement;
+    String query, sessionFilterReplacement, sessionJoinerReplacement, sessionSelectorReplacement, sessionGroupReplacement, sessionSortReplacement;
 
     SQLRequestSessionAppender<Field, RequestQueryBasic<Field>> sessionAppender;
 
@@ -34,6 +28,10 @@ public class SQLRequestQueryBasic<Field extends DataField>
     SQLRequestSessionJoiner<RequestQueryBasic<Field>> sessionJoiner;
 
     SQLRequestSessionSelector<RequestQueryBasic<Field>> sessionSelector;
+
+    SQLRequestSessionGroupBy<RequestQueryBasic<Field>> sessionGroup;
+
+    SQLRequestSessionSortBy<RequestQueryBasic<Field>> sessionSort;
 
 
     public SQLRequestQueryBasic(@NonNull String query, @NonNull SQLRequest request) {
@@ -84,6 +82,28 @@ public class SQLRequestQueryBasic<Field extends DataField>
     }
 
     @Override
+    public @NonNull RequestSessionGroupBy<RequestQueryBasic<Field>> sessionGroup(@NonNull String replacement) {
+        if (sessionGroup == null) {
+
+            sessionGroup = new SQLRequestSessionGroupBy<>(this);
+            sessionGroupReplacement = replacement;
+        }
+
+        return sessionGroup;
+    }
+
+    @Override
+    public @NonNull RequestSessionSortBy<RequestQueryBasic<Field>> sessionSort(@NonNull String replacement) {
+        if (sessionSort == null) {
+
+            sessionSort = new SQLRequestSessionSortBy<>(this);
+            sessionSortReplacement = replacement;
+        }
+
+        return sessionSort;
+    }
+
+    @Override
     protected String toSQL() {
         query = query.replace("{content}", request.getDataContent().getName());;
 
@@ -97,6 +117,14 @@ public class SQLRequestQueryBasic<Field extends DataField>
 
         if (sessionSelectorReplacement != null) {
             query = query.replace(sessionSelectorReplacement, sessionSelector == null ? "" : sessionSelector.getGeneratedSql());
+        }
+
+        if (sessionGroupReplacement != null) {
+            query = query.replace(sessionGroupReplacement, sessionGroup == null ? "" : sessionGroup.getGeneratedSql());
+        }
+
+        if (sessionSortReplacement != null) {
+            query = query.replace(sessionSortReplacement, sessionSort == null ? "" : sessionSort.getGeneratedSql());
         }
 
         if (sessionAppender != null) {
@@ -117,6 +145,10 @@ public class SQLRequestQueryBasic<Field extends DataField>
 
     @Override
     protected Object[] toFieldValues() {
+        if (!toSQL().contains("?")) {
+            return null;
+        }
+
         return sessionAppender == null ? null : sessionAppender.getGeneratedFields()
                 .stream()
                 .filter(field -> field instanceof ValueDataField)

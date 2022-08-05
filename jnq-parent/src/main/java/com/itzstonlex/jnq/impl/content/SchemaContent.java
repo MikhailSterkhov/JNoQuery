@@ -40,6 +40,10 @@ public class SchemaContent implements DataContent {
         return connection.getTableContent(this, name);
     }
 
+    public TableContent createTableContent(@NonNull String name) {
+        return new TableContent(name, this);
+    }
+
     public @NonNull CompletableFuture<UpdateResponse> create()
     throws JnqException {
 

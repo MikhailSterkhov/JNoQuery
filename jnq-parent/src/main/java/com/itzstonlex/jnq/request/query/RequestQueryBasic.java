@@ -1,10 +1,7 @@
 package com.itzstonlex.jnq.request.query;
 
 import com.itzstonlex.jnq.field.DataField;
-import com.itzstonlex.jnq.request.query.session.RequestSessionAppender;
-import com.itzstonlex.jnq.request.query.session.RequestSessionFilter;
-import com.itzstonlex.jnq.request.query.session.RequestSessionJoiner;
-import com.itzstonlex.jnq.request.query.session.RequestSessionSelector;
+import com.itzstonlex.jnq.request.query.session.*;
 import lombok.NonNull;
 
 public interface RequestQueryBasic<F extends DataField> extends RequestQuery {
@@ -22,6 +19,12 @@ public interface RequestQueryBasic<F extends DataField> extends RequestQuery {
     RequestSessionSelector<RequestQueryBasic<F>> sessionSelector(@NonNull String replacement);
 
     @NonNull
+    RequestSessionGroupBy<RequestQueryBasic<F>> sessionGroup(@NonNull String replacement);
+
+    @NonNull
+    RequestSessionSortBy<RequestQueryBasic<F>> sessionSort(@NonNull String replacement);
+
+    @NonNull
     default RequestSessionFilter<RequestQueryBasic<F>> sessionFilter() {
         return sessionFilter("{filter}");
     }
@@ -34,5 +37,15 @@ public interface RequestQueryBasic<F extends DataField> extends RequestQuery {
     @NonNull
     default RequestSessionSelector<RequestQueryBasic<F>> sessionSelector() {
         return sessionSelector("{selector}");
+    }
+
+    @NonNull
+    default RequestSessionGroupBy<RequestQueryBasic<F>> sessionGroup() {
+        return sessionGroup("{group}");
+    }
+
+    @NonNull
+    default RequestSessionSortBy<RequestQueryBasic<F>> sessionSort() {
+        return sessionSort("{sort}");
     }
 }
