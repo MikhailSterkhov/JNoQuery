@@ -6,14 +6,13 @@ import com.itzstonlex.jnq.impl.content.SchemaContent;
 import com.itzstonlex.jnq.impl.content.TableContent;
 import com.itzstonlex.jnq.impl.field.IndexDataField;
 import com.itzstonlex.jnq.impl.field.ValueDataField;
-import com.itzstonlex.jnq.orm.exception.JnqObjectMappingException;
 import com.itzstonlex.jnq.sql.SQLConnection;
 import com.itzstonlex.jnq.sql.SQLHelper;
 
 public class TestH2 {
 
     public static void main(String[] args)
-    throws JnqException, JnqObjectMappingException {
+    throws JnqException {
 
         final DataConnection connection = new SQLConnection(SQLHelper.toH2JDBC(), "root", "password");
         final SchemaContent schemaContent = connection.getSchemaContent(SQLHelper.H2_DEFAULT_SCHEMA_NAME);

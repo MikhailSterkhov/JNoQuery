@@ -34,13 +34,13 @@ public class TestORM_H2 {
         private long lastUpdateTimeMillis;
 
         @MappingInitMethod // annotation from JNQ
-        public void init() {
+        private void init() {
             System.out.println("User " + name + " was initialized!");
         }
     }
 
     public static void main(String[] args)
-            throws JnqObjectMappingException {
+    throws JnqObjectMappingException {
 
         final DataConnection connection = new SQLConnection(SQLHelper.toH2JDBC(), "root", "password");
         final SchemaContent schemaContent = connection.getSchemaContent(SQLHelper.H2_DEFAULT_SCHEMA_NAME);
