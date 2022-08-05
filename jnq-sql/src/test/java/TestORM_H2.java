@@ -1,5 +1,4 @@
 import com.itzstonlex.jnq.DataConnection;
-import com.itzstonlex.jnq.impl.content.SchemaContent;
 import com.itzstonlex.jnq.impl.field.MappingDataField;
 import com.itzstonlex.jnq.orm.ObjectMappingService;
 import com.itzstonlex.jnq.orm.annotation.Mapping;
@@ -42,41 +41,50 @@ public class TestORM_H2 {
     public static void main(String[] args)
     throws JnqObjectMappingException {
 
-        final DataConnection connection = new SQLConnection(SQLHelper.toH2JDBC(), "root", "password")
-                .setMode("MySQL");
+        SpeedTest.fixLongSpeed("GENERAL", () -> { // 1387ms. (1.387 in sec.)
 
-        // getting objects-mapper service.
-        final ObjectMappingService<MappingDataField> objectMappingService = connection.getObjectMappings();
+            final DataConnection connection = new SQLConnection(SQLHelper.toH2JDBC(), "root", "password")
+                    .setMode("MySQL");
 
-        // insert new user value.
-        objectMappingService.getRequestFactory("reg_users")
-                .newUpdate()
+            // getting objects-mapper service.
+            final ObjectMappingService<MappingDataField> objectMappingService = connection.getObjectMappings();
 
-                .withAutomapping()
-                .compile()
+            SpeedTest.fixLongSpeed("INSERT_USERS", () -> { // 176ms. (0.176 in sec.)
 
-                .map(new User("itzstonlex", System.currentTimeMillis(), System.currentTimeMillis()))
-                .thenAccept(userID -> {
+                // insert new user value.
+                objectMappingService.getRequestFactory("reg_users")
+                        .newUpdate()
 
-                    System.out.println("Inserted User ID - " + userID);
-                });
+                        .withAutomapping()
+                        .compile()
 
-        // getting first 100 users values.
-        List<User> usersList = objectMappingService.getRequestFactory("reg_users")
-                .newFinder()
+                        .map(new User("itzstonlex", System.currentTimeMillis(), System.currentTimeMillis()))
+                        .thenAccept(userID -> {
 
-                .withLimit(100)
+                            System.out.println("Inserted User ID - " + userID);
+                        });
+            });
 
-                .withAutomapping()
-                .compile()
+            SpeedTest.fixLongSpeed("FETCH_USERS", () -> { // 19ms. (0.019 in sec.)
 
-                .fetchAll(User.class);
+                // getting first 100 users values.
+                List<User> usersList = objectMappingService.getRequestFactory("reg_users")
+                        .newFinder()
 
-        System.out.println("Users found count: " + usersList.size());
+                        .withLimit(100)
 
-        for (User user : usersList) {
-            System.out.println(" - " + user.toString());
-        }
+                        .withAutomapping()
+                        .compile()
+
+                        .fetchAll(User.class);
+
+                System.out.println("Users found count: " + usersList.size());
+
+                for (User user : usersList) {
+                    System.out.println(" - " + user.toString());
+                }
+            });
+        });
     }
 
 }

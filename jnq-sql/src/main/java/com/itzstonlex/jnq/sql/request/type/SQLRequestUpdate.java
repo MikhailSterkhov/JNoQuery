@@ -36,8 +36,8 @@ public class SQLRequestUpdate extends SQLRequestQuery implements RequestUpdate {
     protected String toSQL() {
         String query = QUERY.replace("{content}", request.getDataContent().getName());
 
-        query = query.replace("{update}", sessionUpdater.getGeneratedSql());
-        query = query.replace("{filter}", sessionFilter.getGeneratedSql());
+        query = query.replace("{update}", sessionUpdater.getGeneratedSql().replace("WHERE ", ""));
+        query = query.replace("{filter}", sessionFilter.getGeneratedSql().replace("WHERE ", ""));
 
         return query;
     }

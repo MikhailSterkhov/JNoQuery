@@ -4,13 +4,9 @@ import com.google.gson.Gson;
 import com.itzstonlex.jnq.orm.ObjectMapper;
 import com.itzstonlex.jnq.orm.ObjectMapperProperties;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.experimental.FieldDefaults;
 
-@NoArgsConstructor
-@AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class JsonMapper<T> implements ObjectMapper<T> {
 
