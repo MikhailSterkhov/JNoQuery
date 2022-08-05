@@ -9,7 +9,7 @@ Java Database connection with nosql &amp; sql management
 
 ---
 
-Information Block
+#### INFORMATION BLOCK
 
 [![MIT License](https://img.shields.io/github/license/pl3xgaming/Purpur?&logo=github)](LICENSE)
 
