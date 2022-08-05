@@ -44,7 +44,7 @@ public class TestORM_H2 {
         SpeedTest.fixLongSpeed("GENERAL", () -> { // 1387ms. (1.387 in sec.)
 
             final DataConnection connection = new SQLConnection(SQLHelper.toH2JDBC(), "root", "password")
-                    .setMode("MySQL");
+                    .setMode("MySQL"); // !!! this command for tests, this is not required
 
             // getting objects-mapper service.
             final ObjectMappingService<MappingDataField> objectMappingService = connection.getObjectMappings();

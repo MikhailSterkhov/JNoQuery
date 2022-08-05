@@ -17,7 +17,7 @@ public class TestSQL_H2 {
         SpeedTest.fixLongSpeed("GENERAL", () -> { // 1281ms. (1.281 in sec.)
 
             final DataConnection connection = new SQLConnection(SQLHelper.toH2JDBC(), "root", "password")
-                    .setMode("MySQL");
+                    .setMode("MySQL"); // !!! this command for tests, this is not required
 
             final SchemaContent schemaContent = connection.getSchemaContent(SQLHelper.H2_DEFAULT_SCHEMA_NAME);
 
