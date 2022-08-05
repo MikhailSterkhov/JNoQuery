@@ -1,19 +1,13 @@
 <div align="center">
 
----
-
 ![logo](jnq_logo.png)
+
+[![MIT License](https://img.shields.io/github/license/pl3xgaming/Purpur?&logo=github)](LICENSE)
 
 ---
 
 # JNoQuery
 Java Database connection with nosql &amp; sql management
-
----
-
-#### _INFORMATION BLOCK_
-
-[![MIT License](https://img.shields.io/github/license/pl3xgaming/Purpur?&logo=github)](LICENSE)
 
 ---
 </div>
