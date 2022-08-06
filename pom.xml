@@ -14,9 +14,9 @@
     <description>Database connection with nosql and sql management</description>
 
     <modules>
+        <module>jnq-orm</module>
         <module>jnq-parent</module>
         <module>jnq-sql</module>
-        <module>jnq-orm</module>
     </modules>
 
     <developers>
