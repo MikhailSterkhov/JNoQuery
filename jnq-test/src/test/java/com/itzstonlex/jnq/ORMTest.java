@@ -1,5 +1,6 @@
 package com.itzstonlex.jnq;
 
+import com.itzstonlex.jnq.connection.H2Connection;
 import com.itzstonlex.jnq.impl.field.MappingDataField;
 import com.itzstonlex.jnq.orm.ObjectMappingService;
 import com.itzstonlex.jnq.orm.annotation.Mapping;
@@ -47,10 +48,8 @@ public class ORMTest {
     private ObjectMappingService<MappingDataField> objectMappings;
 
     @Test
-    void testConnection() throws JnqObjectMappingException {
-        DataConnection connection = new SQLConnection(SQLHelper.toH2JDBC(), "root", "password")
-                .setMode("MySQL"); // <- this line is not required.
-
+    void testSetupConnection() throws JnqObjectMappingException {
+        DataConnection connection = new H2Connection("root", "password");
         objectMappings = connection.getObjectMappings();
     }
 
