@@ -34,7 +34,7 @@ public class MapObjectMapperProperties implements ObjectMapperProperties {
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T> @NonNull T get(@NonNull String key, @NonNull Supplier<T> defaultValue) {
+    public <T> @NonNull T of(@NonNull String key, @NonNull Supplier<T> defaultValue) {
         T returnValue = (T) propertiesMap.get(key.toLowerCase());
 
         if (returnValue == null) {
