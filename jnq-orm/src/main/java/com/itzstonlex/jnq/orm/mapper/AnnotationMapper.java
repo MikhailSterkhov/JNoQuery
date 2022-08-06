@@ -105,7 +105,7 @@ public class AnnotationMapper<T> implements ObjectMapper<T> {
                 String name = entry.getKey();
                 Field field = entry.getValue();
 
-                Object value = properties.of(name.toLowerCase(), () -> null);
+                Object value = properties.ofNullable(name.toLowerCase());
 
                 field.setAccessible(true);
                 field.set(instance, value);

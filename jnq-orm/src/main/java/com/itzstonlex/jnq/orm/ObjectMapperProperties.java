@@ -18,7 +18,7 @@ public interface ObjectMapperProperties {
     @NonNull
     <T> T of(@NonNull String key, @NonNull Supplier<T> defaultValue);
 
-    default Object ofNullable(@NonNull String key) {
+    default <T> T ofNullable(@NonNull String key) {
         return of(key, () -> null);
     }
 }

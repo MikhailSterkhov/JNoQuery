@@ -20,7 +20,7 @@ public class JsonMapper<T> implements ObjectMapper<T> {
 
     @Override
     public @NonNull T fetch(@NonNull Class<T> cls, @NonNull ObjectMapperProperties properties) {
-        String json = properties.of("json", () -> null);
+        String json = properties.ofNullable("json");
         return PARSER.fromJson(json, cls);
     }
 
