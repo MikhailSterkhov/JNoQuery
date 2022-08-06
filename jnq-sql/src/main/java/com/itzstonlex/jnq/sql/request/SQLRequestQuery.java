@@ -1,5 +1,7 @@
 package com.itzstonlex.jnq.sql.request;
 
+import com.itzstonlex.jnq.impl.field.MappingDataField;
+import com.itzstonlex.jnq.orm.request.MappingRequestFactory;
 import com.itzstonlex.jnq.request.RequestExecutor;
 import com.itzstonlex.jnq.request.query.RequestQuery;
 import com.itzstonlex.jnq.sql.SQLRequest;
@@ -24,7 +26,9 @@ public abstract class SQLRequestQuery implements RequestQuery {
     public @NonNull RequestExecutor compile() {
 
         SQLWrapperStatement statement = new SQLWrapperStatement(request, toFieldValues());
-        return new SQLRequestExecutor(toSQL(), statement, request.connection().getObjectMappings());
+        MappingRequestFactory<MappingDataField> mappingRequestFactory = request.connection().getObjectMappings().getRequestFactory(request.getDataContent().getName());
+
+        return new SQLRequestExecutor(toSQL(), statement, mappingRequestFactory);
     }
 
     @Override

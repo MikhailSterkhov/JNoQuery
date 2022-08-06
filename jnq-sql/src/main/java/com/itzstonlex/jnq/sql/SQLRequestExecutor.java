@@ -2,8 +2,8 @@ package com.itzstonlex.jnq.sql;
 
 import com.itzstonlex.jnq.exception.JnqException;
 import com.itzstonlex.jnq.impl.field.MappingDataField;
-import com.itzstonlex.jnq.orm.ObjectMappingService;
 import com.itzstonlex.jnq.orm.exception.JnqObjectMappingException;
+import com.itzstonlex.jnq.orm.request.MappingRequestFactory;
 import com.itzstonlex.jnq.request.RequestExecutor;
 import com.itzstonlex.jnq.response.Response;
 import com.itzstonlex.jnq.response.ResponseLine;
@@ -24,7 +24,7 @@ public class SQLRequestExecutor implements RequestExecutor {
     String query;
     SQLWrapperStatement wrapperStatement;
 
-    ObjectMappingService<MappingDataField> objectMappingService;
+    MappingRequestFactory<MappingDataField> mappingRequestFactory;
 
     @Override
     public @NonNull Response fetchTransaction() throws JnqException {
@@ -88,22 +88,27 @@ public class SQLRequestExecutor implements RequestExecutor {
 
     @Override
     public CompletableFuture<Integer> map(@NonNull Object object) throws JnqObjectMappingException {
-        throw new UnsupportedOperationException(); // TODO: перенести сюда DataContent и реализовать функционал
-    }
-
-    @Override
-    public <T> @NonNull T fetchFirst(@NonNull Class<T> cls) throws JnqObjectMappingException {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public <T> @NonNull T fetchLast(@NonNull Class<T> cls) throws JnqObjectMappingException {
-        throw new UnsupportedOperationException();
+        return mappingRequestFactory.newUpdate().withAutomapping().compile().map(object);
     }
 
     @Override
     public @NonNull <T> LinkedList<T> fetchAll(@NonNull Class<T> cls) throws JnqObjectMappingException {
-        throw new UnsupportedOperationException();
+        return mappingRequestFactory.newFinder().withAutomapping().compile().fetchAll(cls);
+    }
+
+    @Override
+    public @NonNull <T> LinkedList<T> fetchAll(int limit, @NonNull Class<T> cls) throws JnqObjectMappingException {
+        return mappingRequestFactory.newFinder().withLimit(limit).withAutomapping().compile().fetchAll(cls);
+    }
+
+    @Override
+    public <T> @NonNull T fetchFirst(@NonNull Class<T> cls) throws JnqObjectMappingException {
+        return mappingRequestFactory.newFinder().withAutomapping().compile().fetchFirst(cls);
+    }
+
+    @Override
+    public <T> @NonNull T fetchLast(@NonNull Class<T> cls) throws JnqObjectMappingException {
+        return mappingRequestFactory.newFinder().withAutomapping().compile().fetchLast(cls);
     }
 
 }

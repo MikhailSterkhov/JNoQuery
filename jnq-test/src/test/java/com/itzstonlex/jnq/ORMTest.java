@@ -7,8 +7,6 @@ import com.itzstonlex.jnq.orm.annotation.Mapping;
 import com.itzstonlex.jnq.orm.annotation.MappingColumn;
 import com.itzstonlex.jnq.orm.annotation.MappingInitMethod;
 import com.itzstonlex.jnq.orm.exception.JnqObjectMappingException;
-import com.itzstonlex.jnq.sql.SQLConnection;
-import com.itzstonlex.jnq.sql.SQLHelper;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

@@ -8,7 +8,6 @@ import com.itzstonlex.jnq.impl.content.SchemaContent;
 import com.itzstonlex.jnq.impl.content.TableContent;
 import com.itzstonlex.jnq.impl.field.IndexDataField;
 import com.itzstonlex.jnq.impl.field.ValueDataField;
-import com.itzstonlex.jnq.sql.SQLConnection;
 import com.itzstonlex.jnq.sql.SQLHelper;
 import org.junit.jupiter.api.*;
 

@@ -1,15 +1,20 @@
 package com.itzstonlex.jnq.request;
 
 import com.itzstonlex.jnq.exception.JnqException;
+import com.itzstonlex.jnq.orm.exception.JnqObjectMappingException;
 import com.itzstonlex.jnq.orm.request.MappingRequestExecutor;
 import com.itzstonlex.jnq.response.Response;
 import com.itzstonlex.jnq.response.ResponseLine;
 import com.itzstonlex.jnq.response.UpdateResponse;
 import lombok.NonNull;
 
+import java.util.LinkedList;
 import java.util.concurrent.CompletableFuture;
 
 public interface RequestExecutor extends MappingRequestExecutor {
+
+    @NonNull
+    <T> LinkedList<T> fetchAll(int limit, @NonNull Class<T> cls) throws JnqObjectMappingException;
 
     @NonNull
     Response fetchTransaction() throws JnqException;
