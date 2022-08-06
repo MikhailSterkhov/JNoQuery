@@ -17,4 +17,8 @@ public interface ObjectMapperProperties {
 
     @NonNull
     <T> T get(@NonNull String key, @NonNull Supplier<T> defaultValue);
+
+    default Object get(@NonNull String key) {
+        return get(key, () -> null);
+    }
 }
