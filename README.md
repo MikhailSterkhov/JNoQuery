@@ -19,6 +19,34 @@ Java Database connection with nosql &amp; sql management
 
 ---
 
+## WHAT IS THIS?
+
+
+This library contains functionality for easy connection
+to different types of relational databases with support
+for synchronous and asynchronous query types.
+
+
+The whole concept of JNoQuery is divided into several
+modules created for different technical solutions, namely:
+
+* **JDBC**: Owns direct connection via URL formats, and also supports many previously known types of relational databases:
+    * H2;
+    * MySQL;
+    * SQLite;
+    * ClickHouse;
+    * PostgreSQL.
+
+<br>
+
+* **NoSQL**: This type of technology makes it possible to create queries based on building on a builder pattern;
+
+<br>
+
+* **ORM**:This technology allows you to manipulate the database with any Java objects in general, while maintaining the ability to perform all the same familiar queries.
+
+---
+
 ## HOW TO USE ?
 
 You can view the full documentation of the library by clicking on <a href="https://github.com/ItzStonlex/JNoQuery/wiki">the link</a>
