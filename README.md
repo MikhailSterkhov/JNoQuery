@@ -21,7 +21,7 @@ Java Database connection with nosql &amp; sql management
 
 ## HOW TO USE ?
 
-Some...
+You can view the full documentation of the library by clicking on <a href="https://github.com/ItzStonlex/JNoQuery/wiki">the link</a>
 
 ---
 
