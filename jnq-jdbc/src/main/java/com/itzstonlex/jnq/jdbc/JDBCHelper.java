@@ -29,56 +29,40 @@ public class JDBCHelper {
     public final String MYSQL_DEFAULT_SCHEMA_NAME = "mysql";
     public final String CLICKHOUSE_DEFAULT_SCHEMA_NAME = "default";
 
-    public final String JDBC_URL_FORMAT = "jdbc:%s://%s:%s/%s";
+    public final String JDBC_URL_FORMAT = "jdbc:%s://%s:%s/";
     public final String SQLITE_URL_PREFIX = "jdbc:sqlite:";
-    public final String JDBC_MEM_FORMAT = "jdbc:%s:mem:%s";
+    public final String JDBC_MEM_FORMAT = "jdbc:%s:mem:";
 
-    public @NonNull String makeLink(@NonNull String driverName, @NonNull String schema, @NonNull String host, int port) {
-        return String.format(JDBC_URL_FORMAT, driverName.toLowerCase(), host, port, schema);
-    }
-
-    public @NonNull String toMysql(@NonNull String schema, @NonNull String host, int port) {
-        return makeLink(MYSQL_DRIVER_NAME, schema, host, port);
+    public @NonNull String makeLink(@NonNull String driverName, @NonNull String host, int port) {
+        return String.format(JDBC_URL_FORMAT, driverName.toLowerCase(), host, port);
     }
 
     public @NonNull String toMysql(@NonNull String host, int port) {
-        return toMysql("", host, port);
+        return makeLink(MYSQL_DRIVER_NAME, host, port);
     }
 
     public @NonNull String toMysql(@NonNull String host) {
         return toMysql(host, MYSQL_PORT);
     }
 
-    public @NonNull String toClickHouse(@NonNull String schema, @NonNull String host, int port) {
-        return makeLink(CLICKHOUSE_DRIVER_NAME, schema, host, port);
-    }
-
     public @NonNull String toClickHouse(@NonNull String host, int port) {
-        return toClickHouse("", host, port);
+        return makeLink(CLICKHOUSE_DRIVER_NAME, host, port);
     }
 
     public @NonNull String toClickHouse(@NonNull String host) {
         return toClickHouse(host, CLICKHOUSE_PORT);
     }
 
-    public @NonNull String toPostgresql(@NonNull String schema, @NonNull String host, int port) {
-        return makeLink(POSTGRESQL_DRIVER_NAME, schema, host, port);
-    }
-
     public @NonNull String toPostgresql(@NonNull String host, int port) {
-        return toPostgresql("", host, port);
+        return makeLink(POSTGRESQL_DRIVER_NAME, host, port);
     }
 
     public @NonNull String toPostgresql(@NonNull String host) {
         return toPostgresql(host, POSTGRESQL_PORT);
     }
 
-    public @NonNull String toH2(@NonNull String schema) {
-        return String.format(JDBC_MEM_FORMAT, H2_DRIVER_NAME, schema);
-    }
-
     public @NonNull String toH2() {
-        return toH2("");
+        return String.format(JDBC_MEM_FORMAT, H2_DRIVER_NAME);
     }
 
     public @NonNull String toSqlite(@NonNull File dbFile) {

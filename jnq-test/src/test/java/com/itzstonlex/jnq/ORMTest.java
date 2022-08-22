@@ -2,14 +2,14 @@ package com.itzstonlex.jnq;
 
 import com.itzstonlex.jnq.connection.H2Connection;
 import com.itzstonlex.jnq.field.FieldOperator;
+import com.itzstonlex.jnq.impl.content.SchemaContent;
 import com.itzstonlex.jnq.impl.field.MappingDataField;
+import com.itzstonlex.jnq.jdbc.JDBCHelper;
 import com.itzstonlex.jnq.orm.ObjectMappingService;
 import com.itzstonlex.jnq.orm.annotation.Mapping;
 import com.itzstonlex.jnq.orm.annotation.MappingColumn;
 import com.itzstonlex.jnq.orm.annotation.MappingInitMethod;
 import com.itzstonlex.jnq.orm.exception.JnqObjectMappingException;
-import com.itzstonlex.jnq.orm.mapper.AnnotationMapper;
-import com.itzstonlex.jnq.orm.mapper.JsonMapper;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -53,6 +53,16 @@ public class ORMTest {
     void testSetupConnection() throws JnqObjectMappingException {
         DataConnection connection = new H2Connection("root", "password");
         objectMappings = connection.getObjectMappings();
+
+        // Called here to automatically generate the required schema.
+        SchemaContent defaultSchema = connection.getSchema(JDBCHelper.H2_DEFAULT_SCHEMA_NAME);
+
+        // In order for some ORM functionality to work correctly, you need to set a different SQL syntax mode.
+        connection.createRequest(defaultSchema)
+                .toFactory()
+                .fromQuery("set mode MySQL")
+                .compile()
+                .updateTransaction();
     }
 
     @Test

@@ -25,8 +25,8 @@ public class NoSQLTest {
     void testSetupConnection() throws JnqException {
         connection = new H2Connection("root", "password");
 
-        SchemaContent schemaContent = connection.getSchemaContent(JDBCHelper.H2_DEFAULT_SCHEMA_NAME);
-        usersTable = schemaContent.createTableContent("reg_users");
+        SchemaContent defaultSchema = connection.getSchema(JDBCHelper.H2_DEFAULT_SCHEMA_NAME);
+        usersTable = defaultSchema.newTableInstance("reg_users");
     }
 
     @Test

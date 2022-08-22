@@ -8,6 +8,6 @@ import lombok.NonNull;
 public class MySQLConnection extends JDBCConnection {
 
     public MySQLConnection(@NonNull String username, @NonNull String password) throws JnqException {
-        super(JDBCHelper.MYSQL_DRIVER_CLASS, JDBCHelper.toMysql("test", "localhost", 3306), username, password);
+        super(JDBCHelper.MYSQL_DRIVER_CLASS, JDBCHelper.toMysql("localhost", 3306), username, password);
     }
 }

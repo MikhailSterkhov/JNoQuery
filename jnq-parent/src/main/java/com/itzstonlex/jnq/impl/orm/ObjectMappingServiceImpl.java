@@ -45,7 +45,7 @@ public class ObjectMappingServiceImpl implements ObjectMappingService<MappingDat
 
     @Override
     public MappingRequestFactory<MappingDataField> getRequestFactory(@NonNull String table) {
-        return getRequestFactory(connection.getSchemasContents().iterator().next().getName(), table);
+        return getRequestFactory(connection.getActiveSchemas().iterator().next().getName(), table);
     }
 
     private Map<String, Field> _toMapFields(Class<?> cls) {

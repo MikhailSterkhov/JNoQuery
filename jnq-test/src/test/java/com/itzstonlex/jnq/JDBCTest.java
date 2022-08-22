@@ -1,6 +1,6 @@
 package com.itzstonlex.jnq;
 
-import com.itzstonlex.jnq.connection.MySQLConnection;
+import com.itzstonlex.jnq.connection.H2Connection;
 import com.itzstonlex.jnq.exception.JnqException;
 import com.itzstonlex.jnq.field.FieldOperator;
 import com.itzstonlex.jnq.field.FieldType;
@@ -23,10 +23,10 @@ public class JDBCTest {
     @Test
     @Order(0)
     void testConnectionSetup() throws JnqException {
-        connection = new MySQLConnection("root", "");
+        connection = new H2Connection("root", "password");
 
-        SchemaContent schemaContent = connection.getSchemaContent(JDBCHelper.H2_DEFAULT_SCHEMA_NAME);
-        usersTable = schemaContent.createTableContent("reg_users");
+        SchemaContent defaultSchema = connection.getSchema(JDBCHelper.H2_DEFAULT_SCHEMA_NAME);
+        usersTable = defaultSchema.newTableInstance("reg_users");
     }
 
     @Test

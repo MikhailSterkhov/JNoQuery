@@ -1,5 +1,6 @@
 package com.itzstonlex.jnq.impl.content;
 
+import com.itzstonlex.jnq.DataConnectionMeta;
 import com.itzstonlex.jnq.content.DataContent;
 import com.itzstonlex.jnq.exception.JnqException;
 import com.itzstonlex.jnq.impl.field.IndexDataField;
@@ -9,23 +10,26 @@ import com.itzstonlex.jnq.response.UpdateResponse;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.NonNull;
+import lombok.ToString;
 import lombok.experimental.FieldDefaults;
 
 import java.util.concurrent.CompletableFuture;
 
 @Data
+@ToString
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class TableContent implements DataContent {
+public abstract class TableContent implements DataContent {
 
+    @ToString.Include
     String name;
 
     SchemaContent schema;
 
     public boolean exists() {
-        return schema.hasTableByName(name);
+        return schema.isTableActive(name);
     }
 
-    public @NonNull RequestSessionAppender<IndexDataField, RequestCreateTable> create() {
+    public @NonNull RequestSessionAppender<IndexDataField, RequestCreateTable> newCreateSession() {
         return schema.getConnection().createRequest(this)
                 .toFactory()
                 .newCreateTable()
@@ -34,7 +38,17 @@ public class TableContent implements DataContent {
                 .session();
     }
 
-    public @NonNull CompletableFuture<UpdateResponse> clear() throws JnqException {
+    @Override
+    public boolean isValid(int timeout) {
+        return schema.isValid(timeout);
+    }
+
+    @Override
+    public @NonNull DataConnectionMeta getMeta() {
+        return schema.getMeta();
+    }
+
+    public @NonNull CompletableFuture<UpdateResponse> executeClear() {
         return schema.getConnection().createRequest(this)
                 .toFactory()
                 .newDelete()
@@ -43,13 +57,19 @@ public class TableContent implements DataContent {
                 .updateTransactionAsync();
     }
 
-    public @NonNull CompletableFuture<UpdateResponse> drop() throws JnqException {
+    public @NonNull CompletableFuture<UpdateResponse> executeDrop() {
         return schema.getConnection().createRequest(this)
                 .toFactory()
                 .newDropTable()
 
                 .compile()
                 .updateTransactionAsync();
+    }
+
+    @Override
+    public @NonNull CompletableFuture<Void> closeConnection()
+    throws JnqException {
+        return schema.closeConnection();
     }
 
 }

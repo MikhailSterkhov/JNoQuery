@@ -40,23 +40,21 @@ public class MappingRequestExecutorImpl implements MappingRequestExecutor {
 
     MappingRequestFinderImpl requestFinder;
 
-    private RequestSessionAppender<IndexDataField, RequestCreateTable> _getTableCreateSession()
-    throws JnqException {
-
-        SchemaContent schemaContent = connection.getSchemaContent(schema);
+    private RequestSessionAppender<IndexDataField, RequestCreateTable> _getTableCreateSession() {
+        SchemaContent schemaContent = connection.getSchema(schema);
 
         // create schema if not exists.
-        if (schemaContent.getTablesContents().isEmpty()) {
-            schemaContent.create();
+        if (schemaContent.getActiveTables().isEmpty()) {
+            schemaContent.executeCreate();
         }
 
         // create tables if not exists.
-        TableContent tableContent = schemaContent.getTableContent(table);
+        TableContent tableContent = schemaContent.getTableByName(table);
 
         if (tableContent == null) {
-            tableContent = new TableContent(table, schemaContent);
+            tableContent = schemaContent.newTableInstance(table);
 
-            return tableContent.create().append(
+            return tableContent.newCreateSession().append(
                     IndexDataField.createPrimaryNotNullAutoIncrement("id")
             );
         }
@@ -67,7 +65,7 @@ public class MappingRequestExecutorImpl implements MappingRequestExecutor {
     private CompletableFuture<Integer> _insertObject(ObjectMapperProperties properties)
     throws JnqException {
 
-        TableContent tableContent = connection.getTableContent(schema, table);
+        TableContent tableContent = connection.getTable(schema, table);
 
         RequestSessionAppender<ValueDataField, RequestInsert> insertSession = connection.createRequest(tableContent)
                 .toFactory()
@@ -95,7 +93,7 @@ public class MappingRequestExecutorImpl implements MappingRequestExecutor {
     private Response _fetchAllResponse()
     throws JnqException {
 
-        TableContent tableContent = connection.getTableContent(schema, table);
+        TableContent tableContent = connection.getTable(schema, table);
 
         RequestFinder newRequestFinder = connection.createRequest(tableContent)
                 .toFactory()

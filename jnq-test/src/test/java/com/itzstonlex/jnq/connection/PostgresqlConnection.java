@@ -8,6 +8,6 @@ import lombok.NonNull;
 public class PostgresqlConnection extends JDBCConnection {
 
     public PostgresqlConnection(@NonNull String username, @NonNull String password) throws JnqException {
-        super(JDBCHelper.toPostgresql("test", "localhost", JDBCHelper.POSTGRESQL_PORT), username, password);
+        super(JDBCHelper.toPostgresql("localhost", JDBCHelper.POSTGRESQL_PORT), username, password);
     }
 }
