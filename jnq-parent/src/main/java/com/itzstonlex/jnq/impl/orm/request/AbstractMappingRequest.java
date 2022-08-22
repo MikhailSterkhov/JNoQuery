@@ -35,7 +35,7 @@ public abstract class AbstractMappingRequest implements MappingRequest {
     }
 
     @Override
-    public @NonNull MappingRequest withMapper(@NonNull Class<? extends ObjectMapper<?>> cls) throws JnqObjectMappingException {
+    public @NonNull <T extends ObjectMapper<T>> MappingRequest withMapper(@NonNull Class<T> cls) throws JnqObjectMappingException {
         return withMapper(objectMappingService.findMapper(cls));
     }
 

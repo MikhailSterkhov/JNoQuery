@@ -11,10 +11,7 @@ import lombok.NonNull;
 import java.util.LinkedList;
 import java.util.concurrent.CompletableFuture;
 
-public interface RequestExecutor extends MappingRequestExecutor {
-
-    @NonNull
-    <T> LinkedList<T> fetchAll(int limit, @NonNull Class<T> cls) throws JnqObjectMappingException;
+public interface RequestExecutor {
 
     @NonNull
     Response fetchTransaction() throws JnqException;

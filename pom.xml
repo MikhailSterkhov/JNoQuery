@@ -16,7 +16,7 @@
     <modules>
         <module>jnq-orm</module>
         <module>jnq-parent</module>
-        <module>jnq-sql</module>
+        <module>jnq-jdbc</module>
     </modules>
 
     <developers>

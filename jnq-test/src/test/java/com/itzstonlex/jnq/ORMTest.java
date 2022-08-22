@@ -1,24 +1,27 @@
 package com.itzstonlex.jnq;
 
 import com.itzstonlex.jnq.connection.H2Connection;
+import com.itzstonlex.jnq.field.FieldOperator;
 import com.itzstonlex.jnq.impl.field.MappingDataField;
 import com.itzstonlex.jnq.orm.ObjectMappingService;
 import com.itzstonlex.jnq.orm.annotation.Mapping;
 import com.itzstonlex.jnq.orm.annotation.MappingColumn;
 import com.itzstonlex.jnq.orm.annotation.MappingInitMethod;
 import com.itzstonlex.jnq.orm.exception.JnqObjectMappingException;
+import com.itzstonlex.jnq.orm.mapper.AnnotationMapper;
+import com.itzstonlex.jnq.orm.mapper.JsonMapper;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.*;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class ORMTest {
 
     @Mapping // annotation from JNQ
@@ -46,12 +49,14 @@ public class ORMTest {
     private ObjectMappingService<MappingDataField> objectMappings;
 
     @Test
+    @Order(0)
     void testSetupConnection() throws JnqObjectMappingException {
         DataConnection connection = new H2Connection("root", "password");
         objectMappings = connection.getObjectMappings();
     }
 
     @Test
+    @Order(1)
     void testMap() throws JnqObjectMappingException {
         objectMappings.getRequestFactory("reg_users")
                 .newUpdate()
@@ -69,11 +74,13 @@ public class ORMTest {
     }
 
     @Test
+    @Order(2)
     void testFetch() throws JnqObjectMappingException {
         List<User> usersList = objectMappings.getRequestFactory("reg_users")
                 .newFinder()
 
                 .withLimit(100)
+                .withInclude(MappingDataField.create(FieldOperator.MORE_OR_EQUAL, "id", 1))
 
                 .withAutomapping()
                 .compile()

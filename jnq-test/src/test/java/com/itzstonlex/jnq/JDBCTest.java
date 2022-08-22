@@ -1,6 +1,6 @@
 package com.itzstonlex.jnq;
 
-import com.itzstonlex.jnq.connection.H2Connection;
+import com.itzstonlex.jnq.connection.MySQLConnection;
 import com.itzstonlex.jnq.exception.JnqException;
 import com.itzstonlex.jnq.field.FieldOperator;
 import com.itzstonlex.jnq.field.FieldType;
@@ -15,15 +15,15 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class NoSQLTest {
+public class JDBCTest {
 
     private DataConnection connection;
     private TableContent usersTable;
 
     @Test
     @Order(0)
-    void testSetupConnection() throws JnqException {
-        connection = new H2Connection("root", "password");
+    void testConnectionSetup() throws JnqException {
+        connection = new MySQLConnection("root", "");
 
         SchemaContent schemaContent = connection.getSchemaContent(JDBCHelper.H2_DEFAULT_SCHEMA_NAME);
         usersTable = schemaContent.createTableContent("reg_users");
@@ -34,11 +34,9 @@ public class NoSQLTest {
     void testContents() throws JnqException {
         connection.createRequest(usersTable)
                 .toFactory()
-                .newCreateTable()
+                .<IndexDataField>fromQuery("CREATE TABLE IF NOT EXISTS `{content}` ({0}, {1}, {2}, {3})")
 
-                .withExistsChecking()
-
-                .session()
+                .sessionAppender()
                     .append(IndexDataField.createPrimaryNotNullAutoIncrement("id"))
                     .append(IndexDataField.createNotNull(FieldType.VARCHAR, "name"))
                     .append(IndexDataField.createNotNull(FieldType.LONG, "register_date"))
@@ -55,12 +53,12 @@ public class NoSQLTest {
 
     @Test
     @Order(2)
-    void testInsert() {
+    void testInsert() throws JnqException {
         connection.createRequest(usersTable)
                 .toFactory()
-                .newInsert()
+                .<ValueDataField>fromQuery("INSERT INTO `{content}` ({name0}, {name1}, {name2}) VALUES (?, ?, ?)")
 
-                .session()
+                .sessionAppender()
                     .append(ValueDataField.create("name", "itzstonlex"))
                     .append(ValueDataField.create("register_date", System.currentTimeMillis()))
                     .append(ValueDataField.create("last_update_date", System.currentTimeMillis()))
@@ -83,15 +81,13 @@ public class NoSQLTest {
     void testFinder() {
         connection.createRequest(usersTable)
                 .toFactory()
-                .newFinder()
+                .fromQuery("SELECT {select} FROM `{content}` {where} {group} {sort} LIMIT 50")
 
-                .withLimit(50)
-
-                .sessionSelector()
+                .sessionSelector("{select}")
                     .withUpperCase("name").as("upper_name")
                     .withAll()
 
-                .sessionFilter()
+                .sessionFilter("{where}")
                     .and(ValueDataField.create("name", "itzstonlex"))
                     .endpoint()
 
@@ -129,10 +125,10 @@ public class NoSQLTest {
     void testUpdate() {
         connection.createRequest(usersTable)
                 .toFactory()
-                .newUpdate()
+                .fromQuery("UPDATE `{content}` SET {0} {filter}")
 
-                .sessionUpdater()
-                    .and(ValueDataField.create("last_update_date", System.currentTimeMillis()))
+                .sessionAppender()
+                    .append(ValueDataField.create("last_update_date", System.currentTimeMillis()))
                     .endpoint()
 
                 .sessionFilter()
@@ -150,4 +146,5 @@ public class NoSQLTest {
                     System.out.println();
                 });
     }
+
 }

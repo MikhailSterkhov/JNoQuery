@@ -10,7 +10,7 @@ public interface MappingRequest {
     MappingRequest withMapper(@NonNull ObjectMapper<?> objectMapper);
 
     @NonNull
-    MappingRequest withMapper(@NonNull Class<? extends ObjectMapper<?>> cls) throws JnqObjectMappingException;
+    <T extends ObjectMapper<T>> MappingRequest withMapper(@NonNull Class<T> cls) throws JnqObjectMappingException;
 
     @NonNull
     MappingRequest withAutomapping();
