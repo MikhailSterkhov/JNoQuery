@@ -3,7 +3,7 @@ package com.itzstonlex.jnq.jdbc.request.type;
 import com.itzstonlex.jnq.impl.field.ValueDataField;
 import com.itzstonlex.jnq.request.query.session.RequestSessionAppender;
 import com.itzstonlex.jnq.request.query.type.RequestInsert;
-import com.itzstonlex.jnq.jdbc.JDBCRequest;
+import com.itzstonlex.jnq.jdbc.request.JDBCRequest;
 import com.itzstonlex.jnq.jdbc.request.JDBCRequestQuery;
 import com.itzstonlex.jnq.jdbc.request.session.JDBCRequestSessionAppender;
 import lombok.AccessLevel;

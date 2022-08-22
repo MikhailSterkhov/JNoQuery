@@ -27,7 +27,9 @@ public interface DataConnection {
     Set<TableContent> getActiveTables(@NonNull String schema);
 
     @NonNull
-    Request createRequest(@NonNull DataContent executableContent);
+    default Request createRequest(@NonNull DataContent content) {
+        return content.createRequest();
+    }
 
     @NonNull
     ObjectMappingService<MappingDataField> getObjectMappings();

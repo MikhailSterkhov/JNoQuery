@@ -4,7 +4,6 @@ import com.itzstonlex.jnq.field.DataField;
 import com.itzstonlex.jnq.impl.field.ValueDataField;
 import com.itzstonlex.jnq.request.query.RequestQueryBasic;
 import com.itzstonlex.jnq.request.query.session.*;
-import com.itzstonlex.jnq.jdbc.JDBCRequest;
 import com.itzstonlex.jnq.jdbc.request.session.*;
 import lombok.AccessLevel;
 import lombok.NonNull;

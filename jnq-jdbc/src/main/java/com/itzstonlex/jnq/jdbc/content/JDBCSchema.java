@@ -1,5 +1,6 @@
 package com.itzstonlex.jnq.jdbc.content;
 
+import com.itzstonlex.jnq.DataConnection;
 import com.itzstonlex.jnq.exception.JnqException;
 import com.itzstonlex.jnq.impl.content.SchemaContent;
 import com.itzstonlex.jnq.impl.content.TableContent;
@@ -7,6 +8,8 @@ import com.itzstonlex.jnq.jdbc.JDBCConnection;
 import com.itzstonlex.jnq.jdbc.JDBCConnectionMeta;
 import com.itzstonlex.jnq.jdbc.JDBCHelper;
 import com.itzstonlex.jnq.jdbc.JDBCStatement;
+import com.itzstonlex.jnq.jdbc.request.JDBCRequest;
+import com.itzstonlex.jnq.request.Request;
 import com.itzstonlex.jnq.response.Response;
 import com.itzstonlex.jnq.response.ResponseLine;
 import lombok.AccessLevel;
@@ -98,6 +101,16 @@ public class JDBCSchema extends SchemaContent implements JDBCDataContent {
         synchronized (connection) {
             return !connection.isClosed() && connection.isValid(timeout);
         }
+    }
+
+    @Override
+    public JDBCConnection getConnection() {
+        return jdbcConnection;
+    }
+
+    @Override
+    public @NonNull JDBCRequest createRequest() {
+        return new JDBCRequest(jdbcConnection, this);
     }
 
     @Override

@@ -1,7 +1,8 @@
-package com.itzstonlex.jnq.jdbc;
+package com.itzstonlex.jnq.jdbc.request;
 
 import com.itzstonlex.jnq.DataConnection;
-import com.itzstonlex.jnq.content.DataContent;
+import com.itzstonlex.jnq.jdbc.JDBCConnection;
+import com.itzstonlex.jnq.jdbc.content.JDBCDataContent;
 import com.itzstonlex.jnq.request.Request;
 import com.itzstonlex.jnq.request.RequestFactory;
 import com.itzstonlex.jnq.request.option.RequestConcurrency;
@@ -15,7 +16,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
 
-@RequiredArgsConstructor(access = AccessLevel.PACKAGE)
+@RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PROTECTED, makeFinal = true)
 public class JDBCRequest implements Request {
 
@@ -23,7 +24,7 @@ public class JDBCRequest implements Request {
     JDBCConnection connection;
 
     @Getter
-    DataContent dataContent;
+    JDBCDataContent dataContent;
 
     @NonFinal
     RequestConcurrency concurrency;

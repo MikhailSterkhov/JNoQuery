@@ -1,7 +1,7 @@
 package com.itzstonlex.jnq.jdbc.request.type;
 
 import com.itzstonlex.jnq.request.query.type.RequestCreateSchema;
-import com.itzstonlex.jnq.jdbc.JDBCRequest;
+import com.itzstonlex.jnq.jdbc.request.JDBCRequest;
 import com.itzstonlex.jnq.jdbc.request.JDBCRequestQuery;
 import lombok.AccessLevel;
 import lombok.NonNull;

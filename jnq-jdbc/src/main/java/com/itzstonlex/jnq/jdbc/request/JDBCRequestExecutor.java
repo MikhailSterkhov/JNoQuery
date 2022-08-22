@@ -1,11 +1,12 @@
-package com.itzstonlex.jnq.jdbc;
+package com.itzstonlex.jnq.jdbc.request;
 
 import com.itzstonlex.jnq.exception.JnqException;
+import com.itzstonlex.jnq.jdbc.JDBCStatement;
 import com.itzstonlex.jnq.request.RequestExecutor;
 import com.itzstonlex.jnq.response.Response;
 import com.itzstonlex.jnq.response.ResponseLine;
 import com.itzstonlex.jnq.response.UpdateResponse;
-import com.itzstonlex.jnq.util.JnqSupplier;
+import com.itzstonlex.jnq.util.JnqFactory;
 import lombok.AccessLevel;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -18,16 +19,16 @@ import java.util.concurrent.CompletableFuture;
 public class JDBCRequestExecutor implements RequestExecutor {
 
     String query;
-    JDBCStatement wrapperStatement;
+    JDBCStatement statement;
 
     @Override
     public @NonNull Response fetchTransaction() throws JnqException {
-        return wrapperStatement.fetch(query);
+        return statement.fetch(query);
     }
 
     @Override
     public @NonNull UpdateResponse updateTransaction() throws JnqException {
-        return wrapperStatement.update(query);
+        return statement.update(query);
     }
 
     @Override
@@ -40,12 +41,12 @@ public class JDBCRequestExecutor implements RequestExecutor {
         return fetchTransaction().getLast();
     }
 
-    private @NonNull <T> CompletableFuture<T> _executeAsyncTransaction(boolean autojoin, @NonNull JnqSupplier<T> supplier) {
+    private @NonNull <T> CompletableFuture<T> _executeAsyncTransaction(boolean autojoin, @NonNull JnqFactory<T> factory) {
         CompletableFuture<T> completableFuture = new CompletableFuture<>();
         CompletableFuture.runAsync(() -> {
 
             try {
-                completableFuture.complete(supplier.get());
+                completableFuture.complete(factory.get());
             }
             catch (JnqException exception) {
                 completableFuture.completeExceptionally(exception);

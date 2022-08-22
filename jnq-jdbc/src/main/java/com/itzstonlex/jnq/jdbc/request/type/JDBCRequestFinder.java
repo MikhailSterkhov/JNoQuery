@@ -2,7 +2,7 @@ package com.itzstonlex.jnq.jdbc.request.type;
 
 import com.itzstonlex.jnq.request.query.session.*;
 import com.itzstonlex.jnq.request.query.type.RequestFinder;
-import com.itzstonlex.jnq.jdbc.JDBCRequest;
+import com.itzstonlex.jnq.jdbc.request.JDBCRequest;
 import com.itzstonlex.jnq.jdbc.request.JDBCRequestQuery;
 import com.itzstonlex.jnq.jdbc.request.session.*;
 import lombok.AccessLevel;

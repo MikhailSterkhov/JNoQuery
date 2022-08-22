@@ -2,7 +2,7 @@ package com.itzstonlex.jnq.jdbc;
 
 import com.itzstonlex.jnq.exception.JnqException;
 import com.itzstonlex.jnq.impl.response.WrapperUpdateResponse;
-import com.itzstonlex.jnq.jdbc.content.JDBCDataContent;
+import com.itzstonlex.jnq.jdbc.request.JDBCRequest;
 import com.itzstonlex.jnq.request.option.RequestConcurrency;
 import com.itzstonlex.jnq.request.option.RequestFetchDirection;
 import com.itzstonlex.jnq.request.option.RequestHoldability;
@@ -64,7 +64,7 @@ public final class JDBCStatement {
     public UpdateResponse update(@NonNull String query)
     throws JnqException {
 
-        Connection connection = ((JDBCDataContent) request.getDataContent()).getJdbcConnection();
+        Connection connection = request.getDataContent().getJdbcConnection();
 
         try (PreparedStatement statement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
             this._prepareStatementValues(statement);
@@ -96,7 +96,7 @@ public final class JDBCStatement {
 
         int fetchDirectionIndex = request.fetchDirection() != null ? request.fetchDirection().getIndex() : RequestFetchDirection.FORWARD.getIndex();
 
-        Connection connection = ((JDBCDataContent) request.getDataContent()).getJdbcConnection();
+        Connection connection = request.getDataContent().getJdbcConnection();
 
         try (PreparedStatement statement = connection.prepareStatement(query, typeIndex, concurrencyIndex, holdabilityIndex)) {
             statement.setFetchDirection(fetchDirectionIndex);

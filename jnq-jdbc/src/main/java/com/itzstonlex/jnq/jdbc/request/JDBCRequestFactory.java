@@ -1,12 +1,11 @@
-package com.itzstonlex.jnq.jdbc;
+package com.itzstonlex.jnq.jdbc.request;
 
-import com.itzstonlex.jnq.content.DataContent;
 import com.itzstonlex.jnq.field.DataField;
+import com.itzstonlex.jnq.jdbc.content.JDBCDataContent;
+import com.itzstonlex.jnq.jdbc.request.type.*;
 import com.itzstonlex.jnq.request.RequestFactory;
 import com.itzstonlex.jnq.request.query.RequestQueryBasic;
 import com.itzstonlex.jnq.request.query.type.*;
-import com.itzstonlex.jnq.jdbc.request.JDBCRequestQueryBasic;
-import com.itzstonlex.jnq.jdbc.request.type.*;
 import lombok.AccessLevel;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +18,7 @@ public class JDBCRequestFactory implements RequestFactory {
     JDBCRequest request;
 
     @Override
-    public @NonNull DataContent getExecutableContent() {
+    public @NonNull JDBCDataContent getExecutableContent() {
         return request.getDataContent();
     }
 

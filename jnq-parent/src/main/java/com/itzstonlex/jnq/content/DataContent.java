@@ -2,6 +2,7 @@ package com.itzstonlex.jnq.content;
 
 import com.itzstonlex.jnq.DataConnectionMeta;
 import com.itzstonlex.jnq.exception.JnqException;
+import com.itzstonlex.jnq.request.Request;
 import com.itzstonlex.jnq.response.UpdateResponse;
 import lombok.NonNull;
 
@@ -20,6 +21,9 @@ public interface DataContent {
 
     @NonNull
     DataConnectionMeta getMeta();
+
+    @NonNull
+    Request createRequest();
 
     @NonNull
     CompletableFuture<UpdateResponse> executeClear();

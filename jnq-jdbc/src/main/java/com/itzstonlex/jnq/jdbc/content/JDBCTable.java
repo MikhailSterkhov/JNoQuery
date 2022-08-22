@@ -1,7 +1,9 @@
 package com.itzstonlex.jnq.jdbc.content;
 
 import com.itzstonlex.jnq.impl.content.TableContent;
+import com.itzstonlex.jnq.jdbc.request.JDBCRequest;
 import lombok.AccessLevel;
+import lombok.NonNull;
 import lombok.experimental.FieldDefaults;
 
 import java.sql.Connection;
@@ -19,5 +21,10 @@ public class JDBCTable extends TableContent implements JDBCDataContent {
     @Override
     public final Connection getJdbcConnection() {
         return jdbcSchema.getJdbcConnection();
+    }
+
+    @Override
+    public @NonNull JDBCRequest createRequest() {
+        return new JDBCRequest(jdbcSchema.getConnection(), this);
     }
 }
