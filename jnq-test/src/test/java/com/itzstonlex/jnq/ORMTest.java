@@ -57,7 +57,7 @@ public class ORMTest {
         // Called here to automatically generate the required schema.
         SchemaContent defaultSchema = connection.getSchema(JDBCHelper.H2_DEFAULT_SCHEMA_NAME);
 
-        // In order for some ORM functionality to work correctly, you need to set a different SQL syntax mode.
+        // because some syntax is not supported in the H2 driver, then in order for some ORM functionality to work correctly, you need to set a different SQL syntax mode.
         connection.createRequest(defaultSchema)
                 .toFactory()
                 .fromQuery("set mode MySQL")
