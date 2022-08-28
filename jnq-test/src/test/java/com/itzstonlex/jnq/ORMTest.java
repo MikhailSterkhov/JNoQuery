@@ -74,7 +74,7 @@ public class ORMTest {
                 .withAutomapping()
                 .compile()
 
-                .map(new User("itzstonlex", System.currentTimeMillis(), System.currentTimeMillis()))
+                .save(new User("itzstonlex", System.currentTimeMillis(), System.currentTimeMillis()))
                 .thenAccept(userID -> {
 
                     assertEquals(userID, 1);

@@ -110,7 +110,7 @@ public class MappingRequestExecutorImpl implements MappingRequestExecutor {
     }
 
     @Override
-    public CompletableFuture<Integer> map(@NonNull Object object) throws JnqObjectMappingException {
+    public CompletableFuture<Integer> save(@NonNull Object object) throws JnqObjectMappingException {
         ObjectMapperProperties properties = new MapObjectMapperProperties();
 
         objectMapper.mapping(object, properties);

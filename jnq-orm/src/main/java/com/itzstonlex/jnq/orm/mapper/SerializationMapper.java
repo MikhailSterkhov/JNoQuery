@@ -1,25 +1,28 @@
 package com.itzstonlex.jnq.orm.mapper;
 
-import com.google.gson.Gson;
 import com.itzstonlex.jnq.orm.ObjectMapper;
 import com.itzstonlex.jnq.orm.ObjectMapperProperties;
 import lombok.AccessLevel;
 import lombok.NonNull;
 import lombok.experimental.FieldDefaults;
+import org.apache.commons.lang3.SerializationUtils;
+
+import java.io.Serializable;
+import java.util.function.Supplier;
 
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class JsonMapper<T> implements ObjectMapper<T> {
+public class SerializationMapper<T extends Serializable> implements ObjectMapper<T> {
 
-    private static final Gson PARSER = new Gson();
+    private static final Supplier<byte[]> DEFAULT_DATA_FACTORY = () -> new byte[512];
 
     @Override
     public void mapping(@NonNull T src, @NonNull ObjectMapperProperties properties) {
-        properties.set("json", PARSER.toJson(src));
+        properties.set("data", SerializationUtils.serialize(src));
     }
 
     @Override
     public @NonNull T fetch(@NonNull Class<T> cls, @NonNull ObjectMapperProperties properties) {
-        return PARSER.fromJson(properties.<String>ofNullable("json"), cls);
+        return SerializationUtils.deserialize(properties.of("data", DEFAULT_DATA_FACTORY));
     }
 
 }

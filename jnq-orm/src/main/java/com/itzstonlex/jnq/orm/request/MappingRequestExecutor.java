@@ -8,7 +8,7 @@ import java.util.concurrent.CompletableFuture;
 
 public interface MappingRequestExecutor {
 
-    CompletableFuture<Integer> map(@NonNull Object object) throws JnqObjectMappingException;
+    CompletableFuture<Integer> save(@NonNull Object object) throws JnqObjectMappingException;
 
     @NonNull
     <T> LinkedList<T> fetchAll(@NonNull Class<T> cls) throws JnqObjectMappingException;

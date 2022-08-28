@@ -10,6 +10,7 @@ import com.itzstonlex.jnq.orm.annotation.MappingColumn;
 import com.itzstonlex.jnq.orm.exception.JnqObjectMappingException;
 import com.itzstonlex.jnq.orm.mapper.AnnotationMapper;
 import com.itzstonlex.jnq.orm.mapper.JsonMapper;
+import com.itzstonlex.jnq.orm.mapper.SerializationMapper;
 import com.itzstonlex.jnq.orm.request.MappingRequestFactory;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -36,6 +37,7 @@ public class ObjectMappingServiceImpl implements ObjectMappingService<MappingDat
     {
         existsMappersMap.put(AnnotationMapper.class, new AnnotationMapper<>());
         existsMappersMap.put(JsonMapper.class, new JsonMapper<>());
+        existsMappersMap.put(SerializationMapper.class, new SerializationMapper<>());
     }
 
     @Override
