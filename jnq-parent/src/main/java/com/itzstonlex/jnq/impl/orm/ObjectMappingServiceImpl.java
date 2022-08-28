@@ -18,6 +18,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
+import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -123,6 +124,10 @@ public class ObjectMappingServiceImpl implements ObjectMappingService<MappingDat
 
         if (cls.getDeclaredAnnotation(Mapping.class) != null) {
             return findMapper(AnnotationMapper.class);
+        }
+
+        if (cls.isAssignableFrom(Serializable.class)) {
+            return findMapper(SerializationMapper.class);
         }
 
         return findMapper(JsonMapper.class);
