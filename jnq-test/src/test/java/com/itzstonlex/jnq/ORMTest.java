@@ -67,7 +67,7 @@ public class ORMTest {
 
     @Test
     @Order(1)
-    void testMap() throws JnqObjectMappingException {
+    void testSave() throws JnqObjectMappingException {
         objectMappings.getRequestFactory("reg_users")
                 .newUpdate()
 
