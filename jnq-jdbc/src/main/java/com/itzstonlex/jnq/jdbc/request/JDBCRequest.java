@@ -1,14 +1,12 @@
 package com.itzstonlex.jnq.jdbc.request;
 
-import com.itzstonlex.jnq.DataConnection;
-import com.itzstonlex.jnq.jdbc.JDBCConnection;
-import com.itzstonlex.jnq.jdbc.content.JDBCDataContent;
-import com.itzstonlex.jnq.request.Request;
-import com.itzstonlex.jnq.request.RequestFactory;
-import com.itzstonlex.jnq.request.option.RequestConcurrency;
-import com.itzstonlex.jnq.request.option.RequestFetchDirection;
-import com.itzstonlex.jnq.request.option.RequestHoldability;
-import com.itzstonlex.jnq.request.option.RequestType;
+import com.itzstonlex.jnq.content.Request;
+import com.itzstonlex.jnq.content.RequestFactory;
+import com.itzstonlex.jnq.content.request.RequestConcurrency;
+import com.itzstonlex.jnq.content.request.RequestFetchDirection;
+import com.itzstonlex.jnq.content.request.RequestHoldability;
+import com.itzstonlex.jnq.content.request.RequestType;
+import com.itzstonlex.jnq.jdbc.content.JDBCContent;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NonNull;
@@ -21,10 +19,7 @@ import lombok.experimental.NonFinal;
 public class JDBCRequest implements Request {
 
     @Getter
-    JDBCConnection connection;
-
-    @Getter
-    JDBCDataContent dataContent;
+    JDBCContent content;
 
     @NonFinal
     RequestConcurrency concurrency;
@@ -37,11 +32,6 @@ public class JDBCRequest implements Request {
 
     @NonFinal
     RequestType type;
-
-    @Override
-    public @NonNull DataConnection connection() {
-        return connection;
-    }
 
     @Override
     public RequestConcurrency concurrency() {

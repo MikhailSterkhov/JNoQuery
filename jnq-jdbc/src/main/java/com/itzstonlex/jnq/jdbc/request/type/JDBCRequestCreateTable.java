@@ -1,11 +1,11 @@
 package com.itzstonlex.jnq.jdbc.request.type;
 
-import com.itzstonlex.jnq.impl.field.IndexDataField;
-import com.itzstonlex.jnq.request.query.session.RequestSessionAppender;
-import com.itzstonlex.jnq.request.query.type.RequestCreateTable;
+import com.itzstonlex.jnq.content.field.type.IndexField;
+import com.itzstonlex.jnq.content.request.session.RequestSessionCollection;
+import com.itzstonlex.jnq.content.request.type.RequestCreateTable;
 import com.itzstonlex.jnq.jdbc.request.JDBCRequest;
 import com.itzstonlex.jnq.jdbc.request.JDBCRequestQuery;
-import com.itzstonlex.jnq.jdbc.request.session.JDBCRequestSessionAppender;
+import com.itzstonlex.jnq.jdbc.request.session.JDBCRequestSessionCollection;
 import lombok.AccessLevel;
 import lombok.NonNull;
 import lombok.experimental.FieldDefaults;
@@ -19,7 +19,7 @@ public class JDBCRequestCreateTable extends JDBCRequestQuery implements RequestC
 
     private static final String QUERY = "CREATE TABLE {checker} `{content}` ({values})";
 
-    JDBCRequestSessionAppender<IndexDataField, RequestCreateTable> session = new JDBCRequestSessionAppender<>(this);
+    JDBCRequestSessionCollection<IndexField, RequestCreateTable> session = new JDBCRequestSessionCollection<>(this);
 
     @NonFinal
     boolean existsChecking;
@@ -29,24 +29,24 @@ public class JDBCRequestCreateTable extends JDBCRequestQuery implements RequestC
     }
 
     @Override
-    public @NonNull JDBCRequestCreateTable withExistsChecking() {
+    public @NonNull JDBCRequestCreateTable checkAvailability() {
         this.existsChecking = true;
         return this;
     }
 
     @Override
-    public @NonNull RequestSessionAppender<IndexDataField, RequestCreateTable> session() {
+    public @NonNull RequestSessionCollection<IndexField, RequestCreateTable> beginCollection() {
         return session;
     }
 
     @Override
     protected String toSQL() {
-        String query = QUERY.replace("{content}", request.getDataContent().getName());
+        String query = QUERY.replace("{content}", request.getContent().getName());
         query = query.replace("{checker}", existsChecking ? "IF NOT EXISTS" : "");
 
-        List<IndexDataField> generatedFields = session.getGeneratedFields();
+        List<IndexField> generatedFields = session.getGeneratedFields();
 
-        query = query.replace("{values}", generatedFields.stream().map(IndexDataField::toString).collect(Collectors.joining(", ")));
+        query = query.replace("{values}", generatedFields.stream().map(IndexField::toString).collect(Collectors.joining(", ")));
 
         return query;
     }

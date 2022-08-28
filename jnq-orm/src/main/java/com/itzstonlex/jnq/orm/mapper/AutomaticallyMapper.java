@@ -2,7 +2,7 @@ package com.itzstonlex.jnq.orm.mapper;
 
 import com.itzstonlex.jnq.orm.ObjectMapper;
 import com.itzstonlex.jnq.orm.ObjectMapperProperties;
-import com.itzstonlex.jnq.orm.ObjectMappingService;
+import com.itzstonlex.jnq.orm.data.ObjectMappingService;
 import com.itzstonlex.jnq.orm.exception.JnqObjectMappingException;
 import lombok.AccessLevel;
 import lombok.NonNull;
@@ -13,7 +13,7 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public final class AutomaticallyMapper implements ObjectMapper<Object> {
 
-    ObjectMappingService<?> objectMappingService;
+    ObjectMappingService objectMappingService;
 
     @Override
     public @NonNull Object fetch(@NonNull Class<Object> cls, @NonNull ObjectMapperProperties properties)

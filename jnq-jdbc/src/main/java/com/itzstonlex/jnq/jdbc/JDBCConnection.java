@@ -1,18 +1,13 @@
 package com.itzstonlex.jnq.jdbc;
 
-import com.itzstonlex.jnq.DataConnection;
-import com.itzstonlex.jnq.content.DataContent;
-import com.itzstonlex.jnq.exception.JnqException;
-import com.itzstonlex.jnq.impl.content.SchemaContent;
-import com.itzstonlex.jnq.impl.content.TableContent;
-import com.itzstonlex.jnq.impl.field.MappingDataField;
-import com.itzstonlex.jnq.impl.orm.ObjectMappingServiceImpl;
-import com.itzstonlex.jnq.jdbc.content.JDBCDataContent;
+import com.itzstonlex.jnq.JnqConnection;
+import com.itzstonlex.jnq.content.JnqContent;
+import com.itzstonlex.jnq.content.exception.JnqContentException;
+import com.itzstonlex.jnq.content.type.SchemaContent;
+import com.itzstonlex.jnq.content.type.TableContent;
+import com.itzstonlex.jnq.JnqException;
 import com.itzstonlex.jnq.jdbc.content.JDBCSchema;
 import com.itzstonlex.jnq.jdbc.content.JDBCTable;
-import com.itzstonlex.jnq.jdbc.request.JDBCRequest;
-import com.itzstonlex.jnq.orm.ObjectMappingService;
-import com.itzstonlex.jnq.request.Request;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NonNull;
@@ -24,14 +19,12 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 @FieldDefaults(level = AccessLevel.PROTECTED, makeFinal = true)
-public class JDBCConnection implements DataConnection {
+public class JDBCConnection implements JnqConnection {
 
     @Getter
     String jdbcUrl, username, password;
 
     Map<String, JDBCSchema> jdbcSchemasMap;
-
-    ObjectMappingService<MappingDataField> ormService;
 
     public JDBCConnection(String driverCls, @NonNull String jdbcUrl, @NonNull String username, @NonNull String password) throws JnqException {
         try {
@@ -45,7 +38,6 @@ public class JDBCConnection implements DataConnection {
             this.password = password;
 
             this.jdbcSchemasMap = new ConcurrentHashMap<>();
-            this.ormService = new ObjectMappingServiceImpl(this);
         }
         catch (Exception exception) {
             throw new JnqException("init", exception);
@@ -63,7 +55,7 @@ public class JDBCConnection implements DataConnection {
             try {
                 jdbcSchema.updateTablesData();
             }
-            catch (JnqException exception) {
+            catch (JnqContentException exception) {
                 throw new RuntimeException(exception);
             }
         });
@@ -85,7 +77,7 @@ public class JDBCConnection implements DataConnection {
     }
 
     @Override
-    public JDBCTable getTable(@NonNull DataContent schema, @NonNull String name) {
+    public JDBCTable getTable(@NonNull JnqContent schema, @NonNull String name) {
         return getTable(schema.getName(), name);
     }
 
@@ -94,8 +86,4 @@ public class JDBCConnection implements DataConnection {
         return getSchema(schema).getActiveTables();
     }
 
-    @Override
-    public @NonNull ObjectMappingService<MappingDataField> getObjectMappings() {
-        return ormService;
-    }
 }

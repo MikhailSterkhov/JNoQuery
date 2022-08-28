@@ -9,6 +9,8 @@ public interface ObjectMapperProperties {
 
     void foreach(@NonNull BiConsumer<String, Object> foreach);
 
+    void removeAll();
+
     @NonNull
     ObjectMapperProperties set(@NonNull String key, Object value);
 

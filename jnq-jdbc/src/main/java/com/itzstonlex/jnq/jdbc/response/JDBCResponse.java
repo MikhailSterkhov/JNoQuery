@@ -1,8 +1,8 @@
 package com.itzstonlex.jnq.jdbc.response;
 
-import com.itzstonlex.jnq.exception.JnqException;
-import com.itzstonlex.jnq.response.Response;
-import com.itzstonlex.jnq.response.ResponseLine;
+import com.itzstonlex.jnq.content.exception.JnqContentException;
+import com.itzstonlex.jnq.content.Response;
+import com.itzstonlex.jnq.content.ResponseLine;
 import lombok.NonNull;
 
 import java.sql.ResultSet;
@@ -18,7 +18,7 @@ public class JDBCResponse extends LinkedList<ResponseLine> implements Response {
     }
 
     public JDBCResponse(@NonNull ResultSet resultSet)
-    throws JnqException {
+    throws JnqContentException {
 
         try {
             ResultSetMetaData metadata = resultSet.getMetaData();
@@ -38,7 +38,7 @@ public class JDBCResponse extends LinkedList<ResponseLine> implements Response {
                 index++;
             }
         } catch (SQLException exception) {
-            throw new JnqException("response", exception);
+            throw new JnqContentException("response", exception);
         }
     }
 

@@ -7,13 +7,13 @@ import lombok.NonNull;
 public interface MappingRequest {
 
     @NonNull
-    MappingRequest withMapper(@NonNull ObjectMapper<?> objectMapper);
+    MappingRequest mapper(@NonNull ObjectMapper<?> objectMapper);
 
     @NonNull
-    <T extends ObjectMapper<T>> MappingRequest withMapper(@NonNull Class<T> cls) throws JnqObjectMappingException;
+    <T extends ObjectMapper<T>> MappingRequest mapper(@NonNull Class<T> cls) throws JnqObjectMappingException;
 
     @NonNull
-    MappingRequest withAutomapping();
+    MappingRequest markAutomapping();
 
     @NonNull
     MappingRequestExecutor compile();

@@ -1,13 +1,12 @@
 package com.itzstonlex.jnq;
 
 import com.itzstonlex.jnq.connection.H2Connection;
-import com.itzstonlex.jnq.exception.JnqException;
-import com.itzstonlex.jnq.field.FieldOperator;
-import com.itzstonlex.jnq.field.FieldType;
-import com.itzstonlex.jnq.impl.content.SchemaContent;
-import com.itzstonlex.jnq.impl.content.TableContent;
-import com.itzstonlex.jnq.impl.field.IndexDataField;
-import com.itzstonlex.jnq.impl.field.ValueDataField;
+import com.itzstonlex.jnq.content.field.FieldOperator;
+import com.itzstonlex.jnq.content.field.FieldType;
+import com.itzstonlex.jnq.content.field.type.EntryField;
+import com.itzstonlex.jnq.content.field.type.IndexField;
+import com.itzstonlex.jnq.content.type.SchemaContent;
+import com.itzstonlex.jnq.content.type.TableContent;
 import com.itzstonlex.jnq.jdbc.JDBCHelper;
 import org.junit.jupiter.api.*;
 
@@ -17,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class NoSQLTest {
 
-    private DataConnection connection;
+    private JnqConnection connection;
     private TableContent usersTable;
 
     @Test
@@ -31,18 +30,18 @@ public class NoSQLTest {
 
     @Test
     @Order(1)
-    void testContents() throws JnqException {
-        connection.createRequest(usersTable)
+    void testContents() {
+        usersTable.createRequest()
                 .toFactory()
                 .newCreateTable()
 
-                .withExistsChecking()
+                .checkAvailability()
 
-                .session()
-                    .append(IndexDataField.createPrimaryNotNullAutoIncrement("id"))
-                    .append(IndexDataField.createNotNull(FieldType.VARCHAR, "name"))
-                    .append(IndexDataField.createNotNull(FieldType.LONG, "register_date"))
-                    .append(IndexDataField.createNotNull(FieldType.LONG, "last_update_date"))
+                .beginCollection()
+                    .add(IndexField.createPrimaryNotNullAutoIncrement("id"))
+                    .add(IndexField.createNotNull(FieldType.VARCHAR, "name"))
+                    .add(IndexField.createNotNull(FieldType.LONG, "register_date"))
+                    .add(IndexField.createNotNull(FieldType.LONG, "last_update_date"))
                     .endpoint()
 
                 .compile()
@@ -56,14 +55,14 @@ public class NoSQLTest {
     @Test
     @Order(2)
     void testInsert() {
-        connection.createRequest(usersTable)
+        usersTable.createRequest()
                 .toFactory()
                 .newInsert()
 
-                .session()
-                    .append(ValueDataField.create("name", "itzstonlex"))
-                    .append(ValueDataField.create("register_date", System.currentTimeMillis()))
-                    .append(ValueDataField.create("last_update_date", System.currentTimeMillis()))
+                .beginCollection()
+                    .add(EntryField.create("name", "itzstonlex"))
+                    .add(EntryField.create("register_date", System.currentTimeMillis()))
+                    .add(EntryField.create("last_update_date", System.currentTimeMillis()))
                     .endpoint()
 
                 .compile()
@@ -81,27 +80,27 @@ public class NoSQLTest {
     @Test
     @Order(3)
     void testFinder() {
-        connection.createRequest(usersTable)
+        usersTable.createRequest()
                 .toFactory()
                 .newFinder()
 
-                .withLimit(50)
+                .markLimit(50)
 
-                .sessionSelector()
+                .beginSelection()
                     .withUpperCase("name").as("upper_name")
                     .withAll()
 
-                .sessionFilter()
-                    .and(ValueDataField.create("name", "itzstonlex"))
+                .beginCondition()
+                    .and(EntryField.create("name", "itzstonlex"))
                     .endpoint()
 
-                .sessionGroup()
-                    .by(ValueDataField.create("id"))
+                .beginGrouping()
+                    .by(EntryField.create("id"))
                     .endpoint()
 
-                .sessionSort()
-                    .byDesc(ValueDataField.create("id"))
-                    .byAsc(ValueDataField.create("name"))
+                .beginSorting()
+                    .byDesc(EntryField.create("id"))
+                    .byAsc(EntryField.create("name"))
                     .endpoint()
 
                 .compile()
@@ -131,13 +130,13 @@ public class NoSQLTest {
                 .toFactory()
                 .newUpdate()
 
-                .sessionUpdater()
-                    .and(ValueDataField.create("last_update_date", System.currentTimeMillis()))
+                .beginUpdateCondition()
+                    .and(EntryField.create("last_update_date", System.currentTimeMillis()))
                     .endpoint()
 
-                .sessionFilter()
-                    .and(FieldOperator.MORE_OR_EQUAL, ValueDataField.create("id", 1))
-                    .and(ValueDataField.create("name", "itzstonlex"))
+                .beginCondition()
+                    .and(FieldOperator.MORE_OR_EQUAL, EntryField.create("id", 1))
+                    .and(EntryField.create("name", "itzstonlex"))
                     .endpoint()
 
                 .compile()

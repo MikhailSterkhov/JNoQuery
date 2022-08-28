@@ -1,14 +1,14 @@
 package com.itzstonlex.jnq.jdbc;
 
-import com.itzstonlex.jnq.exception.JnqException;
-import com.itzstonlex.jnq.impl.response.WrapperUpdateResponse;
+import com.itzstonlex.jnq.content.exception.JnqContentException;
+import com.itzstonlex.jnq.content.UpdateResponseDecorator;
 import com.itzstonlex.jnq.jdbc.request.JDBCRequest;
-import com.itzstonlex.jnq.request.option.RequestConcurrency;
-import com.itzstonlex.jnq.request.option.RequestFetchDirection;
-import com.itzstonlex.jnq.request.option.RequestHoldability;
-import com.itzstonlex.jnq.request.option.RequestType;
-import com.itzstonlex.jnq.response.Response;
-import com.itzstonlex.jnq.response.UpdateResponse;
+import com.itzstonlex.jnq.content.request.RequestConcurrency;
+import com.itzstonlex.jnq.content.request.RequestFetchDirection;
+import com.itzstonlex.jnq.content.request.RequestHoldability;
+import com.itzstonlex.jnq.content.request.RequestType;
+import com.itzstonlex.jnq.content.Response;
+import com.itzstonlex.jnq.content.UpdateResponse;
 import com.itzstonlex.jnq.jdbc.response.JDBCResponse;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -28,7 +28,7 @@ public final class JDBCStatement {
     Object[] valuesArray;
 
     private void _prepareStatementValues(@NonNull PreparedStatement statement)
-    throws JnqException {
+    throws JnqContentException {
 
         if (valuesArray == null || valuesArray.length == 0) {
             return;
@@ -56,15 +56,15 @@ public final class JDBCStatement {
                 index++;
             }
             catch (SQLException exception) {
-                throw new JnqException(exception);
+                throw new JnqContentException(exception);
             }
         }
     }
 
     public UpdateResponse update(@NonNull String query)
-    throws JnqException {
+    throws JnqContentException {
 
-        Connection connection = request.getDataContent().getJdbcConnection();
+        Connection connection = request.getContent().getJdbcConnection();
 
         try (PreparedStatement statement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
             this._prepareStatementValues(statement);
@@ -76,17 +76,17 @@ public final class JDBCStatement {
                 boolean generatedKeySupports = resultSet.next();
                 int generatedKey = generatedKeySupports ? resultSet.getInt(1) : 0;
 
-                return new WrapperUpdateResponse(generatedKeySupports, generatedKey, affectedRows);
+                return new UpdateResponseDecorator(generatedKeySupports, generatedKey, affectedRows);
             }
 
         } catch (SQLException exception) {
-            throw new JnqException(exception);
+            throw new JnqContentException(exception);
         }
     }
 
     @SuppressWarnings("MagicConstant")
     public Response fetch(@NonNull String query)
-    throws JnqException {
+    throws JnqContentException {
 
         int typeIndex = request.type() != null ? request.type().getIndex() : RequestType.FORWARD_ONLY.getIndex();
 
@@ -96,7 +96,7 @@ public final class JDBCStatement {
 
         int fetchDirectionIndex = request.fetchDirection() != null ? request.fetchDirection().getIndex() : RequestFetchDirection.FORWARD.getIndex();
 
-        Connection connection = request.getDataContent().getJdbcConnection();
+        Connection connection = request.getContent().getJdbcConnection();
 
         try (PreparedStatement statement = connection.prepareStatement(query, typeIndex, concurrencyIndex, holdabilityIndex)) {
             statement.setFetchDirection(fetchDirectionIndex);
@@ -108,7 +108,7 @@ public final class JDBCStatement {
             }
 
         } catch (SQLException exception) {
-            throw new JnqException(exception);
+            throw new JnqContentException(exception);
         }
     }
 

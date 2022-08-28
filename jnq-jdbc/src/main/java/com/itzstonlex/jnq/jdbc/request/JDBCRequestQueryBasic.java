@@ -1,9 +1,9 @@
 package com.itzstonlex.jnq.jdbc.request;
 
-import com.itzstonlex.jnq.field.DataField;
-import com.itzstonlex.jnq.impl.field.ValueDataField;
-import com.itzstonlex.jnq.request.query.RequestQueryBasic;
-import com.itzstonlex.jnq.request.query.session.*;
+import com.itzstonlex.jnq.content.field.DataField;
+import com.itzstonlex.jnq.content.field.type.EntryField;
+import com.itzstonlex.jnq.content.request.RequestQueryBasic;
+import com.itzstonlex.jnq.content.request.session.*;
 import com.itzstonlex.jnq.jdbc.request.session.*;
 import lombok.AccessLevel;
 import lombok.NonNull;
@@ -16,17 +16,17 @@ public class JDBCRequestQueryBasic<Field extends DataField>
 
     String query, sessionFilterReplacement, sessionJoinerReplacement, sessionSelectorReplacement, sessionGroupReplacement, sessionSortReplacement;
 
-    JDBCRequestSessionAppender<Field, RequestQueryBasic<Field>> sessionAppender;
+    JDBCRequestSessionCollection<Field, RequestQueryBasic<Field>> sessionAppender;
 
-    JDBCRequestSessionFilter<RequestQueryBasic<Field>> sessionFilter;
+    JDBCRequestSessionCondition<RequestQueryBasic<Field>> sessionFilter;
 
     JDBCRequestSessionJoiner<RequestQueryBasic<Field>> sessionJoiner;
 
     JDBCRequestSessionSelector<RequestQueryBasic<Field>> sessionSelector;
 
-    JDBCRequestSessionGroupBy<RequestQueryBasic<Field>> sessionGroup;
+    JDBCRequestSessionGrouping<RequestQueryBasic<Field>> sessionGroup;
 
-    JDBCRequestSessionSortBy<RequestQueryBasic<Field>> sessionSort;
+    JDBCRequestSessionSorting<RequestQueryBasic<Field>> sessionSort;
 
 
     public JDBCRequestQueryBasic(@NonNull String query, @NonNull JDBCRequest request) {
@@ -35,19 +35,19 @@ public class JDBCRequestQueryBasic<Field extends DataField>
     }
 
     @Override
-    public @NonNull RequestSessionAppender<Field, RequestQueryBasic<Field>> sessionAppender() {
+    public @NonNull RequestSessionCollection<Field, RequestQueryBasic<Field>> beginCollection() {
         if (sessionAppender == null) {
-            sessionAppender = new JDBCRequestSessionAppender<>(this);
+            sessionAppender = new JDBCRequestSessionCollection<>(this);
         }
         
         return sessionAppender;
     }
 
     @Override
-    public @NonNull RequestSessionFilter<RequestQueryBasic<Field>> sessionFilter(@NonNull String replacement) {
+    public @NonNull RequestSessionCondition<RequestQueryBasic<Field>> beginCondition(@NonNull String replacement) {
         if (sessionFilter == null) {
 
-            sessionFilter = new JDBCRequestSessionFilter<>(this);
+            sessionFilter = new JDBCRequestSessionCondition<>(this);
             sessionFilterReplacement = replacement;
         }
 
@@ -55,7 +55,7 @@ public class JDBCRequestQueryBasic<Field extends DataField>
     }
 
     @Override
-    public @NonNull RequestSessionJoiner<RequestQueryBasic<Field>> sessionJoiner(@NonNull String replacement) {
+    public @NonNull RequestSessionJoiner<RequestQueryBasic<Field>> beginJoiner(@NonNull String replacement) {
         if (sessionJoiner == null) {
 
             sessionJoiner = new JDBCRequestSessionJoiner<>(this);
@@ -66,7 +66,7 @@ public class JDBCRequestQueryBasic<Field extends DataField>
     }
 
     @Override
-    public @NonNull RequestSessionSelector<RequestQueryBasic<Field>> sessionSelector(@NonNull String replacement) {
+    public @NonNull RequestSessionSelector<RequestQueryBasic<Field>> beginSelection(@NonNull String replacement) {
         if (sessionSelector == null) {
 
             sessionSelector = new JDBCRequestSessionSelector<>(this);
@@ -77,10 +77,10 @@ public class JDBCRequestQueryBasic<Field extends DataField>
     }
 
     @Override
-    public @NonNull RequestSessionGroupBy<RequestQueryBasic<Field>> sessionGroup(@NonNull String replacement) {
+    public @NonNull RequestSessionGrouping<RequestQueryBasic<Field>> beginGrouping(@NonNull String replacement) {
         if (sessionGroup == null) {
 
-            sessionGroup = new JDBCRequestSessionGroupBy<>(this);
+            sessionGroup = new JDBCRequestSessionGrouping<>(this);
             sessionGroupReplacement = replacement;
         }
 
@@ -88,10 +88,10 @@ public class JDBCRequestQueryBasic<Field extends DataField>
     }
 
     @Override
-    public @NonNull RequestSessionSortBy<RequestQueryBasic<Field>> sessionSort(@NonNull String replacement) {
+    public @NonNull RequestSessionSorting<RequestQueryBasic<Field>> beginSorting(@NonNull String replacement) {
         if (sessionSort == null) {
 
-            sessionSort = new JDBCRequestSessionSortBy<>(this);
+            sessionSort = new JDBCRequestSessionSorting<>(this);
             sessionSortReplacement = replacement;
         }
 
@@ -100,7 +100,7 @@ public class JDBCRequestQueryBasic<Field extends DataField>
 
     @Override
     protected String toSQL() {
-        query = query.replace("{content}", request.getDataContent().getName());;
+        query = query.replace("{content}", request.getContent().getName());;
 
         if (sessionFilterReplacement != null) {
             query = query.replace(sessionFilterReplacement, sessionFilter == null ? "" : sessionFilter.getGeneratedSql());
@@ -146,8 +146,8 @@ public class JDBCRequestQueryBasic<Field extends DataField>
 
         return sessionAppender == null ? null : sessionAppender.getGeneratedFields()
                 .stream()
-                .filter(field -> field instanceof ValueDataField)
-                .map(field -> ((ValueDataField) field).value())
+                .filter(field -> field instanceof EntryField)
+                .map(field -> ((EntryField) field).value())
                 .toArray();
     }
 }

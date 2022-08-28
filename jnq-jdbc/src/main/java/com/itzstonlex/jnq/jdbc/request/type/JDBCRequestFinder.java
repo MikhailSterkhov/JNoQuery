@@ -1,7 +1,7 @@
 package com.itzstonlex.jnq.jdbc.request.type;
 
-import com.itzstonlex.jnq.request.query.session.*;
-import com.itzstonlex.jnq.request.query.type.RequestFinder;
+import com.itzstonlex.jnq.content.request.session.*;
+import com.itzstonlex.jnq.content.request.type.RequestFinder;
 import com.itzstonlex.jnq.jdbc.request.JDBCRequest;
 import com.itzstonlex.jnq.jdbc.request.JDBCRequestQuery;
 import com.itzstonlex.jnq.jdbc.request.session.*;
@@ -13,15 +13,15 @@ import lombok.experimental.NonFinal;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class JDBCRequestFinder extends JDBCRequestQuery implements RequestFinder {
 
-    private static final String QUERY = "SELECT {selector} FROM `{content}` {joiner} {filter} {group} {order} {limit}";
+    private static final String QUERY = "SELECT {selection} FROM `{content}` {joiner} {condition} {group} {order} {limit}";
 
     JDBCRequestSessionSelector<RequestFinder> sessionSelector = new JDBCRequestSessionSelector<>(this);
 
-    JDBCRequestSessionSortBy<RequestFinder> sessionOrder = new JDBCRequestSessionSortBy<>(this);
+    JDBCRequestSessionSorting<RequestFinder> sessionOrder = new JDBCRequestSessionSorting<>(this);
 
-    JDBCRequestSessionGroupBy<RequestFinder> sessionGroup = new JDBCRequestSessionGroupBy<>(this);
+    JDBCRequestSessionGrouping<RequestFinder> sessionGroup = new JDBCRequestSessionGrouping<>(this);
 
-    JDBCRequestSessionFilter<RequestFinder> sessionFilter = new JDBCRequestSessionFilter<>(this);
+    JDBCRequestSessionCondition<RequestFinder> sessionFilter = new JDBCRequestSessionCondition<>(this);
 
     JDBCRequestSessionJoiner<RequestFinder> sessionJoiner = new JDBCRequestSessionJoiner<>(this);
 
@@ -33,44 +33,44 @@ public class JDBCRequestFinder extends JDBCRequestQuery implements RequestFinder
     }
 
     @Override
-    public @NonNull RequestFinder withLimit(int limit) {
+    public @NonNull RequestFinder markLimit(int limit) {
         this.limitSize = limit;
         return this;
     }
 
     @Override
-    public @NonNull RequestSessionSelector<RequestFinder> sessionSelector() {
+    public @NonNull RequestSessionSelector<RequestFinder> beginSelection() {
         return sessionSelector;
     }
 
     @Override
-    public @NonNull RequestSessionSortBy<RequestFinder> sessionSort() {
+    public @NonNull RequestSessionSorting<RequestFinder> beginSorting() {
         return sessionOrder;
     }
 
     @Override
-    public @NonNull RequestSessionGroupBy<RequestFinder> sessionGroup() {
+    public @NonNull RequestSessionGrouping<RequestFinder> beginGrouping() {
         return sessionGroup;
     }
 
     @Override
-    public @NonNull RequestSessionFilter<RequestFinder> sessionFilter() {
+    public @NonNull RequestSessionCondition<RequestFinder> beginCondition() {
         return sessionFilter;
     }
 
     @Override
-    public @NonNull RequestSessionJoiner<RequestFinder> sessionJoiner() {
+    public @NonNull RequestSessionJoiner<RequestFinder> beginJoiner() {
         return sessionJoiner;
     }
 
     @Override
     protected String toSQL() {
-        String query = QUERY.replace("{content}", request.getDataContent().getName());
+        String query = QUERY.replace("{content}", request.getContent().getName());
 
-        query = query.replace("{selector}", sessionSelector.getGeneratedSql());
+        query = query.replace("{selection}", sessionSelector.getGeneratedSql());
         query = query.replace("{order}", sessionOrder.getGeneratedSql());
         query = query.replace("{group}", sessionGroup.getGeneratedSql());
-        query = query.replace("{filter}", sessionFilter.getGeneratedSql());
+        query = query.replace("{condition}", sessionFilter.getGeneratedSql());
         query = query.replace("{joiner}", sessionJoiner.getGeneratedSql());
 
         query = query.replace("{limit}", limitSize > 0 ? "LIMIT " + limitSize : "");

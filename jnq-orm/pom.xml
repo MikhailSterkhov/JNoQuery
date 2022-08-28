@@ -20,6 +20,12 @@
 
     <dependencies>
         <dependency>
+            <groupId>com.github.itzstonlex</groupId>
+            <artifactId>jnq-contents</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
             <version>2.9.0</version>

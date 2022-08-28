@@ -1,6 +1,6 @@
 package com.itzstonlex.jnq.jdbc.response;
 
-import com.itzstonlex.jnq.response.ResponseLine;
+import com.itzstonlex.jnq.content.ResponseLine;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;

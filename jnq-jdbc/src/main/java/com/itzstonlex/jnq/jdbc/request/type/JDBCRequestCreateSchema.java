@@ -1,6 +1,6 @@
 package com.itzstonlex.jnq.jdbc.request.type;
 
-import com.itzstonlex.jnq.request.query.type.RequestCreateSchema;
+import com.itzstonlex.jnq.content.request.type.RequestCreateSchema;
 import com.itzstonlex.jnq.jdbc.request.JDBCRequest;
 import com.itzstonlex.jnq.jdbc.request.JDBCRequestQuery;
 import lombok.AccessLevel;
@@ -21,14 +21,14 @@ public class JDBCRequestCreateSchema extends JDBCRequestQuery implements Request
     }
 
     @Override
-    public @NonNull RequestCreateSchema withExistsChecking() {
+    public @NonNull RequestCreateSchema checkAvailability() {
         this.existsChecking = true;
         return this;
     }
 
     @Override
     protected String toSQL() {
-        String query = QUERY.replace("{content}", request.getDataContent().getName());
+        String query = QUERY.replace("{content}", request.getContent().getName());
         query = query.replace("{checker}", existsChecking ? "IF NOT EXISTS" : "");
 
         return query;

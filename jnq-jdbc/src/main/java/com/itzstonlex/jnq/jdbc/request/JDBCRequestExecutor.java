@@ -1,12 +1,13 @@
 package com.itzstonlex.jnq.jdbc.request;
 
-import com.itzstonlex.jnq.exception.JnqException;
+import com.itzstonlex.jnq.content.exception.JnqContentException;
+import com.itzstonlex.jnq.JnqException;
 import com.itzstonlex.jnq.jdbc.JDBCStatement;
-import com.itzstonlex.jnq.request.RequestExecutor;
-import com.itzstonlex.jnq.response.Response;
-import com.itzstonlex.jnq.response.ResponseLine;
-import com.itzstonlex.jnq.response.UpdateResponse;
-import com.itzstonlex.jnq.util.JnqFactory;
+import com.itzstonlex.jnq.content.RequestExecutor;
+import com.itzstonlex.jnq.content.Response;
+import com.itzstonlex.jnq.content.ResponseLine;
+import com.itzstonlex.jnq.content.UpdateResponse;
+import com.itzstonlex.jnq.JnqFactory;
 import lombok.AccessLevel;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -22,22 +23,22 @@ public class JDBCRequestExecutor implements RequestExecutor {
     JDBCStatement statement;
 
     @Override
-    public @NonNull Response fetchTransaction() throws JnqException {
+    public @NonNull Response fetchTransaction() throws JnqContentException {
         return statement.fetch(query);
     }
 
     @Override
-    public @NonNull UpdateResponse updateTransaction() throws JnqException {
+    public @NonNull UpdateResponse updateTransaction() throws JnqContentException {
         return statement.update(query);
     }
 
     @Override
-    public @NonNull ResponseLine fetchFirstLine() throws JnqException {
+    public @NonNull ResponseLine fetchFirstLine() throws JnqContentException {
         return fetchTransaction().getFirst();
     }
 
     @Override
-    public @NonNull ResponseLine fetchLastLine() throws JnqException {
+    public @NonNull ResponseLine fetchLastLine() throws JnqContentException {
         return fetchTransaction().getLast();
     }
 
@@ -46,7 +47,7 @@ public class JDBCRequestExecutor implements RequestExecutor {
         CompletableFuture.runAsync(() -> {
 
             try {
-                completableFuture.complete(factory.get());
+                completableFuture.complete(factory.create());
             }
             catch (JnqException exception) {
                 completableFuture.completeExceptionally(exception);

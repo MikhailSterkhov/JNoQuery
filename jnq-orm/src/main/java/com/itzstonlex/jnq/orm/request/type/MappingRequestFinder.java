@@ -1,20 +1,38 @@
 package com.itzstonlex.jnq.orm.request.type;
 
+import com.itzstonlex.jnq.content.field.FieldOperator;
+import com.itzstonlex.jnq.content.field.type.EntryField;
 import com.itzstonlex.jnq.orm.request.MappingRequest;
 import lombok.NonNull;
 
-import java.util.List;
+import java.util.Map;
 
-public interface MappingRequestFinder<Include> extends MappingRequest {
+public interface MappingRequestFinder extends MappingRequest {
 
     int limit();
 
     @NonNull
-    List<Include> includes();
+    Map<EntryField, FieldOperator> entryFieldsAnd();
 
     @NonNull
-    MappingRequestFinder<Include> withLimit(int limit);
+    Map<EntryField, FieldOperator> entryFieldsOr();
 
     @NonNull
-    MappingRequestFinder<Include> withInclude(@NonNull Include include);
+    MappingRequestFinder limit(int limit);
+
+    @NonNull
+    MappingRequestFinder and(@NonNull FieldOperator operator, @NonNull EntryField field);
+
+    @NonNull
+    MappingRequestFinder or(@NonNull FieldOperator operator, @NonNull EntryField field);
+
+    @NonNull
+    default MappingRequestFinder and(@NonNull EntryField field) {
+        return and(FieldOperator.EQUAL, field);
+    }
+
+    @NonNull
+    default MappingRequestFinder or(@NonNull EntryField field) {
+        return or(FieldOperator.EQUAL, field);
+    }
 }

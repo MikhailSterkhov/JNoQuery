@@ -1,11 +1,11 @@
 package com.itzstonlex.jnq;
 
 import com.itzstonlex.jnq.connection.H2Connection;
-import com.itzstonlex.jnq.field.FieldOperator;
-import com.itzstonlex.jnq.impl.content.SchemaContent;
-import com.itzstonlex.jnq.impl.field.MappingDataField;
+import com.itzstonlex.jnq.content.field.FieldOperator;
+import com.itzstonlex.jnq.content.field.type.EntryField;
+import com.itzstonlex.jnq.content.type.SchemaContent;
 import com.itzstonlex.jnq.jdbc.JDBCHelper;
-import com.itzstonlex.jnq.orm.ObjectMappingService;
+import com.itzstonlex.jnq.orm.data.ObjectMappingService;
 import com.itzstonlex.jnq.orm.annotation.Mapping;
 import com.itzstonlex.jnq.orm.annotation.MappingColumn;
 import com.itzstonlex.jnq.orm.annotation.MappingInitMethod;
@@ -46,16 +46,17 @@ public class ORMTest {
         }
     }
 
-    private ObjectMappingService<MappingDataField> objectMappings;
+    private ObjectMappingService objectMappings;
 
     @Test
     @Order(0)
     void testSetupConnection() throws JnqObjectMappingException {
-        DataConnection connection = new H2Connection("root", "password");
-        objectMappings = connection.getObjectMappings();
+        JnqConnection connection = new H2Connection("root", "password");
 
         // Called here to automatically generate the required schema.
         SchemaContent defaultSchema = connection.getSchema(JDBCHelper.H2_DEFAULT_SCHEMA_NAME);
+        
+        objectMappings = ObjectMappingService.instanceOf(defaultSchema, "reg_users");
 
         // because some syntax is not supported in the H2 driver, then in order for some ORM functionality to work correctly, you need to set a different SQL syntax mode.
         connection.createRequest(defaultSchema)
@@ -68,10 +69,10 @@ public class ORMTest {
     @Test
     @Order(1)
     void testSave() throws JnqObjectMappingException {
-        objectMappings.getRequestFactory("reg_users")
+        objectMappings.getRequestFactory()
                 .newUpdate()
 
-                .withAutomapping()
+                .markAutomapping()
                 .compile()
 
                 .save(new User("itzstonlex", System.currentTimeMillis(), System.currentTimeMillis()))
@@ -86,13 +87,13 @@ public class ORMTest {
     @Test
     @Order(2)
     void testFetch() throws JnqObjectMappingException {
-        List<User> usersList = objectMappings.getRequestFactory("reg_users")
+        List<User> usersList = objectMappings.getRequestFactory()
                 .newFinder()
 
-                .withLimit(100)
-                .withInclude(MappingDataField.create(FieldOperator.MORE_OR_EQUAL, "id", 1))
+                .limit(100)
+                .and(FieldOperator.MORE_OR_EQUAL, EntryField.create("id", 1))
 
-                .withAutomapping()
+                .markAutomapping()
                 .compile()
 
                 .fetchAll(User.class);

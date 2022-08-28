@@ -1,7 +1,7 @@
 package com.itzstonlex.jnq.jdbc.request.session;
 
-import com.itzstonlex.jnq.request.query.RequestQuery;
-import com.itzstonlex.jnq.request.query.session.RequestSessionJoiner;
+import com.itzstonlex.jnq.content.request.RequestQuery;
+import com.itzstonlex.jnq.content.request.session.RequestSessionJoiner;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NonNull;

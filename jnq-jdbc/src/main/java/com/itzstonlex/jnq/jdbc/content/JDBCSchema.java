@@ -1,17 +1,15 @@
 package com.itzstonlex.jnq.jdbc.content;
 
-import com.itzstonlex.jnq.DataConnection;
-import com.itzstonlex.jnq.exception.JnqException;
-import com.itzstonlex.jnq.impl.content.SchemaContent;
-import com.itzstonlex.jnq.impl.content.TableContent;
+import com.itzstonlex.jnq.content.Request;
+import com.itzstonlex.jnq.content.RequestFactory;
+import com.itzstonlex.jnq.content.Response;
+import com.itzstonlex.jnq.content.ResponseLine;
+import com.itzstonlex.jnq.content.exception.JnqContentException;
+import com.itzstonlex.jnq.content.type.SchemaContent;
 import com.itzstonlex.jnq.jdbc.JDBCConnection;
-import com.itzstonlex.jnq.jdbc.JDBCConnectionMeta;
+import com.itzstonlex.jnq.jdbc.JDBCContentMeta;
 import com.itzstonlex.jnq.jdbc.JDBCHelper;
-import com.itzstonlex.jnq.jdbc.JDBCStatement;
 import com.itzstonlex.jnq.jdbc.request.JDBCRequest;
-import com.itzstonlex.jnq.request.Request;
-import com.itzstonlex.jnq.response.Response;
-import com.itzstonlex.jnq.response.ResponseLine;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NonNull;
@@ -25,7 +23,7 @@ import java.sql.SQLException;
 import java.util.concurrent.CompletableFuture;
 
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class JDBCSchema extends SchemaContent implements JDBCDataContent {
+public class JDBCSchema extends SchemaContent implements JDBCContent {
 
     JDBCConnection jdbcConnection;
 
@@ -34,15 +32,16 @@ public class JDBCSchema extends SchemaContent implements JDBCDataContent {
 
     @Getter
     @NonFinal
-    JDBCConnectionMeta meta;
+    JDBCContentMeta meta;
 
     public JDBCSchema(@NonNull String name, @NonNull JDBCConnection jdbcConnection) {
-        super(name, jdbcConnection);
+        super(name);
         this.jdbcConnection = jdbcConnection;
     }
 
+    @Override
     public void updateTablesData()
-    throws JnqException {
+    throws JnqContentException {
 
         synchronized (connection) {
 
@@ -78,7 +77,7 @@ public class JDBCSchema extends SchemaContent implements JDBCDataContent {
             baseConnection.setSchema(name);
 
             this.connection = baseConnection;
-            this.meta = new JDBCConnectionMeta(baseConnection.getMetaData());
+            this.meta = new JDBCContentMeta(baseConnection.getMetaData());
         }
     }
 
@@ -104,18 +103,13 @@ public class JDBCSchema extends SchemaContent implements JDBCDataContent {
     }
 
     @Override
-    public JDBCConnection getConnection() {
-        return jdbcConnection;
-    }
-
-    @Override
-    public @NonNull JDBCRequest createRequest() {
-        return new JDBCRequest(jdbcConnection, this);
+    public @NonNull Request createRequest() {
+        return new JDBCRequest(this);
     }
 
     @Override
     public CompletableFuture<Void> closeConnection()
-    throws JnqException {
+    throws JnqContentException {
 
         CompletableFuture<Void> completableFuture = new CompletableFuture<>();
 
@@ -133,7 +127,7 @@ public class JDBCSchema extends SchemaContent implements JDBCDataContent {
                 } catch (SQLException exception) {
                     completableFuture.completeExceptionally(exception);
 
-                    throw new JnqException("close", exception);
+                    throw new JnqContentException("close", exception);
                 }
             }
         }

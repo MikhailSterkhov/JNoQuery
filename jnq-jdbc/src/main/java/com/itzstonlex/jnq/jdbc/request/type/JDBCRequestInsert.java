@@ -1,11 +1,11 @@
 package com.itzstonlex.jnq.jdbc.request.type;
 
-import com.itzstonlex.jnq.impl.field.ValueDataField;
-import com.itzstonlex.jnq.request.query.session.RequestSessionAppender;
-import com.itzstonlex.jnq.request.query.type.RequestInsert;
+import com.itzstonlex.jnq.content.field.type.EntryField;
+import com.itzstonlex.jnq.content.request.session.RequestSessionCollection;
+import com.itzstonlex.jnq.content.request.type.RequestInsert;
 import com.itzstonlex.jnq.jdbc.request.JDBCRequest;
 import com.itzstonlex.jnq.jdbc.request.JDBCRequestQuery;
-import com.itzstonlex.jnq.jdbc.request.session.JDBCRequestSessionAppender;
+import com.itzstonlex.jnq.jdbc.request.session.JDBCRequestSessionCollection;
 import lombok.AccessLevel;
 import lombok.NonNull;
 import lombok.experimental.FieldDefaults;
@@ -19,7 +19,7 @@ public class JDBCRequestInsert extends JDBCRequestQuery implements RequestInsert
 
     private static final String QUERY = "INSERT {ignored} INTO `{content}` ({keys}) VALUES ({values}) {update_keys}";
 
-    JDBCRequestSessionAppender<ValueDataField, RequestInsert> appender = new JDBCRequestSessionAppender<>(this);
+    JDBCRequestSessionCollection<EntryField, RequestInsert> appender = new JDBCRequestSessionCollection<>(this);
 
     @NonFinal
     boolean ignored, updateOnDuplicateKeys;
@@ -29,34 +29,34 @@ public class JDBCRequestInsert extends JDBCRequestQuery implements RequestInsert
     }
 
     @Override
-    public @NonNull RequestInsert withIgnored() {
+    public @NonNull RequestInsert markIgnored() {
         this.ignored = true;
         return this;
     }
 
     @Override
-    public @NonNull RequestInsert withUpdateDuplicatedKeys() {
+    public @NonNull RequestInsert checkAvailability() {
         this.updateOnDuplicateKeys = true;
         return this;
     }
 
     @Override
-    public @NonNull RequestSessionAppender<ValueDataField, RequestInsert> session() {
+    public @NonNull RequestSessionCollection<EntryField, RequestInsert> beginCollection() {
         return appender;
     }
 
     @Override
     protected String toSQL() {
-        String query = QUERY.replace("{content}", request.getDataContent().getName());
+        String query = QUERY.replace("{content}", request.getContent().getName());
 
-        List<ValueDataField> generatedFields = appender.getGeneratedFields();
+        List<EntryField> generatedFields = appender.getGeneratedFields();
 
         query = query.replace("{ignored}", ignored ? "IGNORE" : "");
 
         query = query.replace("{keys}", generatedFields.stream().map(field -> "`" + field.name() + "`").collect(Collectors.joining(", ")));
         query = query.replace("{values}", generatedFields.stream().map(field -> field.value() instanceof Number ? field.value().toString() : "'" + field.value() + "'").collect(Collectors.joining(", ")));
 
-        String suffix = generatedFields.stream().map(ValueDataField::toString).collect(Collectors.joining(", "));
+        String suffix = generatedFields.stream().map(EntryField::toString).collect(Collectors.joining(", "));
         query = query.replace("{update_keys}", !updateOnDuplicateKeys ? "" : "ON DUPLICATE KEY UPDATE " + suffix);
 
         return query;

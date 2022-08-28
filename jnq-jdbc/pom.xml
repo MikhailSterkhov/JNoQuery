@@ -58,8 +58,8 @@
     <dependencies>
         <dependency>
             <groupId>com.github.itzstonlex</groupId>
-            <artifactId>jnq-parent</artifactId>
-            <version>1.0</version>
+            <artifactId>jnq-api</artifactId>
+            <version>${project.version}</version>
         </dependency>
     </dependencies>
 </project>
