@@ -27,7 +27,12 @@
             <groupId>com.github.itzstonlex</groupId>
             <artifactId>jnq-jdbc</artifactId>
             <version>${project.version}</version>
-            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.itzstonlex</groupId>
+            <artifactId>jnq-orm</artifactId>
+            <version>${project.version}</version>
         </dependency>
 
         <dependency>
@@ -57,5 +62,6 @@
             <version>2.1.212</version>
             <scope>test</scope>
         </dependency>
+
     </dependencies>
 </project>
