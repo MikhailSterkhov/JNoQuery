@@ -19,6 +19,7 @@ public class JDBCHelper {
 
     public final String H2_DRIVER_NAME = "h2";
     public final String MYSQL_DRIVER_NAME = "mysql";
+    public final String MARIADB_DRIVER_NAME = "mariadb";
     public final String CLICKHOUSE_DRIVER_NAME = "clickhouse";
     public final String POSTGRESQL_DRIVER_NAME = "postgresql";
 
@@ -43,6 +44,14 @@ public class JDBCHelper {
     }
 
     public @NonNull String toMysql(@NonNull String host) {
+        return toMysql(host, MYSQL_PORT);
+    }
+
+    public @NonNull String toMariaDB(@NonNull String host, int port) {
+        return makeLink(MARIADB_DRIVER_NAME, host, port);
+    }
+
+    public @NonNull String toMariaDB(@NonNull String host) {
         return toMysql(host, MYSQL_PORT);
     }
 
