@@ -30,7 +30,7 @@ public class JDBCTest {
 
     @Test
     @Order(1)
-    void testContents() throws JnqException {
+    void testContents() {
         usersTable.createRequest()
                 .toFactory()
                 .<IndexField>fromQuery("CREATE TABLE IF NOT EXISTS `{content}` ({0}, {1}, {2}, {3})")

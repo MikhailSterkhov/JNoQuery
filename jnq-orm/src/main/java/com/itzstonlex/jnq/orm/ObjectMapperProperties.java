@@ -18,9 +18,20 @@ public interface ObjectMapperProperties {
     ObjectMapperProperties remove(@NonNull String key);
 
     @NonNull
-    <T> T of(@NonNull String key, @NonNull Supplier<T> defaultValue);
+    <T> T peek(@NonNull String key, Supplier<T> defaultValue);
 
-    default <T> T ofNullable(@NonNull String key) {
-        return of(key, () -> null);
+    default <T> T peek(@NonNull String key) {
+        return peek(key, () -> null);
+    }
+
+    default <T> T poll(@NonNull String key, Supplier<T> defaultValue) {
+        T obj = peek(key, defaultValue);
+
+        remove(key);
+        return obj;
+    }
+
+    default <T> T poll(@NonNull String key) {
+        return poll(key, () -> null);
     }
 }

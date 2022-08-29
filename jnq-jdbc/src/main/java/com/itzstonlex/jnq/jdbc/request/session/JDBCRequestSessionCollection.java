@@ -28,4 +28,10 @@ public class JDBCRequestSessionCollection<Field extends DataField, Query extends
         generatedFields.add(field);
         return this;
     }
+
+    @Override
+    public @NonNull RequestSessionCollection<Field, Query> addAll(@NonNull Iterable<Field> fields) {
+        fields.forEach(generatedFields::add);
+        return this;
+    }
 }

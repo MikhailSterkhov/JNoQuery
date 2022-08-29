@@ -16,17 +16,17 @@ public final class AutomaticallyMapper implements ObjectMapper<Object> {
     ObjectMappingService objectMappingService;
 
     @Override
-    public @NonNull Object fetch(@NonNull Class<Object> cls, @NonNull ObjectMapperProperties properties)
+    public @NonNull Object deserialize(@NonNull Class<Object> cls, @NonNull ObjectMapperProperties properties)
     throws JnqObjectMappingException {
 
-        return this._findMapper(cls).fetch(cls, properties);
+        return this._findMapper(cls).deserialize(cls, properties);
     }
 
     @Override
-    public void mapping(@NonNull Object src, @NonNull ObjectMapperProperties properties)
+    public void serialize(@NonNull Object src, @NonNull ObjectMapperProperties properties)
     throws JnqObjectMappingException {
 
-        this._findMapper(src.getClass()).mapping(src, properties);
+        this._findMapper(src.getClass()).serialize(src, properties);
     }
 
     private ObjectMapper<Object> _findMapper(Class<?> cls)

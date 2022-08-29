@@ -16,13 +16,13 @@ public class SerializationMapper<T extends Serializable> implements ObjectMapper
     private static final Supplier<byte[]> DEFAULT_DATA_FACTORY = () -> new byte[512];
 
     @Override
-    public void mapping(@NonNull T src, @NonNull ObjectMapperProperties properties) {
+    public void serialize(@NonNull T src, @NonNull ObjectMapperProperties properties) {
         properties.set("data", SerializationUtils.serialize(src));
     }
 
     @Override
-    public @NonNull T fetch(@NonNull Class<T> cls, @NonNull ObjectMapperProperties properties) {
-        return SerializationUtils.deserialize(properties.of("data", DEFAULT_DATA_FACTORY));
+    public @NonNull T deserialize(@NonNull Class<T> cls, @NonNull ObjectMapperProperties properties) {
+        return SerializationUtils.deserialize(properties.peek("data", DEFAULT_DATA_FACTORY));
     }
 
 }

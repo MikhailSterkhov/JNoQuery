@@ -1,5 +1,6 @@
 package com.itzstonlex.jnq.orm.base.properties;
 
+import com.google.gson.internal.LinkedTreeMap;
 import com.itzstonlex.jnq.orm.ObjectMapperProperties;
 import lombok.AccessLevel;
 import lombok.NonNull;
@@ -12,7 +13,7 @@ import java.util.function.Supplier;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class ObjectMapperPropertiesImpl implements ObjectMapperProperties {
 
-    Map<String, Object> propertiesMap = new WeakHashMap<>();
+    Map<String, Object> propertiesMap = new LinkedTreeMap<>();
 
     @Override
     public void foreach(@NonNull BiConsumer<String, Object> foreach) {
@@ -38,10 +39,10 @@ public class ObjectMapperPropertiesImpl implements ObjectMapperProperties {
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T> @NonNull T of(@NonNull String key, @NonNull Supplier<T> defaultValue) {
+    public <T> @NonNull T peek(@NonNull String key, Supplier<T> defaultValue) {
         T returnValue = (T) propertiesMap.get(key.toLowerCase());
 
-        if (returnValue == null) {
+        if (returnValue == null && defaultValue != null) {
             return defaultValue.get();
         }
 

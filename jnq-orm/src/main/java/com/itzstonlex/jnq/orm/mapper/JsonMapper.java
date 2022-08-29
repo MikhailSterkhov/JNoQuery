@@ -13,13 +13,13 @@ public class JsonMapper<T> implements ObjectMapper<T> {
     private static final Gson PARSER = new Gson();
 
     @Override
-    public void mapping(@NonNull T src, @NonNull ObjectMapperProperties properties) {
+    public void serialize(@NonNull T src, @NonNull ObjectMapperProperties properties) {
         properties.set("json", PARSER.toJson(src));
     }
 
     @Override
-    public @NonNull T fetch(@NonNull Class<T> cls, @NonNull ObjectMapperProperties properties) {
-        return PARSER.fromJson(properties.<String>ofNullable("json"), cls);
+    public @NonNull T deserialize(@NonNull Class<T> cls, @NonNull ObjectMapperProperties properties) {
+        return PARSER.fromJson(properties.<String>peek("json"), cls);
     }
 
 }

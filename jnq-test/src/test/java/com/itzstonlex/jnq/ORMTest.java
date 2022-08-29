@@ -5,10 +5,8 @@ import com.itzstonlex.jnq.content.field.FieldOperator;
 import com.itzstonlex.jnq.content.field.type.EntryField;
 import com.itzstonlex.jnq.content.type.SchemaContent;
 import com.itzstonlex.jnq.jdbc.JDBCHelper;
+import com.itzstonlex.jnq.orm.annotation.*;
 import com.itzstonlex.jnq.orm.data.ObjectMappingService;
-import com.itzstonlex.jnq.orm.annotation.Mapping;
-import com.itzstonlex.jnq.orm.annotation.MappingColumn;
-import com.itzstonlex.jnq.orm.annotation.MappingInitMethod;
 import com.itzstonlex.jnq.orm.exception.JnqObjectMappingException;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -26,10 +24,12 @@ public class ORMTest {
 
     @Mapping // annotation from JNQ
     @Getter
-    @AllArgsConstructor
-    @NoArgsConstructor
     @ToString
     public static class User {
+
+        @MappingPrimary
+        @MappingID
+        private int id;
 
         @MappingColumn // annotation from JNQ
         private String name;
@@ -39,6 +39,16 @@ public class ORMTest {
 
         @MappingColumn("last_update_date") // annotation from JNQ
         private long lastUpdateTimeMillis;
+
+        // required for new instance calling.
+        private User() {}
+
+        // You object realisations.
+        public User(String name, long registerTimeMillis, long lastUpdateTimeMillis) {
+            this.name = name;
+            this.registerTimeMillis = registerTimeMillis;
+            this.lastUpdateTimeMillis = lastUpdateTimeMillis;
+        }
 
         @MappingInitMethod // annotation from JNQ
         private void init() {
@@ -55,7 +65,6 @@ public class ORMTest {
 
         // Called here to automatically generate the required schema.
         SchemaContent defaultSchema = connection.getSchema(JDBCHelper.H2_DEFAULT_SCHEMA_NAME);
-        
         objectMappings = ObjectMappingService.instanceOf(defaultSchema, "reg_users");
 
         // because some syntax is not supported in the H2 driver, then in order for some ORM functionality to work correctly, you need to set a different SQL syntax mode.

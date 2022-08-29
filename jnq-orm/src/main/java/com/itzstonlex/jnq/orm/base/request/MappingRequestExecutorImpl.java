@@ -15,6 +15,8 @@ import com.itzstonlex.jnq.content.type.SchemaContent;
 import com.itzstonlex.jnq.content.type.TableContent;
 import com.itzstonlex.jnq.orm.ObjectMapper;
 import com.itzstonlex.jnq.orm.ObjectMapperProperties;
+import com.itzstonlex.jnq.orm.annotation.MappingID;
+import com.itzstonlex.jnq.orm.annotation.MappingPrimary;
 import com.itzstonlex.jnq.orm.base.request.type.MappingRequestFinderImpl;
 import com.itzstonlex.jnq.orm.data.ObjectMappingService;
 import com.itzstonlex.jnq.orm.exception.JnqObjectMappingException;
@@ -27,6 +29,7 @@ import lombok.experimental.NonFinal;
 
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
 @RequiredArgsConstructor
@@ -44,6 +47,14 @@ public class MappingRequestExecutorImpl implements MappingRequestExecutor {
     ObjectMappingService ormService;
     MappingRequestFinderImpl requestFinder;
 
+    private String _getIdentifierName(ObjectMapperProperties properties) {
+        return properties.peek(MappingID.PROPERTY_KEY_NAME, () -> MappingID.DEFAULT_COLUMN_NAME);
+    }
+
+    private boolean _hasIdentifier(ObjectMapperProperties properties) {
+        return properties.peek(MappingID.PROPERTY_KEY_NAME) != null;
+    }
+
     private RequestSessionCollection<IndexField, RequestCreateTable> _getTableCreateSession() {
 
         // create schema if not exists.
@@ -56,10 +67,7 @@ public class MappingRequestExecutorImpl implements MappingRequestExecutor {
 
         if (tableContent == null) {
             tableContent = schemaContent.newTableInstance(table);
-
-            return tableContent.newCreateSession().add(
-                    IndexField.createPrimaryNotNullAutoIncrement("id")
-            );
+            return tableContent.newCreateSession();
         }
 
         return null;
@@ -76,11 +84,9 @@ public class MappingRequestExecutorImpl implements MappingRequestExecutor {
 
         properties.foreach((name, value) -> {
 
-            if (name.equalsIgnoreCase("id")) {
-                return;
+            if (!name.equalsIgnoreCase(MappingID.PROPERTY_KEY_NAME) && !name.equalsIgnoreCase(_getIdentifierName(properties))) {
+                insertSession.add(EntryField.create(name, value));
             }
-
-            insertSession.add(EntryField.create(name, value));
         });
 
         UpdateResponse updateResponse = insertSession.endpoint()
@@ -111,15 +117,28 @@ public class MappingRequestExecutorImpl implements MappingRequestExecutor {
     public CompletableFuture<Integer> save(@NonNull Object object) throws JnqObjectMappingException {
         ObjectMapperProperties properties = ormService.createProperties();
 
-        objectMapper.mapping(object, properties);
+        objectMapper.serialize(object, properties);
 
         RequestSessionCollection<IndexField, RequestCreateTable> createSession = _getTableCreateSession();
 
         if (createSession != null) {
+            Set<String> primaryFieldsNamesSet = properties.poll(MappingPrimary.PROPERTY_KEY_NAME);
+
+            String id = properties.poll(MappingID.PROPERTY_KEY_NAME);
+
+            createSession.add(IndexField.createPrimaryNotNullAutoIncrement(id));
+            properties.remove(id);
+
             properties.foreach((name, value) -> {
 
                 FieldType fieldType = FieldType.fromAttachment(value.getClass());
-                createSession.add(IndexField.create(fieldType, name));
+                IndexField indexField = IndexField.create(fieldType, name);
+
+                if (primaryFieldsNamesSet.contains(name.toLowerCase())) {
+                    indexField.index(IndexField.IndexType.PRIMARY);
+                }
+
+                createSession.add(indexField);
             });
 
             createSession.endpoint().compile().updateTransaction();
@@ -162,7 +181,7 @@ public class MappingRequestExecutorImpl implements MappingRequestExecutor {
                 properties.set(label, responseLine.getObject(label).orElse(null));
             }
 
-            linkedList.add((T) objectMapper.fetch((Class<Object>) cls, properties));
+            linkedList.add((T) objectMapper.deserialize((Class<Object>) cls, properties));
             properties.removeAll();
         }
 

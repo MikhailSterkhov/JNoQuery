@@ -6,7 +6,7 @@ import lombok.NonNull;
 public interface ObjectMapper<T> {
 
     @NonNull
-    T fetch(@NonNull Class<T> cls, @NonNull ObjectMapperProperties properties) throws JnqObjectMappingException;
+    T deserialize(@NonNull Class<T> cls, @NonNull ObjectMapperProperties properties) throws JnqObjectMappingException;
 
-    void mapping(@NonNull T src, @NonNull ObjectMapperProperties properties) throws JnqObjectMappingException;
+    void serialize(@NonNull T src, @NonNull ObjectMapperProperties properties) throws JnqObjectMappingException;
 }
