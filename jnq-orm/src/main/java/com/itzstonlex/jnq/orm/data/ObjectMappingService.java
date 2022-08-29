@@ -4,7 +4,7 @@ import com.itzstonlex.jnq.content.type.SchemaContent;
 import com.itzstonlex.jnq.content.type.TableContent;
 import com.itzstonlex.jnq.orm.ObjectMapper;
 import com.itzstonlex.jnq.orm.ObjectMapperProperties;
-import com.itzstonlex.jnq.orm.annotation.Mapping;
+import com.itzstonlex.jnq.orm.annotation.MappingEntity;
 import com.itzstonlex.jnq.orm.annotation.MappingColumn;
 import com.itzstonlex.jnq.orm.base.properties.ObjectMapperPropertiesImpl;
 import com.itzstonlex.jnq.orm.base.request.MappingRequestFactoryImpl;
@@ -126,7 +126,7 @@ public final class ObjectMappingService {
             }
         }
 
-        if (cls.getDeclaredAnnotation(Mapping.class) != null) {
+        if (cls.getDeclaredAnnotation(MappingEntity.class) != null) {
             return findMapper(AnnotationMapper.class);
         }
 

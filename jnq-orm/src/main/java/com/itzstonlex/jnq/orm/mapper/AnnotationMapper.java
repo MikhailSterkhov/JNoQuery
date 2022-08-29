@@ -11,10 +11,8 @@ import lombok.experimental.FieldDefaults;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.sql.Time;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class AnnotationMapper<T> implements ObjectMapper<T> {
@@ -83,7 +81,7 @@ public class AnnotationMapper<T> implements ObjectMapper<T> {
     protected void validateSourceType(@NonNull Class<?> cls)
     throws JnqObjectMappingException {
 
-        if (!cls.isAnnotationPresent(Mapping.class)) {
+        if (!cls.isAnnotationPresent(MappingEntity.class)) {
             throw new JnqObjectMappingException("No @Mapping annotation found in `%s`", cls.getName());
         }
     }

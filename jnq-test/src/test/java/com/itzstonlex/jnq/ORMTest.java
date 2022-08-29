@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class ORMTest {
 
-    @Mapping // annotation from JNQ
+    @MappingEntity // annotation from JNQ
     @Getter
     @ToString
     public static class User {
