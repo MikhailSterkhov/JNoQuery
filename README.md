@@ -37,6 +37,7 @@ modules created for different technical solutions, namely:
     * SQLite;
     * ClickHouse;
     * PostgreSQL.
+    * *etc.*
 
 <br>
 
