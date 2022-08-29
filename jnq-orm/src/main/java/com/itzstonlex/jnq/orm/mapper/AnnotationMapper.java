@@ -11,10 +11,9 @@ import lombok.experimental.FieldDefaults;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.sql.Time;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -105,14 +104,36 @@ public class AnnotationMapper<T> implements ObjectMapper<T> {
             String name = entry.getKey();
             Field field = entry.getValue();
 
+            field.setAccessible(true);
+
             String fieldName = field.getName();
+            Class<?> fieldType = field.getType();
+
+            if (field.isAnnotationPresent(MappingLastUpdateTime.class)) {
+                boolean isLong = fieldType.isAssignableFrom(long.class) || fieldType.isAssignableFrom(Long.class);
+                boolean isDate = fieldType.isAssignableFrom(Date.class);
+
+                if (!isLong && !isDate) {
+                    throw new JnqObjectMappingException("Entity LastUpdateTime field type must be equals 'long' or 'Long' or `Date`");
+                }
+
+                try {
+                    MappingLastUpdateTime annotation = field.getDeclaredAnnotation(MappingLastUpdateTime.class);
+                    long time = annotation.unit().convert(System.currentTimeMillis(), TimeUnit.MILLISECONDS);
+
+                    field.set(src, isLong ? time : new Date(TimeUnit.MILLISECONDS.convert(time, annotation.unit())));
+                }
+                catch (Exception exception) {
+                    throw new JnqObjectMappingException("serialize", exception);
+                }
+            }
 
             if (field.isAnnotationPresent(MappingID.class)) {
                 if (identifierFieldName != null) {
                     throw new JnqObjectMappingException("Entity cannot be use > 1 identifiers");
                 }
 
-                if (!field.getType().isAssignableFrom(int.class) && !field.getType().isAssignableFrom(Integer.class)) {
+                if (!fieldType.isAssignableFrom(int.class) && !fieldType.isAssignableFrom(Integer.class)) {
                     throw new JnqObjectMappingException("Entity ID field type must be equals 'int' or 'Integer'");
                 }
 
@@ -120,8 +141,6 @@ public class AnnotationMapper<T> implements ObjectMapper<T> {
             }
 
             try {
-                field.setAccessible(true);
-
                 properties.set(name, field.get(src));
 
                 if (primaryFieldsSet.stream().anyMatch(f -> f.getName().equalsIgnoreCase(fieldName))) {
@@ -129,12 +148,12 @@ public class AnnotationMapper<T> implements ObjectMapper<T> {
                 }
             }
             catch (Exception exception) {
-                throw new JnqObjectMappingException("mapping", exception);
+                throw new JnqObjectMappingException("serialize", exception);
             }
         }
 
         if (identifierFieldName == null) {
-            throw new JnqObjectMappingException("");
+            throw new JnqObjectMappingException("Entity ID is not found! (by @MappingID)");
         }
 
         properties.set(MappingID.PROPERTY_KEY_NAME, identifierFieldName);
@@ -171,7 +190,7 @@ public class AnnotationMapper<T> implements ObjectMapper<T> {
             return instance;
         }
         catch (Exception exception) {
-            throw new JnqObjectMappingException("fetch", exception);
+            throw new JnqObjectMappingException("deserialize", exception);
         }
     }
 

@@ -1,8 +1,6 @@
 package com.itzstonlex.jnq;
 
-import com.itzstonlex.jnq.orm.exception.JnqObjectMappingException;
-
-public class JnqException extends JnqObjectMappingException {
+public class JnqException extends RuntimeException {
 
     public JnqException() {
         super();

@@ -13,6 +13,7 @@ import lombok.ToString;
 import org.junit.jupiter.api.*;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -36,6 +37,7 @@ public class ORMTest {
         private long registerTimeMillis;
 
         @MappingColumn("last_update_date") // annotation from JNQ
+        @MappingLastUpdateTime(unit = TimeUnit.MILLISECONDS)
         private long lastUpdateTimeMillis;
 
         // required for new instance calling.
@@ -58,7 +60,7 @@ public class ORMTest {
 
     @Test
     @Order(0)
-    void testSetupConnection() throws JnqObjectMappingException {
+    void testSetupConnection() throws JnqException {
         JnqConnection connection = new H2Connection("root", "password");
 
         // Called here to automatically generate the required schema.
