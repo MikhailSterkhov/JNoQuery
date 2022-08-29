@@ -7,7 +7,7 @@ import lombok.NonNull;
 
 import java.util.Map;
 
-public interface MappingRequestFinder extends MappingRequest {
+public interface MappingRequestSearch extends MappingRequest {
 
     int limit();
 
@@ -18,21 +18,21 @@ public interface MappingRequestFinder extends MappingRequest {
     Map<EntryField, FieldOperator> entryFieldsOr();
 
     @NonNull
-    MappingRequestFinder limit(int limit);
+    MappingRequestSearch markLimit(int limit);
 
     @NonNull
-    MappingRequestFinder and(@NonNull FieldOperator operator, @NonNull EntryField field);
+    MappingRequestSearch and(@NonNull FieldOperator operator, @NonNull EntryField field);
 
     @NonNull
-    MappingRequestFinder or(@NonNull FieldOperator operator, @NonNull EntryField field);
+    MappingRequestSearch or(@NonNull FieldOperator operator, @NonNull EntryField field);
 
     @NonNull
-    default MappingRequestFinder and(@NonNull EntryField field) {
+    default MappingRequestSearch and(@NonNull EntryField field) {
         return and(FieldOperator.EQUAL, field);
     }
 
     @NonNull
-    default MappingRequestFinder or(@NonNull EntryField field) {
+    default MappingRequestSearch or(@NonNull EntryField field) {
         return or(FieldOperator.EQUAL, field);
     }
 }

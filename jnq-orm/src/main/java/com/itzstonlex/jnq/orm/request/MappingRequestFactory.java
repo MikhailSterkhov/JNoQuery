@@ -1,11 +1,14 @@
 package com.itzstonlex.jnq.orm.request;
 
-import com.itzstonlex.jnq.orm.request.type.MappingRequestFinder;
-import com.itzstonlex.jnq.orm.request.type.MappingRequestUpdate;
+import com.itzstonlex.jnq.orm.request.type.MappingRequestSearch;
+import com.itzstonlex.jnq.orm.request.type.MappingRequestSaving;
+import lombok.NonNull;
 
 public interface MappingRequestFactory {
 
-    MappingRequestFinder newFinder();
+    @NonNull
+    MappingRequestSearch beginSearch();
 
-    MappingRequestUpdate newUpdate();
+    @NonNull
+    MappingRequestSaving beginSaving();
 }

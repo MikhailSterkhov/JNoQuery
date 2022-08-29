@@ -1,4 +1,4 @@
-package com.itzstonlex.jnq.orm.request;
+package com.itzstonlex.jnq.orm;
 
 import com.itzstonlex.jnq.orm.exception.JnqObjectMappingException;
 import lombok.NonNull;
@@ -6,8 +6,9 @@ import lombok.NonNull;
 import java.util.LinkedList;
 import java.util.concurrent.CompletableFuture;
 
-public interface MappingRequestExecutor {
+public interface ObjectMappingRepository {
 
+    @NonNull
     CompletableFuture<Integer> save(@NonNull Object object) throws JnqObjectMappingException;
 
     @NonNull

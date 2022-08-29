@@ -28,19 +28,19 @@ public abstract class AbstractMappingRequest implements MappingRequest {
 
     @SuppressWarnings("unchecked")
     @Override
-    public @NonNull MappingRequest mapper(@NonNull ObjectMapper<?> objectMapper) {
+    public @NonNull MappingRequest markMapper(@NonNull ObjectMapper<?> objectMapper) {
         this.mapper = (ObjectMapper<Object>) objectMapper;
         return this;
     }
 
     @Override
-    public @NonNull <T extends ObjectMapper<T>> MappingRequest mapper(@NonNull Class<T> cls) throws JnqObjectMappingException {
-        return mapper(objectMappingService.findMapper(cls));
+    public @NonNull <T extends ObjectMapper<T>> MappingRequest markMapper(@NonNull Class<T> cls) throws JnqObjectMappingException {
+        return markMapper(objectMappingService.findMapper(cls));
     }
 
     @Override
     public @NonNull MappingRequest markAutomapping() {
-        return mapper(new AutomaticallyMapper(objectMappingService));
+        return markMapper(new AutomaticallyMapper(objectMappingService));
     }
 
 }

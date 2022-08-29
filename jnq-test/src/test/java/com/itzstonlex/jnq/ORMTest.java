@@ -44,10 +44,9 @@ public class ORMTest {
         private User() {}
 
         // You object realisations.
-        public User(String name, long registerTimeMillis, long lastUpdateTimeMillis) {
+        public User(String name, long registerTimeMillis) {
             this.name = name;
             this.registerTimeMillis = registerTimeMillis;
-            this.lastUpdateTimeMillis = lastUpdateTimeMillis;
         }
 
         @MappingInitMethod // annotation from JNQ
@@ -74,18 +73,22 @@ public class ORMTest {
     @Test
     @Order(1)
     void testSave() throws JnqObjectMappingException {
+        User user = new User("itzstonlex", System.currentTimeMillis());
+
         objectMappings.getRequestFactory()
-                .newUpdate()
+                .beginSaving()
+
+                .checkAvailability()
 
                 .markAutomapping()
                 .compile()
 
-                .save(new User("itzstonlex", System.currentTimeMillis(), System.currentTimeMillis()))
+                .save(user)
                 .thenAccept(userID -> {
 
                     assertEquals(userID, 1);
 
-                    System.out.println("Inserted User ID - " + userID);
+                    System.out.println("Inserted User ID - " + (user.id = userID));
                 });
     }
 
@@ -93,9 +96,9 @@ public class ORMTest {
     @Order(2)
     void testFetch() throws JnqObjectMappingException {
         List<User> usersList = objectMappings.getRequestFactory()
-                .newFinder()
+                .beginSearch()
 
-                .limit(100)
+                .markLimit(10)
                 .and(FieldOperator.MORE_OR_EQUAL, EntryField.create("id", 1))
 
                 .markAutomapping()

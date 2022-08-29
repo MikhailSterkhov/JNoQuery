@@ -16,7 +16,7 @@ public abstract class ObjectMappingRepository {
 
     public CompletableFuture<Integer> save(Object object)
     throws JnqObjectMappingException {
-        return requestFactory.newUpdate().markAutomapping().compile().save(object);
+        return requestFactory.beginSaving().markAutomapping().compile().save(object);
     }
 
     // todo - add fetchers.

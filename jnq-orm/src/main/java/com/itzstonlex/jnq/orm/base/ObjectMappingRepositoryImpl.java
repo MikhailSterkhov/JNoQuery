@@ -1,4 +1,4 @@
-package com.itzstonlex.jnq.orm.base.request;
+package com.itzstonlex.jnq.orm.base;
 
 import com.itzstonlex.jnq.content.Response;
 import com.itzstonlex.jnq.content.ResponseLine;
@@ -17,10 +17,11 @@ import com.itzstonlex.jnq.orm.ObjectMapper;
 import com.itzstonlex.jnq.orm.ObjectMapperProperties;
 import com.itzstonlex.jnq.orm.annotation.MappingID;
 import com.itzstonlex.jnq.orm.annotation.MappingPrimary;
-import com.itzstonlex.jnq.orm.base.request.type.MappingRequestFinderImpl;
+import com.itzstonlex.jnq.orm.base.request.type.MappingRequestSearchImpl;
+import com.itzstonlex.jnq.orm.base.request.type.MappingRequestSavingImpl;
 import com.itzstonlex.jnq.orm.data.ObjectMappingService;
 import com.itzstonlex.jnq.orm.exception.JnqObjectMappingException;
-import com.itzstonlex.jnq.orm.request.MappingRequestExecutor;
+import com.itzstonlex.jnq.orm.ObjectMappingRepository;
 import lombok.AccessLevel;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +35,7 @@ import java.util.concurrent.CompletableFuture;
 
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class MappingRequestExecutorImpl implements MappingRequestExecutor {
+public class ObjectMappingRepositoryImpl implements ObjectMappingRepository {
 
     SchemaContent schemaContent;
     String table;
@@ -45,7 +46,9 @@ public class MappingRequestExecutorImpl implements MappingRequestExecutor {
     ObjectMapper<Object> objectMapper;
 
     ObjectMappingService ormService;
-    MappingRequestFinderImpl requestFinder;
+
+    MappingRequestSearchImpl requestFinder;
+    MappingRequestSavingImpl requestSaver;
 
     private String _getIdentifierName(ObjectMapperProperties properties) {
         return properties.peek(MappingID.PROPERTY_KEY_NAME, () -> MappingID.DEFAULT_COLUMN_NAME);
@@ -76,9 +79,7 @@ public class MappingRequestExecutorImpl implements MappingRequestExecutor {
     private CompletableFuture<Integer> _insertObject(ObjectMapperProperties properties) {
         RequestSessionCollection<EntryField, RequestInsert> insertSession = tableContent.createRequest()
                 .toFactory()
-
                 .newInsert()
-                .checkAvailability()
 
                 .beginCollection();
 
@@ -89,10 +90,13 @@ public class MappingRequestExecutorImpl implements MappingRequestExecutor {
             }
         });
 
-        UpdateResponse updateResponse = insertSession.endpoint()
-                .compile()
-                .updateTransaction();
+        RequestInsert endpoint = insertSession.endpoint();
 
+        if (requestSaver.isCheckAvailability()) {
+            endpoint.checkAvailability();
+        }
+
+        UpdateResponse updateResponse = endpoint.compile().updateTransaction();
         return CompletableFuture.completedFuture(updateResponse.getGeneratedKey());
     }
 
@@ -114,7 +118,7 @@ public class MappingRequestExecutorImpl implements MappingRequestExecutor {
     }
 
     @Override
-    public CompletableFuture<Integer> save(@NonNull Object object) throws JnqObjectMappingException {
+    public @NonNull CompletableFuture<Integer> save(@NonNull Object object) throws JnqObjectMappingException {
         ObjectMapperProperties properties = ormService.createProperties();
 
         objectMapper.serialize(object, properties);
@@ -190,6 +194,7 @@ public class MappingRequestExecutorImpl implements MappingRequestExecutor {
 
     @Override
     public <T> @NonNull T fetchFirst(@NonNull Class<T> cls) throws JnqObjectMappingException {
+        requestFinder.markLimit(1);
         return fetchAll(cls).getFirst();
     }
 

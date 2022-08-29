@@ -2,11 +2,11 @@ package com.itzstonlex.jnq.orm.base.request;
 
 import com.itzstonlex.jnq.content.type.SchemaContent;
 import com.itzstonlex.jnq.orm.data.ObjectMappingService;
-import com.itzstonlex.jnq.orm.base.request.type.MappingRequestFinderImpl;
-import com.itzstonlex.jnq.orm.base.request.type.MappingRequestUpdateImpl;
+import com.itzstonlex.jnq.orm.base.request.type.MappingRequestSearchImpl;
+import com.itzstonlex.jnq.orm.base.request.type.MappingRequestSavingImpl;
 import com.itzstonlex.jnq.orm.request.MappingRequestFactory;
-import com.itzstonlex.jnq.orm.request.type.MappingRequestFinder;
-import com.itzstonlex.jnq.orm.request.type.MappingRequestUpdate;
+import com.itzstonlex.jnq.orm.request.type.MappingRequestSearch;
+import com.itzstonlex.jnq.orm.request.type.MappingRequestSaving;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -21,12 +21,12 @@ public class MappingRequestFactoryImpl implements MappingRequestFactory {
     ObjectMappingService objectMappingService;
 
     @Override
-    public MappingRequestFinder newFinder() {
-        return new MappingRequestFinderImpl(schemaContent, table, objectMappingService);
+    public MappingRequestSearch beginSearch() {
+        return new MappingRequestSearchImpl(schemaContent, table, objectMappingService);
     }
 
     @Override
-    public MappingRequestUpdate newUpdate() {
-        return new MappingRequestUpdateImpl(schemaContent, table, objectMappingService);
+    public MappingRequestSaving beginSaving() {
+        return new MappingRequestSavingImpl(schemaContent, table, objectMappingService);
     }
 }

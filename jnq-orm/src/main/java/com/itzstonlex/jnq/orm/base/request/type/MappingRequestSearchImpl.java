@@ -4,10 +4,10 @@ import com.itzstonlex.jnq.content.field.FieldOperator;
 import com.itzstonlex.jnq.content.field.type.EntryField;
 import com.itzstonlex.jnq.content.type.SchemaContent;
 import com.itzstonlex.jnq.orm.base.request.AbstractMappingRequest;
-import com.itzstonlex.jnq.orm.base.request.MappingRequestExecutorImpl;
+import com.itzstonlex.jnq.orm.base.ObjectMappingRepositoryImpl;
 import com.itzstonlex.jnq.orm.data.ObjectMappingService;
-import com.itzstonlex.jnq.orm.request.MappingRequestExecutor;
-import com.itzstonlex.jnq.orm.request.type.MappingRequestFinder;
+import com.itzstonlex.jnq.orm.ObjectMappingRepository;
+import com.itzstonlex.jnq.orm.request.type.MappingRequestSearch;
 import lombok.AccessLevel;
 import lombok.NonNull;
 import lombok.experimental.FieldDefaults;
@@ -17,14 +17,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class MappingRequestFinderImpl extends AbstractMappingRequest implements MappingRequestFinder {
+public class MappingRequestSearchImpl extends AbstractMappingRequest implements MappingRequestSearch {
 
     Map<EntryField, FieldOperator> and, or;
 
     @NonFinal
     int limit;
 
-    public MappingRequestFinderImpl(@NonNull SchemaContent schema, @NonNull String table, @NonNull ObjectMappingService objectMappingService) {
+    public MappingRequestSearchImpl(@NonNull SchemaContent schema, @NonNull String table, @NonNull ObjectMappingService objectMappingService) {
         super(schema, table, objectMappingService);
 
         this.and = new HashMap<>();
@@ -47,25 +47,25 @@ public class MappingRequestFinderImpl extends AbstractMappingRequest implements 
     }
 
     @Override
-    public @NonNull MappingRequestFinder limit(int limit) {
+    public @NonNull MappingRequestSearch markLimit(int limit) {
         this.limit = limit;
         return this;
     }
 
     @Override
-    public @NonNull MappingRequestFinder and(@NonNull FieldOperator operator, @NonNull EntryField field) {
+    public @NonNull MappingRequestSearch and(@NonNull FieldOperator operator, @NonNull EntryField field) {
         and.put(field, operator);
         return this;
     }
 
     @Override
-    public @NonNull MappingRequestFinder or(@NonNull FieldOperator operator, @NonNull EntryField field) {
+    public @NonNull MappingRequestSearch or(@NonNull FieldOperator operator, @NonNull EntryField field) {
         or.put(field, operator);
         return this;
     }
 
     @Override
-    public @NonNull MappingRequestExecutor compile() {
-        return new MappingRequestExecutorImpl(getSchema(), getTable(), getMapper(), getObjectMappingService(), this);
+    public @NonNull ObjectMappingRepository compile() {
+        return new ObjectMappingRepositoryImpl(getSchema(), getTable(), getMapper(), getObjectMappingService(), this, null);
     }
 }
