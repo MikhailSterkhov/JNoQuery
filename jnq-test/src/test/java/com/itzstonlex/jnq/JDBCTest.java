@@ -26,6 +26,8 @@ public class JDBCTest {
 
         SchemaContent defaultSchema = connection.getSchema(JDBCHelper.H2_DEFAULT_SCHEMA_NAME);
         usersTable = defaultSchema.newTableInstance("reg_users");
+
+        JDBCHelper.updateSyntaxMode(defaultSchema, "MySQL");
     }
 
     @Test

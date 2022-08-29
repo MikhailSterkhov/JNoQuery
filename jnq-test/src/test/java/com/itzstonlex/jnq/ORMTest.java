@@ -8,9 +8,7 @@ import com.itzstonlex.jnq.jdbc.JDBCHelper;
 import com.itzstonlex.jnq.orm.annotation.*;
 import com.itzstonlex.jnq.orm.data.ObjectMappingService;
 import com.itzstonlex.jnq.orm.exception.JnqObjectMappingException;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.junit.jupiter.api.*;
 
@@ -68,11 +66,7 @@ public class ORMTest {
         objectMappings = ObjectMappingService.instanceOf(defaultSchema, "reg_users");
 
         // because some syntax is not supported in the H2 driver, then in order for some ORM functionality to work correctly, you need to set a different SQL syntax mode.
-        connection.createRequest(defaultSchema)
-                .toFactory()
-                .fromQuery("set mode MySQL")
-                .compile()
-                .updateTransaction();
+        JDBCHelper.updateSyntaxMode(defaultSchema, "MySQL");
     }
 
     @Test

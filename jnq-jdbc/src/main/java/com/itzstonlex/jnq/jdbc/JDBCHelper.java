@@ -1,5 +1,6 @@
 package com.itzstonlex.jnq.jdbc;
 
+import com.itzstonlex.jnq.content.JnqContent;
 import lombok.NonNull;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
@@ -76,6 +77,14 @@ public class JDBCHelper {
     @SneakyThrows
     public Connection getConnection(@NonNull String url, @NonNull String username, @NonNull String password) {
         return DriverManager.getConnection(url, username, password);
+    }
+
+    public void updateSyntaxMode(@NonNull JnqContent content, @NonNull String mode) {
+        content.createRequest()
+                .toFactory()
+                .fromQuery("set mode " + mode)
+                .compile()
+                .updateTransaction();
     }
 
 }
