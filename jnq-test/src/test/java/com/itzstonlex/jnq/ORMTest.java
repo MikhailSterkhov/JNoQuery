@@ -26,8 +26,8 @@ public class ORMTest {
     @ToString
     public static class User {
 
-        @MappingPrimary
-        @MappingID
+        @MappingPrimary // annotation from JNQ
+        @MappingID // annotation from JNQ
         private int id;
 
         @MappingColumn // annotation from JNQ
@@ -37,7 +37,7 @@ public class ORMTest {
         private long registerTimeMillis;
 
         @MappingColumn("last_update_date") // annotation from JNQ
-        @MappingLastUpdateTime(unit = TimeUnit.MILLISECONDS)
+        @MappingLastUpdateTime(unit = TimeUnit.MILLISECONDS) // annotation from JNQ
         private long lastUpdateTimeMillis;
 
         // required for new instance calling.
