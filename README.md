@@ -33,6 +33,7 @@ modules created for different technical solutions, namely:
 * **JDBC**: Owns direct connection via URL formats, and also supports many previously known types of relational databases:
     * H2;
     * MySQL;
+    * MariaDB;
     * SQLite;
     * ClickHouse;
     * PostgreSQL.
