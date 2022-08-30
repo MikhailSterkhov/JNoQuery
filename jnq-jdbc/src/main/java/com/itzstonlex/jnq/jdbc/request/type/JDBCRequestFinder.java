@@ -21,7 +21,7 @@ public class JDBCRequestFinder extends JDBCRequestQuery implements RequestFinder
 
     JDBCRequestSessionGrouping<RequestFinder> sessionGroup = new JDBCRequestSessionGrouping<>(this);
 
-    JDBCRequestSessionCondition<RequestFinder> sessionFilter = new JDBCRequestSessionCondition<>(this);
+    JDBCRequestSessionCondition<RequestFinder> sessionFilter = new JDBCRequestSessionCondition<>(true, this);
 
     JDBCRequestSessionJoiner<RequestFinder> sessionJoiner = new JDBCRequestSessionJoiner<>(this);
 
@@ -80,6 +80,6 @@ public class JDBCRequestFinder extends JDBCRequestQuery implements RequestFinder
 
     @Override
     protected Object[] toFieldValues() {
-        return new Object[0];
+        return sessionFilter.getValues().toArray();
     }
 }

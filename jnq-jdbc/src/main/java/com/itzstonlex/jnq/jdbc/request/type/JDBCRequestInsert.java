@@ -11,7 +11,10 @@ import lombok.NonNull;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
 
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -55,12 +58,12 @@ public class JDBCRequestInsert extends JDBCRequestQuery implements RequestInsert
         query = query.replace("{ignored}", ignored ? "IGNORE" : "");
 
         query = query.replace("{keys}", generatedFields.stream().map(field -> "`" + field.name() + "`").collect(Collectors.joining(", ")));
-        query = query.replace("{values}", generatedFields.stream().map(field -> field.value() instanceof Number ? field.value().toString() : "'" + field.value() + "'").collect(Collectors.joining(", ")));
+        query = query.replace("{values}", generatedFields.stream().map(field -> "?").collect(Collectors.joining(", ")));
 
         List<EntryField> duplicatedKeys = duplication.getGeneratedFields();
 
         if (!duplicatedKeys.isEmpty()) {
-            query += " ON DUPLICATE KEY UPDATE " + duplication.getGeneratedFields().stream().map(EntryField::toString).collect(Collectors.joining(", "));
+            query += " ON DUPLICATE KEY UPDATE " + duplication.getGeneratedFields().stream().map(field -> "`" + field.name() + "` = ?").collect(Collectors.joining(", "));
         }
 
         return query;
@@ -68,6 +71,11 @@ public class JDBCRequestInsert extends JDBCRequestQuery implements RequestInsert
 
     @Override
     protected Object[] toFieldValues() {
-        return null;
+        List<Object> values = new ArrayList<>();
+
+        values.addAll(appender.getGeneratedFields().stream().map(EntryField::value).collect(Collectors.toList()));
+        values.addAll(duplication.getGeneratedFields().stream().map(EntryField::value).collect(Collectors.toList()));
+
+        return values.toArray();
     }
 }

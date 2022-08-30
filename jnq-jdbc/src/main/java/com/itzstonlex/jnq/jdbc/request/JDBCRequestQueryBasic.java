@@ -47,7 +47,7 @@ public class JDBCRequestQueryBasic<Field extends DataField>
     public @NonNull RequestSessionCondition<RequestQueryBasic<Field>> beginCondition(@NonNull String replacement) {
         if (sessionFilter == null) {
 
-            sessionFilter = new JDBCRequestSessionCondition<>(this);
+            sessionFilter = new JDBCRequestSessionCondition<>(false, this);
             sessionFilterReplacement = replacement;
         }
 

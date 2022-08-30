@@ -8,24 +8,40 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.experimental.FieldDefaults;
+import lombok.experimental.NonFinal;
 
-@FieldDefaults(level = AccessLevel.PRIVATE)
+import java.util.LinkedHashSet;
+import java.util.Set;
+
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class JDBCRequestSessionCondition<Query extends RequestQuery>
         extends JDBCRequestSession<Query>
         implements RequestSessionCondition<Query> {
 
+    boolean anonymous;
+
+    @NonFinal
     @Getter
     String generatedSql = "";
 
-    public JDBCRequestSessionCondition(@NonNull Query parent) {
+    @Getter
+    Set<Object> values = new LinkedHashSet<>();
+
+    public JDBCRequestSessionCondition(boolean anonymous, @NonNull Query parent) {
         super(parent);
+        this.anonymous = anonymous;
     }
 
     private void _appendField(StringBuilder stringBuilder, FieldOperator operator, EntryField field) {
         Object value = field.value();
 
         if (value != null) {
-            stringBuilder.append(field.toString().replaceFirst("\\=", operator.getSql()));
+            if (anonymous) {
+                stringBuilder.append("`").append(field.name()).append("`").append(operator).append("?");
+            }
+            else {
+                stringBuilder.append(field.toString().replaceFirst("\\=", operator.getSql()));
+            }
         }
     }
 
@@ -40,7 +56,9 @@ public class JDBCRequestSessionCondition<Query extends RequestQuery>
         }
 
         _appendField(builder, operator, field);
+
         generatedSql = builder.toString();
+        values.add(field.value());
     }
 
     @Override

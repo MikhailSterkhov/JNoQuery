@@ -1,14 +1,14 @@
 package com.itzstonlex.jnq.jdbc;
 
-import com.itzstonlex.jnq.content.exception.JnqContentException;
+import com.itzstonlex.jnq.content.Response;
+import com.itzstonlex.jnq.content.UpdateResponse;
 import com.itzstonlex.jnq.content.UpdateResponseDecorator;
-import com.itzstonlex.jnq.jdbc.request.JDBCRequest;
+import com.itzstonlex.jnq.content.exception.JnqContentException;
 import com.itzstonlex.jnq.content.request.RequestConcurrency;
 import com.itzstonlex.jnq.content.request.RequestFetchDirection;
 import com.itzstonlex.jnq.content.request.RequestHoldability;
 import com.itzstonlex.jnq.content.request.RequestType;
-import com.itzstonlex.jnq.content.Response;
-import com.itzstonlex.jnq.content.UpdateResponse;
+import com.itzstonlex.jnq.jdbc.request.JDBCRequest;
 import com.itzstonlex.jnq.jdbc.response.JDBCResponse;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -18,10 +18,23 @@ import lombok.experimental.FieldDefaults;
 import java.sql.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.Map;
+import java.util.WeakHashMap;
 
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PROTECTED)
 public final class JDBCStatement {
+
+    static Map<String, PreparedStatement> weakStatementsMap = new WeakHashMap<>();
+
+    static PreparedStatement peekCachedTransaction(String query) {
+        return weakStatementsMap.get(query.toLowerCase());
+    }
+
+    static PreparedStatement saveTransactionCache(String query, PreparedStatement statement) {
+        weakStatementsMap.put(query.toLowerCase(), statement);
+        return statement;
+    }
 
     JDBCRequest request;
 
@@ -66,7 +79,10 @@ public final class JDBCStatement {
 
         Connection connection = request.getContent().getJdbcConnection();
 
-        try (PreparedStatement statement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
+        try {
+            PreparedStatement transaction = peekCachedTransaction(query);
+            PreparedStatement statement = transaction != null ? transaction : saveTransactionCache(query, connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS));
+
             this._prepareStatementValues(statement);
 
             int affectedRows = statement.executeUpdate();
@@ -89,16 +105,16 @@ public final class JDBCStatement {
     throws JnqContentException {
 
         int typeIndex = request.type() != null ? request.type().getIndex() : RequestType.FORWARD_ONLY.getIndex();
-
         int concurrencyIndex = request.concurrency() != null ? request.concurrency().getIndex() : RequestConcurrency.UPDATABLE.getIndex();
-
         int holdabilityIndex = request.holdability() != null ? request.holdability().getIndex() : RequestHoldability.HOLD_CURSORS_OVER_COMMIT.getIndex();
-
         int fetchDirectionIndex = request.fetchDirection() != null ? request.fetchDirection().getIndex() : RequestFetchDirection.FORWARD.getIndex();
 
         Connection connection = request.getContent().getJdbcConnection();
 
-        try (PreparedStatement statement = connection.prepareStatement(query, typeIndex, concurrencyIndex, holdabilityIndex)) {
+        try {
+            PreparedStatement transaction = peekCachedTransaction(query);
+            PreparedStatement statement = transaction != null ? transaction : saveTransactionCache(query, connection.prepareStatement(query, typeIndex, concurrencyIndex, holdabilityIndex));
+
             statement.setFetchDirection(fetchDirectionIndex);
 
             this._prepareStatementValues(statement);
