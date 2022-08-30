@@ -64,8 +64,6 @@ public final class JDBCStatement {
     public UpdateResponse update(@NonNull String query)
     throws JnqContentException {
 
-        System.out.println(query);
-
         Connection connection = request.getContent().getJdbcConnection();
 
         try (PreparedStatement statement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
