@@ -16,6 +16,7 @@ import com.itzstonlex.jnq.content.type.TableContent;
 import com.itzstonlex.jnq.orm.ObjectMapper;
 import com.itzstonlex.jnq.orm.ObjectMapperProperties;
 import com.itzstonlex.jnq.orm.annotation.MappingID;
+import com.itzstonlex.jnq.orm.annotation.MappingLastUpdateTime;
 import com.itzstonlex.jnq.orm.annotation.MappingPrimary;
 import com.itzstonlex.jnq.orm.base.request.type.MappingRequestSearchImpl;
 import com.itzstonlex.jnq.orm.base.request.type.MappingRequestSavingImpl;
@@ -85,7 +86,10 @@ public class ObjectMappingRepositoryImpl implements ObjectMappingRepository {
 
         properties.foreach((name, value) -> {
 
-            if (!name.equalsIgnoreCase(MappingPrimary.PROPERTY_KEY_NAME) && !name.equalsIgnoreCase(MappingID.PROPERTY_KEY_NAME)
+            if (!name.equalsIgnoreCase(MappingLastUpdateTime.PROPERTY_KEY_NAME)
+                    && !name.equalsIgnoreCase(MappingPrimary.PROPERTY_KEY_NAME)
+                    && !name.equalsIgnoreCase(MappingID.PROPERTY_KEY_NAME)
+
                     && !name.equalsIgnoreCase(_getIdentifierName(properties))) {
 
                 insertSession.add(EntryField.create(name, value));
@@ -95,7 +99,15 @@ public class ObjectMappingRepositoryImpl implements ObjectMappingRepository {
         RequestInsert endpoint = insertSession.endpoint();
 
         if (requestSaver.isCheckAvailability()) {
-            endpoint.checkAvailability();
+            RequestSessionCollection<EntryField, RequestInsert> duplication = endpoint.beginDuplication();
+
+            String lastUpdateTimeVar = properties.peek(MappingLastUpdateTime.PROPERTY_KEY_NAME);
+
+            if (lastUpdateTimeVar != null) {
+                duplication.add(EntryField.create(lastUpdateTimeVar, System.currentTimeMillis()));
+            }
+
+            endpoint = duplication.endpoint();
         }
 
         UpdateResponse updateResponse = endpoint.compile().updateTransaction();
@@ -136,6 +148,10 @@ public class ObjectMappingRepositoryImpl implements ObjectMappingRepository {
             properties.remove(id);
 
             properties.foreach((name, value) -> {
+
+                if (name.equals(MappingLastUpdateTime.PROPERTY_KEY_NAME)) {
+                    return;
+                }
 
                 FieldType fieldType = FieldType.fromAttachment(value.getClass());
                 IndexField indexField = IndexField.create(fieldType, name);

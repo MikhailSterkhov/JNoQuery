@@ -66,11 +66,6 @@ public class AnnotationMapper<T> implements ObjectMapper<T> {
         for (Field field : src.getClass().getDeclaredFields()) {
 
             if (field.isAnnotationPresent(MappingPrimary.class)) {
-
-                if (!field.getType().isPrimitive()) {
-                    throw new JnqObjectMappingException("primary key field type must be primitive");
-                }
-
                 primarySet.add(field);
             }
         }
@@ -120,6 +115,8 @@ public class AnnotationMapper<T> implements ObjectMapper<T> {
                     long time = annotation.unit().convert(System.currentTimeMillis(), TimeUnit.MILLISECONDS);
 
                     field.set(src, isLong ? time : new Date(TimeUnit.MILLISECONDS.convert(time, annotation.unit())));
+
+                    properties.set(MappingLastUpdateTime.PROPERTY_KEY_NAME, name);
                 }
                 catch (Exception exception) {
                     throw new JnqObjectMappingException("serialize", exception);

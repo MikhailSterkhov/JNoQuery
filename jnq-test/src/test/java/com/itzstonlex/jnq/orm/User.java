@@ -17,6 +17,7 @@ public class User {
     @MappingID // annotation from JNQ
     private int id;
 
+    @MappingPrimary
     @MappingColumn // annotation from JNQ
     private String name;
 

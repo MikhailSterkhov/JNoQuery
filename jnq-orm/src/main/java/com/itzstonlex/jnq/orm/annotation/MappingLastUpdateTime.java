@@ -10,5 +10,7 @@ import java.util.concurrent.TimeUnit;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface MappingLastUpdateTime {
 
+    String PROPERTY_KEY_NAME = "@last_update_time";
+
     TimeUnit unit();
 }

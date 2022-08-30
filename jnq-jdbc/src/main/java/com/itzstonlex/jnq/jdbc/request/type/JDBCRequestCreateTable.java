@@ -12,6 +12,7 @@ import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -45,9 +46,17 @@ public class JDBCRequestCreateTable extends JDBCRequestQuery implements RequestC
         query = query.replace("{checker}", existsChecking ? "IF NOT EXISTS" : "");
 
         List<IndexField> generatedFields = session.getGeneratedFields();
+        Set<IndexField> primaryFields = generatedFields.stream().filter(indexField -> indexField.has(IndexField.IndexType.PRIMARY)).collect(Collectors.toSet());
 
-        query = query.replace("{values}", generatedFields.stream().map(IndexField::toString).collect(Collectors.joining(", ")));
+        boolean morePrimaries = primaryFields.size() > 1;
 
+        String fieldsLine = generatedFields.stream().map(IndexField::toString).collect(Collectors.joining(", "));
+
+        if (morePrimaries) {
+            fieldsLine = fieldsLine.replace(" PRIMARY KEY", "");
+        }
+
+        query = query.replace("{values}", fieldsLine + (morePrimaries ? ", PRIMARY KEY (" + primaryFields.stream().map(field -> "`" + field.name() + "`").collect(Collectors.joining(", ")) + ")" : ""));
         return query;
     }
 

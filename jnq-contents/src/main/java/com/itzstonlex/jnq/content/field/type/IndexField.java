@@ -68,6 +68,10 @@ public class IndexField implements DataField {
         return this;
     }
 
+    public boolean has(@NonNull IndexType index) {
+        return indexTypes.contains(index);
+    }
+
     @Override
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder(String.format("`%s`", name));
