@@ -11,7 +11,7 @@ public interface RequestInsert extends RequestQuery {
     RequestInsert markIgnored();
 
     @NonNull
-    RequestInsert checkAvailability();
+    RequestSessionCollection<EntryField, RequestInsert> beginDuplication();
 
     @NonNull
     RequestSessionCollection<EntryField, RequestInsert> beginCollection();

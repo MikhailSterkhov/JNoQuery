@@ -17,12 +17,14 @@ import java.util.stream.Collectors;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class JDBCRequestInsert extends JDBCRequestQuery implements RequestInsert {
 
-    private static final String QUERY = "INSERT {ignored} INTO `{content}` ({keys}) VALUES ({values}) {update_keys}";
+    private static final String QUERY = "INSERT {ignored} INTO `{content}` ({keys}) VALUES ({values})";
+
+    JDBCRequestSessionCollection<EntryField, RequestInsert> duplication = new JDBCRequestSessionCollection<>(this);
 
     JDBCRequestSessionCollection<EntryField, RequestInsert> appender = new JDBCRequestSessionCollection<>(this);
 
     @NonFinal
-    boolean ignored, updateOnDuplicateKeys;
+    boolean ignored;
 
     public JDBCRequestInsert(JDBCRequest request) {
         super(request);
@@ -35,9 +37,8 @@ public class JDBCRequestInsert extends JDBCRequestQuery implements RequestInsert
     }
 
     @Override
-    public @NonNull RequestInsert checkAvailability() {
-        this.updateOnDuplicateKeys = true;
-        return this;
+    public @NonNull RequestSessionCollection<EntryField, RequestInsert> beginDuplication() {
+        return duplication;
     }
 
     @Override
@@ -56,8 +57,11 @@ public class JDBCRequestInsert extends JDBCRequestQuery implements RequestInsert
         query = query.replace("{keys}", generatedFields.stream().map(field -> "`" + field.name() + "`").collect(Collectors.joining(", ")));
         query = query.replace("{values}", generatedFields.stream().map(field -> field.value() instanceof Number ? field.value().toString() : "'" + field.value() + "'").collect(Collectors.joining(", ")));
 
-        String suffix = generatedFields.stream().map(EntryField::toString).collect(Collectors.joining(", "));
-        query = query.replace("{update_keys}", !updateOnDuplicateKeys ? "" : "ON DUPLICATE KEY UPDATE " + suffix);
+        List<EntryField> duplicatedKeys = duplication.getGeneratedFields();
+
+        if (!duplicatedKeys.isEmpty()) {
+            query += "ON DUPLICATE KEY UPDATE " + duplication.getGeneratedFields().stream().map(EntryField::toString).collect(Collectors.joining(", "));
+        }
 
         return query;
     }

@@ -67,6 +67,10 @@ public class NoSQLTest {
                     .add(EntryField.create("last_update_date", System.currentTimeMillis()))
                     .endpoint()
 
+                .beginDuplication()
+                    .add(EntryField.create("last_update_date", System.currentTimeMillis()))
+                    .endpoint()
+
                 .compile()
                 .updateTransactionAsync()
 
