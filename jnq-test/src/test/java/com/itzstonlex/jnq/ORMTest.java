@@ -52,7 +52,7 @@ public class ORMTest {
         User userByName = repository.findByName("itzstonlex");
         User userByID = repository.findByID(1);
 
-        if (userByName.equals(userByID)) {
+        if (userByName.getId() == userByID.getId()) {
             System.out.println("It`s worked!");
         }
     }
