@@ -13,7 +13,6 @@ import java.util.concurrent.TimeUnit;
 public class User {
 
     @Setter
-    @MappingPrimary // annotation from JNQ
     @MappingID // annotation from JNQ
     private int id;
 

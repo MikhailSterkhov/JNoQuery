@@ -60,7 +60,7 @@ public class JDBCRequestInsert extends JDBCRequestQuery implements RequestInsert
         List<EntryField> duplicatedKeys = duplication.getGeneratedFields();
 
         if (!duplicatedKeys.isEmpty()) {
-            query += "ON DUPLICATE KEY UPDATE " + duplication.getGeneratedFields().stream().map(EntryField::toString).collect(Collectors.joining(", "));
+            query += " ON DUPLICATE KEY UPDATE " + duplication.getGeneratedFields().stream().map(EntryField::toString).collect(Collectors.joining(", "));
         }
 
         return query;

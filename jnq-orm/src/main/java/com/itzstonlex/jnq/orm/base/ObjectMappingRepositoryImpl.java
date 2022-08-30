@@ -44,7 +44,7 @@ public class ObjectMappingRepositoryImpl implements ObjectMappingRepository {
     @NonFinal
     TableContent tableContent;
 
-    ObjectMapper<Object> objectMapper;
+    ObjectMapper<Object> mapper;
 
     ObjectMappingService ormService;
 
@@ -135,7 +135,7 @@ public class ObjectMappingRepositoryImpl implements ObjectMappingRepository {
     public @NonNull CompletableFuture<Integer> save(@NonNull Object object) throws JnqObjectMappingException {
         ObjectMapperProperties properties = ormService.createProperties();
 
-        objectMapper.serialize(object, properties);
+        mapper.serialize(object, properties);
 
         RequestSessionCollection<IndexField, RequestCreateTable> createSession = _getTableCreateSession();
 
@@ -144,12 +144,12 @@ public class ObjectMappingRepositoryImpl implements ObjectMappingRepository {
 
             String id = properties.poll(MappingID.PROPERTY_KEY_NAME);
 
-            createSession.add(IndexField.createPrimaryNotNullAutoIncrement(id));
-            properties.remove(id);
+            createSession.add(IndexField.createNotNull(FieldType.INT, id)
+                    .index(IndexField.IndexType.AUTO_INCREMENT));
 
             properties.foreach((name, value) -> {
 
-                if (name.equals(MappingLastUpdateTime.PROPERTY_KEY_NAME)) {
+                if (name.equals(id) || name.equals(MappingLastUpdateTime.PROPERTY_KEY_NAME)) {
                     return;
                 }
 
@@ -203,7 +203,7 @@ public class ObjectMappingRepositoryImpl implements ObjectMappingRepository {
                 properties.set(label, responseLine.getObject(label).orElse(null));
             }
 
-            linkedList.add((T) objectMapper.deserialize((Class<Object>) cls, properties));
+            linkedList.add((T) mapper.deserialize((Class<Object>) cls, properties));
             properties.removeAll();
         }
 
