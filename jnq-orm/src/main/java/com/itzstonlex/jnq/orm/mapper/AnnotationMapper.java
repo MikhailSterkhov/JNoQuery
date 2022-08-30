@@ -112,7 +112,7 @@ public class AnnotationMapper<T> implements ObjectMapper<T> {
                 boolean isDate = fieldType.isAssignableFrom(Date.class);
 
                 if (!isLong && !isDate) {
-                    throw new JnqObjectMappingException("Entity LastUpdateTime field type must be equals 'long' or 'Long' or `Date`");
+                    throw new JnqObjectMappingException("Entity LastUpdateTime field type must have equals 'long' or 'Long' or `Date`");
                 }
 
                 try {
@@ -132,7 +132,7 @@ public class AnnotationMapper<T> implements ObjectMapper<T> {
                 }
 
                 if (!fieldType.isAssignableFrom(int.class) && !fieldType.isAssignableFrom(Integer.class)) {
-                    throw new JnqObjectMappingException("Entity ID field type must be equals 'int' or 'Integer'");
+                    throw new JnqObjectMappingException("Entity ID field type must have equals 'int' or 'Integer'");
                 }
 
                 identifierFieldName = fieldName;

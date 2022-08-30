@@ -5,15 +5,14 @@ import com.itzstonlex.jnq.content.field.FieldOperator;
 import com.itzstonlex.jnq.content.field.type.EntryField;
 import com.itzstonlex.jnq.content.type.SchemaContent;
 import com.itzstonlex.jnq.jdbc.JDBCHelper;
-import com.itzstonlex.jnq.orm.annotation.*;
+import com.itzstonlex.jnq.orm.User;
+import com.itzstonlex.jnq.orm.UserRepository;
 import com.itzstonlex.jnq.orm.data.ObjectMappingService;
+import com.itzstonlex.jnq.orm.data.repository.EntityRepositoryContext;
 import com.itzstonlex.jnq.orm.exception.JnqObjectMappingException;
-import lombok.Getter;
-import lombok.ToString;
 import org.junit.jupiter.api.*;
 
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -21,41 +20,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class ORMTest {
 
-    @MappingEntity // annotation from JNQ
-    @Getter
-    @ToString
-    public static class User {
-
-        @MappingPrimary // annotation from JNQ
-        @MappingID // annotation from JNQ
-        private int id;
-
-        @MappingColumn // annotation from JNQ
-        private String name;
-
-        @MappingColumn("register_date") // annotation from JNQ
-        private long registerTimeMillis;
-
-        @MappingColumn("last_update_date") // annotation from JNQ
-        @MappingLastUpdateTime(unit = TimeUnit.MILLISECONDS) // annotation from JNQ
-        private long lastUpdateTimeMillis;
-
-        // required for new instance calling.
-        private User() {}
-
-        // You object realisations.
-        public User(String name, long registerTimeMillis) {
-            this.name = name;
-            this.registerTimeMillis = registerTimeMillis;
-        }
-
-        @MappingInitMethod // annotation from JNQ
-        private void init() {
-            System.out.println("User " + name + " was initialized!");
-        }
-    }
-
     private ObjectMappingService objectMappings;
+
+    private User user;
 
     @Test
     @Order(0)
@@ -68,13 +35,31 @@ public class ORMTest {
 
         // because some syntax is not supported in the H2 driver, then in order for some ORM functionality to work correctly, you need to set a different SQL syntax mode.
         JDBCHelper.updateSyntaxMode(defaultSchema, "MySQL");
+
+        // Initialize user-data object.
+        user = new User("itzstonlex", System.currentTimeMillis());
     }
 
     @Test
     @Order(1)
-    void testSave() throws JnqObjectMappingException {
-        User user = new User("itzstonlex", System.currentTimeMillis());
+    void testRepository() throws JnqObjectMappingException {
+        EntityRepositoryContext entityRepositoryContext = objectMappings.getEntityRepositoryContext();
 
+        UserRepository repository = entityRepositoryContext.makeRepository(UserRepository.class);
+
+        repository.save(user);
+
+        User userByName = repository.findByName("itzstonlex");
+        User userByID = repository.findByID(1);
+
+        if (userByName.equals(userByID)) {
+            System.out.println("It`s worked!");
+        }
+    }
+
+    @Test
+    @Order(2)
+    void testSaving() throws JnqObjectMappingException {
         objectMappings.getRequestFactory()
                 .beginSaving()
 
@@ -88,13 +73,14 @@ public class ORMTest {
 
                     assertEquals(userID, 1);
 
-                    System.out.println("Inserted User ID - " + (user.id = userID));
+                    user.setId(userID);
+                    System.out.println("Inserted User ID - " + userID);
                 });
     }
 
     @Test
-    @Order(2)
-    void testFetch() throws JnqObjectMappingException {
+    @Order(3)
+    void testSearch() throws JnqObjectMappingException {
         List<User> usersList = objectMappings.getRequestFactory()
                 .beginSearch()
 
@@ -113,7 +99,7 @@ public class ORMTest {
         for (User user : usersList) {
             assertEquals(user.getName(), "itzstonlex");
 
-            System.out.println(" - User: " + user);
+            System.out.println(" - " + user);
         }
     }
 

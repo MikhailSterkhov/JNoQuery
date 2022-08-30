@@ -85,7 +85,9 @@ public class ObjectMappingRepositoryImpl implements ObjectMappingRepository {
 
         properties.foreach((name, value) -> {
 
-            if (!name.equalsIgnoreCase(MappingID.PROPERTY_KEY_NAME) && !name.equalsIgnoreCase(_getIdentifierName(properties))) {
+            if (!name.equalsIgnoreCase(MappingPrimary.PROPERTY_KEY_NAME) && !name.equalsIgnoreCase(MappingID.PROPERTY_KEY_NAME)
+                    && !name.equalsIgnoreCase(_getIdentifierName(properties))) {
+
                 insertSession.add(EntryField.create(name, value));
             }
         });

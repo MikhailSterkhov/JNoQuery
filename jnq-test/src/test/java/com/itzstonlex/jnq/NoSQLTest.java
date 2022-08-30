@@ -73,7 +73,7 @@ public class NoSQLTest {
                 .whenComplete((updateResponse, error) -> {
 
                     System.out.println("INSERT RESPONSE:");
-                    System.out.println(" Inserted User ID: " + updateResponse.getGeneratedKey());
+                    System.out.println(" Inserted com.itzstonlex.jnq.orm.User ID: " + updateResponse.getGeneratedKey());
                     System.out.println(" - " + updateResponse.getAffectedRows() + " affected rows");
                     System.out.println();
                 });

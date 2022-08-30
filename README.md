@@ -21,7 +21,6 @@ Java Database connection with nosql &amp; sql management
 
 ## WHAT IS THIS?
 
-
 This library contains functionality for easy connection
 to different types of relational databases with support
 for synchronous and asynchronous query types.

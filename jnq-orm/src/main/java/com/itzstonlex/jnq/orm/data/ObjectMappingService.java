@@ -8,6 +8,7 @@ import com.itzstonlex.jnq.orm.annotation.MappingEntity;
 import com.itzstonlex.jnq.orm.annotation.MappingColumn;
 import com.itzstonlex.jnq.orm.base.properties.ObjectMapperPropertiesImpl;
 import com.itzstonlex.jnq.orm.base.request.MappingRequestFactoryImpl;
+import com.itzstonlex.jnq.orm.data.repository.EntityRepositoryContext;
 import com.itzstonlex.jnq.orm.exception.JnqObjectMappingException;
 import com.itzstonlex.jnq.orm.mapper.AnnotationMapper;
 import com.itzstonlex.jnq.orm.mapper.JsonMapper;
@@ -25,7 +26,6 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-@Getter
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public final class ObjectMappingService {
@@ -38,8 +38,13 @@ public final class ObjectMappingService {
         return instanceOf(tableContent.getSchema(), tableContent.getName());
     }
 
+    @Getter
     SchemaContent schemaContent;
+    @Getter
     String table;
+
+    @Getter
+    EntityRepositoryContext entityRepositoryContext = new EntityRepositoryContext(this);
 
     Map<Class<?>, ObjectMapper<?>>
             mappersByTypesMap = new HashMap<>(),
