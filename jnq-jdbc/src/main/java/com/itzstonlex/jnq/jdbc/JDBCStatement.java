@@ -20,6 +20,8 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Map;
 import java.util.WeakHashMap;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PROTECTED)
@@ -74,10 +76,28 @@ public final class JDBCStatement {
         }
     }
 
-    public UpdateResponse update(@NonNull String query)
+    public <T> T wrapTransaction(@NonNull Function<Connection, T> transaction)
     throws JnqContentException {
 
         Connection connection = request.getContent().getJdbcConnection();
+
+        try {
+            connection.setAutoCommit(false);
+
+            T response = transaction.apply(connection);
+            connection.commit();
+
+            connection.setAutoCommit(true);
+
+            return response;
+        }
+        catch (SQLException exception) {
+            throw new JnqContentException();
+        }
+    }
+
+    public UpdateResponse update(@NonNull Connection connection, @NonNull String query)
+    throws JnqContentException {
 
         try {
             PreparedStatement transaction = peekCachedTransaction(query);
@@ -101,15 +121,13 @@ public final class JDBCStatement {
     }
 
     @SuppressWarnings("MagicConstant")
-    public Response fetch(@NonNull String query)
+    public Response fetch(@NonNull Connection connection, @NonNull String query)
     throws JnqContentException {
 
         int typeIndex = request.type() != null ? request.type().getIndex() : RequestType.FORWARD_ONLY.getIndex();
         int concurrencyIndex = request.concurrency() != null ? request.concurrency().getIndex() : RequestConcurrency.UPDATABLE.getIndex();
         int holdabilityIndex = request.holdability() != null ? request.holdability().getIndex() : RequestHoldability.HOLD_CURSORS_OVER_COMMIT.getIndex();
         int fetchDirectionIndex = request.fetchDirection() != null ? request.fetchDirection().getIndex() : RequestFetchDirection.FORWARD.getIndex();
-
-        Connection connection = request.getContent().getJdbcConnection();
 
         try {
             PreparedStatement transaction = peekCachedTransaction(query);

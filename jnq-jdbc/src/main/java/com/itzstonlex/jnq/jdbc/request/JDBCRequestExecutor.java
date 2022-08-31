@@ -24,12 +24,12 @@ public class JDBCRequestExecutor implements RequestExecutor {
 
     @Override
     public @NonNull Response fetchTransaction() throws JnqContentException {
-        return statement.fetch(query);
+        return statement.wrapTransaction(connection -> statement.fetch(connection, query));
     }
 
     @Override
     public @NonNull UpdateResponse updateTransaction() throws JnqContentException {
-        return statement.update(query);
+        return statement.wrapTransaction(connection -> statement.update(connection, query));
     }
 
     @Override
