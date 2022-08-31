@@ -35,7 +35,7 @@ modules created for different technical solutions, namely:
     * MariaDB;
     * SQLite;
     * ClickHouse;
-    * OracleSQL
+    * OracleSQL;
     * PostgreSQL;
     * *etc.*
 
