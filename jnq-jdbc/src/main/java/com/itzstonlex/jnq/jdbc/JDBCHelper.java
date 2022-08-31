@@ -38,7 +38,7 @@ public class JDBCHelper {
     public final String SQLITE_URL_PREFIX = "jdbc:sqlite:";
     public final String JDBC_URL_FORMAT = "jdbc:%s://%s:%s/";
     public final String JDBC_MEM_URL_FORMAT = "jdbc:%s:mem:";
-    public final String JDBC_ORACLE_URL_FORMAT = "jdbc:%s:thin:@%s:%s"
+    public final String JDBC_ORACLE_URL_FORMAT = "jdbc:%s:thin:@%s:%s";
 
     public @NonNull String makeLink(@NonNull String driverName, @NonNull String host, int port) {
         return String.format(JDBC_URL_FORMAT, driverName.toLowerCase(), host, port);
@@ -69,7 +69,7 @@ public class JDBCHelper {
     }
 
     public @NonNull String toOracleSQL(@NonNull String host, int port) {
-        return String.format(JDBC_ORACLE_URL_FORMAT, ORACLE_DRIVER_NAME.toLowerCase(), host, port)
+        return String.format(JDBC_ORACLE_URL_FORMAT, ORACLE_DRIVER_NAME.toLowerCase(), host, port);
     }
 
     public @NonNull String toOracleSQL(@NonNull String host) {
@@ -97,7 +97,7 @@ public class JDBCHelper {
     }
 
     @SneakyThrows
-    public Connection getConnection(@NonNull String url, @NonNull String username, @NonNull String password) {
+    public Connection getConnection(@NonNull String url, String username, String password) {
         return DriverManager.getConnection(url, username, password);
     }
 
