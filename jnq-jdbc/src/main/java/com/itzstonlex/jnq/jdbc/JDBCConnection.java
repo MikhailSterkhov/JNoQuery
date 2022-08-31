@@ -26,7 +26,7 @@ public class JDBCConnection implements JnqConnection {
 
     Map<String, JDBCSchema> jdbcSchemasMap;
 
-    public JDBCConnection(String driverCls, @NonNull String jdbcUrl, @NonNull String username, @NonNull String password) throws JnqException {
+    public JDBCConnection(String driverCls, @NonNull String jdbcUrl, String username, String password) throws JnqException {
         try {
             if (driverCls != null) {
                 Class.forName(driverCls);
@@ -44,8 +44,16 @@ public class JDBCConnection implements JnqConnection {
         }
     }
 
-    public JDBCConnection(@NonNull String url, @NonNull String username, @NonNull String password) throws JnqException {
+    public JDBCConnection(@NonNull String url, String username, String password) throws JnqException {
         this(null, url, username, password);
+    }
+
+    public JDBCConnection(String driverCls, @NonNull String url) throws JnqException {
+        this(driverCls, url, null, null);
+    }
+
+    public JDBCConnection(@NonNull String url) throws JnqException {
+        this(url, null, null);
     }
 
     @Override

@@ -5,9 +5,9 @@ import com.itzstonlex.jnq.jdbc.JDBCConnection;
 import com.itzstonlex.jnq.jdbc.JDBCHelper;
 import lombok.NonNull;
 
-public class PostgresqlConnection extends JDBCConnection {
+public class PostgreSQLConnection extends JDBCConnection {
 
-    public PostgresqlConnection(@NonNull String username, @NonNull String password) throws JnqException {
+    public PostgreSQLConnection(@NonNull String username, @NonNull String password) throws JnqException {
         super(JDBCHelper.toPostgreSQL("localhost", JDBCHelper.POSTGRESQL_PORT), username, password);
     }
 }
