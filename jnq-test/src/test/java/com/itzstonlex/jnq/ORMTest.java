@@ -52,9 +52,8 @@ public class ORMTest {
         User userByName = repository.findByName("itzstonlex");
         User userByID = repository.findByID(1);
 
-        if (userByName.getId() == userByID.getId()) {
-            System.out.println("It`s worked!");
-        }
+        assertEquals(userByID.getId(), userByName.getId());
+        assertEquals(userByID.getName(), userByName.getName());
     }
 
     @Test
