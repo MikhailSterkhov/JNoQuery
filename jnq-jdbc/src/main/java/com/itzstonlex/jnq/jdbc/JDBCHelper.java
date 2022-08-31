@@ -35,9 +35,10 @@ public class JDBCHelper {
     public final String CLICKHOUSE_DEFAULT_SCHEMA_NAME = "default";
     public final String ORACLE_DEFAULT_SCHEMA_NAME = "orcl";
 
-    public final String JDBC_URL_FORMAT = "jdbc:%s://%s:%s/";
     public final String SQLITE_URL_PREFIX = "jdbc:sqlite:";
-    public final String JDBC_MEM_FORMAT = "jdbc:%s:mem:";
+    public final String JDBC_URL_FORMAT = "jdbc:%s://%s:%s/";
+    public final String JDBC_MEM_URL_FORMAT = "jdbc:%s:mem:";
+    public final String JDBC_ORACLE_URL_FORMAT = "jdbc:%s:thin:@%s:%s"
 
     public @NonNull String makeLink(@NonNull String driverName, @NonNull String host, int port) {
         return String.format(JDBC_URL_FORMAT, driverName.toLowerCase(), host, port);
@@ -68,7 +69,7 @@ public class JDBCHelper {
     }
 
     public @NonNull String toOracleSQL(@NonNull String host, int port) {
-        return makeLink(ORACLE_DRIVER_NAME + ":thin", host, port);
+        return String.format(JDBC_ORACLE_URL_FORMAT, ORACLE_DRIVER_NAME.toLowerCase(), host, port)
     }
 
     public @NonNull String toOracleSQL(@NonNull String host) {
@@ -84,7 +85,7 @@ public class JDBCHelper {
     }
 
     public @NonNull String toH2() {
-        return String.format(JDBC_MEM_FORMAT, H2_DRIVER_NAME);
+        return String.format(JDBC_MEM_URL_FORMAT, H2_DRIVER_NAME);
     }
 
     public @NonNull String toSqlite(@NonNull File dbFile) {
